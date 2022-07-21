@@ -25,8 +25,8 @@ export const debounce = (fn: Function) => {
   };
 };
 
-export const conClasses = (str: string | boolean | undefined | (string | boolean | undefined)[]) => {
-  return (Array.isArray(str) ? str : typeof str == "string" ? str.split(" ") : []).filter(s => !!s && typeof s == "string").join(" ");
+export const concatenate = (...str: (string | boolean | undefined)[]) => {
+  return str.filter(s => !!s && typeof s == "string").join(" ");
 };
 
 export const parseCSSModules = (module: { [key: string]: string }, styles?: (string | boolean | undefined)[]) => {
@@ -40,5 +40,5 @@ export const parseCSSModules = (module: { [key: string]: string }, styles?: (str
         : c
     )
     .filter(c => typeof c === "string");
-  return conClasses(parsed);
+  return concatenate(...parsed);
 };

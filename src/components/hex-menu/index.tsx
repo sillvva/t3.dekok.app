@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import Link from "next/link";
 import styles from "./HexMenu.module.scss";
 import { useRouter } from "next/router";
-import { conClasses, parseCSSModules } from "$src/utils/misc";
+import { concatenate, parseCSSModules } from "$src/utils/misc";
 
 export type Item = {
   link: string;
@@ -48,14 +48,14 @@ const HexMenu = (props: HexMenuProps) => {
 
   return (
     <nav
-      className={conClasses([
+      className={concatenate(
         styles.HexWrapper,
         !props.classes.find(c => c.startsWith("[--scale:")) && "[--scale:1]",
         props.rotated && styles.rotated,
         ...props.classes
-      ])}>
+      )}>
       {menuRows.map((row, r) => (
-        <div key={r} className={conClasses([styles.HexRow, r % 2 === 1 && !props.rotated && styles.shift])}>
+        <div key={r} className={concatenate(styles.HexRow, r % 2 === 1 && !props.rotated && styles.shift)}>
           {row.map((item, i) => (
             <HexMenuItem
               key={`hex-item-${i}`}
@@ -108,7 +108,7 @@ const HexMenuItem = (props: HexMenuItemProps) => {
     <div className={parseCSSModules(styles, [styles.HexMenuItemContainer, props.rotated && styles.rotated, ...props.classes])}>
       <svg
         viewBox="0 0 800 800"
-        className={conClasses([styles.HexItem, props.rotated && styles.rotated, !props.label && styles.empty, props.active && styles.active])}
+        className={concatenate(styles.HexItem, props.rotated && styles.rotated, !props.label && styles.empty, props.active && styles.active)}
         style={
           {
             ...(props.color && { "--color": props.color }),
@@ -124,20 +124,20 @@ const HexMenuItem = (props: HexMenuItemProps) => {
               {props.rotated ? (
                 <g transform="matrix(-6.92 0 0 -6.92 400.24 400.24)">
                   <polygon
-                    className={conClasses(["h-hex", styles.hex, ...props.hexagonClasses])}
+                    className={concatenate("h-hex", styles.hex, ...props.hexagonClasses)}
                     points="-19.9,34.5 -39.8,0 -19.9,-34.5 19.9,-34.5 39.8,0 19.9,34.5 "
                   />
                 </g>
               ) : (
                 <g transform="matrix(0 6.92 -6.92 0 400.17 400.33)">
                   <polygon
-                    className={conClasses(["h-hex", styles.hex, ...props.hexagonClasses])}
+                    className={concatenate("h-hex", styles.hex, ...props.hexagonClasses)}
                     points="-19.9,34.5 -39.8,0 -19.9,-34.5 19.9,-34.5 39.8,0 19.9,34.5 "
                   />
                 </g>
               )}
               <foreignObject className="hex-fo" x="0" y="0" width="100%" height="100%">
-                <span className={conClasses([styles.label, ...props.labelClasses])}>{props.label}</span>
+                <span className={concatenate(styles.label, ...props.labelClasses)}>{props.label}</span>
               </foreignObject>
             </a>
           </Link>
@@ -146,20 +146,20 @@ const HexMenuItem = (props: HexMenuItemProps) => {
             {props.rotated ? (
               <g transform="matrix(-6.92 0 0 -6.92 400.24 400.24)">
                 <polygon
-                  className={conClasses(["h-hex", styles.hex, ...props.hexagonClasses])}
+                  className={concatenate("h-hex", styles.hex, ...props.hexagonClasses)}
                   points="-19.9,34.5 -39.8,0 -19.9,-34.5 19.9,-34.5 39.8,0 19.9,34.5 "
                 />
               </g>
             ) : (
               <g transform="matrix(0 6.92 -6.92 0 400.17 400.33)">
                 <polygon
-                  className={conClasses(["h-hex", styles.hex, ...props.hexagonClasses])}
+                  className={concatenate("h-hex", styles.hex, ...props.hexagonClasses)}
                   points="-19.9,34.5 -39.8,0 -19.9,-34.5 19.9,-34.5 39.8,0 19.9,34.5 "
                 />
               </g>
             )}
             <foreignObject className="hex-fo" x="0" y="0" width="100%" height="100%">
-              <span className={conClasses([styles.label, ...props.labelClasses])}>{props.label}</span>
+              <span className={concatenate(styles.label, ...props.labelClasses)}>{props.label}</span>
             </foreignObject>
           </>
         )}

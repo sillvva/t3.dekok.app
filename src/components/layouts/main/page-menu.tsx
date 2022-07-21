@@ -1,4 +1,3 @@
-import styles from "$src/layouts/main/styles.module.scss";
 import { useRouter } from "next/router";
 import AnimatedButton from "../../animated-button";
 

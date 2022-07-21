@@ -3,7 +3,7 @@ import type { FunctionComponent, PropsWithChildren } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { mainMotion } from "$src/layouts/main";
 import styles from "$src/layouts/main/styles.module.scss";
-import { conClasses } from "$src/utils/misc";
+import { concatenate as concatenate } from "$src/utils/misc";
 
 type PageBgProps = {
   theme: string;
@@ -21,10 +21,10 @@ const PageBg: FunctionComponent<PageBgProps> = ({ theme, init }) => {
         exit="exit"
         transition={{ duration: 0.5 }}
         data-theme={theme}
-        className={conClasses([
+        className={concatenate(
           "page-background fixed inset-0 scale-x-[var(--bg-scale-x)]",
           "bg-fixed bg-cover bg-no-repeat bg-theme-body bg-[image:var(--bg-img)]"
-        ])}
+        )}
       />
       {theme}
     </AnimatePresence>
@@ -32,7 +32,7 @@ const PageBg: FunctionComponent<PageBgProps> = ({ theme, init }) => {
 };
 
 const PageBody = (props: PropsWithChildren<unknown>) => {
-  return <div className={styles.PageBody}>{props.children}</div>;
+  return <div className="flex flex-col justify-center items-center relative px-2 md:px-4 pt-24 lg:pt-0 pb-4">{props.children}</div>;
 };
 
 interface PageArticleProps {
@@ -41,7 +41,7 @@ interface PageArticleProps {
 
 const PageArticle = (props: PropsWithChildren<PageArticleProps>) => {
   return (
-    <article className={conClasses(["shadow-xl ring-1 rounded-lg mb-4 ring-gray-900/5 overflow-hidden bg-theme-article", props.className || ""])}>
+    <article className={concatenate("shadow-xl ring-1 rounded-lg mb-4 ring-gray-900/5 overflow-hidden bg-theme-article", props.className || "")}>
       {props.children}
     </article>
   );
@@ -55,13 +55,13 @@ interface PageSectionProps {
 const PageSection = (props: PropsWithChildren<PageSectionProps>) => {
   return (
     <section
-      className={conClasses([
+      className={concatenate(
         "p-5 section-divider text-theme-base",
         "last:border-b-0",
         props.className || "",
         props.bgImage ?? `bg-[image:url(${props.bgImage}))]`,
         `bg-cover bg-center`
-      ])}>
+      )}>
       {props.children}
     </section>
   );

@@ -4,7 +4,7 @@ import { useTheme } from "next-themes";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Transition, Variants } from "framer-motion";
-import { conClasses, debounce } from "$src/utils/misc";
+import { concatenate, debounce } from "$src/utils/misc";
 import MainLayoutContext, { MainLayoutContextProvider } from "./context";
 import Page from "$src/components/layouts/main/page";
 import PageHeader from "$src/components/layouts/main/page-header";
@@ -52,7 +52,7 @@ const Layout = (props: React.PropsWithChildren<PageHeadProps>) => {
       <AnimatePresence initial={false} exitBeforeEnter>
         <motion.main
           key={`main${props.path}`}
-          className={conClasses(["relative flex-col justify-center items-center z-[2] px-2 pb-4 md:px-4", head?.title ? "mt-24 lg:mt-36" : "mt-20"])}
+          className={concatenate("relative flex-col justify-center items-center z-[2] px-2 pb-4 md:px-4", head?.title ? "mt-24 lg:mt-36" : "mt-20")}
           variants={mainMotion.variants}
           initial="hidden"
           animate="enter"

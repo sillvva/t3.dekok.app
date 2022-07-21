@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { Transition, Variants } from "framer-motion";
 import MainLayoutContext, { menuItems } from "$src/layouts/main/context";
 import type { PageHeadProps } from "../../../layouts/main";
-import { conClasses } from "$src/utils/misc";
+import { concatenate } from "$src/utils/misc";
 
 const PageMenu = dynamic(() => import("./page-menu"));
 
@@ -25,18 +25,24 @@ const PageHeader = ({ layoutMotion, onThemeChange }: PageHeaderProps) => {
   const { data: head } = useQuery<PageHeadProps>(["page-props"]);
   const { theme, setTheme, themes } = useTheme();
   const [menu, setMenu] = useState(true);
+  const [title, setTitle] = useState(head?.title);
 
   useEffect(() => {
     const listener = (ev: string) => {
       if (ev == "/") setMenu(false);
       else setMenu(true);
+      setTitle("");
     };
 
     router.events.on("routeChangeStart", listener);
     return () => router.events.off("routeChangeStart", listener);
   }, [router.events]);
+  
+  useEffect(() => {
+    setTitle(head?.title);
+  }, [head?.title]);
 
-  const smallTitle = (head?.title?.length || 0) > 12;
+  const smallTitle = (title?.length || 0) > 12;
   const items = head?.menu && menu ? menuItems : [];
   const baseThemes = themes.filter(t => t !== "system");
   const nextTheme = baseThemes[(baseThemes.indexOf(theme || "") + 1) % baseThemes.length] || "";
@@ -53,7 +59,7 @@ const PageHeader = ({ layoutMotion, onThemeChange }: PageHeaderProps) => {
   );
 
   return (
-    <header className={conClasses(["flex flex-col items-center transition-all duration-500", "fixed top-0 left-0 right-0 z-[3] scroll-blur"])}>
+    <header className={concatenate("flex flex-col items-center transition-all duration-500", "fixed top-0 left-0 right-0 z-[3] scroll-blur")}>
       <div className="flex gap-4 w-full py-4 px-2 2xs:px-3 items-center text-center max-h-[80px]">
         <div className="w-12">
           {head?.backTo === true ? (
@@ -71,28 +77,32 @@ const PageHeader = ({ layoutMotion, onThemeChange }: PageHeaderProps) => {
               type="button"
               aria-label="Open Drawer"
               onClick={drawer.toggle}
-              className={conClasses(["fab", head?.drawer && head?.menu && "inline lg:hidden"])}>
+              className={concatenate("fab", head?.drawer && head?.menu && "inline lg:hidden")}>
               <Icon path={mdiMenu} />
             </button>
           ) : null}
         </div>
         <div className="flex-1 block relative h-14">
-          {head?.menu ? <nav className={conClasses(["hidden justify-center gap-3 px-3 lg:flex"])}>{items.length ? <PageMenu items={items} /> : ""}</nav> : ""}
-          <motion.h1
-            variants={layoutMotion?.variants}
-            key={`title: ${head?.title}`}
-            initial="hidden"
-            animate="enter"
-            exit="exit"
-            transition={layoutMotion?.transition}
-            className={conClasses([
-              "text-3xl text-center text-theme-heading font-medium font-montserrat",
-              "drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
-              "block lg:hidden flex-1 p-2 absolute inset-0",
-              smallTitle && "text-sm sm:text-lg md:text-2xl flex lg:hidden justify-center items-center"
-            ])}>
-            {head?.title || ""}
-          </motion.h1>
+          {head?.menu ? <nav className={concatenate("hidden justify-center gap-3 px-3 lg:flex")}>{items.length ? <PageMenu items={items} /> : ""}</nav> : ""}
+          <AnimatePresence initial={false} exitBeforeEnter>
+            {title && (
+              <motion.h1
+                variants={layoutMotion?.variants}
+                key={`title: ${title}`}
+                initial="hidden"
+                animate="enter"
+                exit="exit"
+                transition={layoutMotion?.transition}
+                className={concatenate(
+                  "text-3xl text-center text-theme-heading font-medium font-montserrat",
+                  "drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
+                  "block lg:hidden flex-1 p-2 absolute inset-0",
+                  smallTitle && "text-sm sm:text-lg md:text-2xl flex lg:hidden justify-center items-center"
+                )}>
+                {title || ""}
+              </motion.h1>
+            )}
+          </AnimatePresence>
         </div>
         <div className="hidden xs:block w-12">
           <button
@@ -108,20 +118,20 @@ const PageHeader = ({ layoutMotion, onThemeChange }: PageHeaderProps) => {
         </div>
       </div>
       <AnimatePresence initial={false} exitBeforeEnter>
-        {head?.title && (
+        {title && (
           <motion.h1
             variants={layoutMotion?.variants}
-            key={`title: ${head?.title}`}
+            key={`title: ${title}`}
             initial="hidden"
             animate="enter"
             exit="exit"
             transition={layoutMotion?.transition}
-            className={conClasses([
+            className={concatenate(
               "text-3xl text-center text-theme-heading font-medium font-montserrat",
               "drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
               "hidden lg:block"
-            ])}>
-            {head?.title}
+            )}>
+            {title}
           </motion.h1>
         )}
       </AnimatePresence>
