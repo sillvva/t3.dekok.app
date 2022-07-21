@@ -48,7 +48,7 @@ const Layout = (props: React.PropsWithChildren<PageHeadProps>) => {
   return (
     <div id="app" className="min-h-screen min-w-screen">
       {theme && theme !== oldTheme && <Page.Bg theme={oldTheme || ""} />}
-      <Page.Bg key={theme} theme={theme || "dark"} init={init.current} />
+      <Page.Bg key={theme} theme={theme} init={init.current} />
       <AnimatePresence initial={false} exitBeforeEnter>
         <motion.main
           key={`main${props.path}`}

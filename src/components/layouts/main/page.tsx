@@ -6,7 +6,7 @@ import styles from "$src/layouts/main/styles.module.scss";
 import { concatenate as concatenate } from "$src/utils/misc";
 
 type PageBgProps = {
-  theme: string;
+  theme?: string;
   init?: boolean;
 };
 
