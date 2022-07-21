@@ -8,7 +8,7 @@ export const createContext = (opts?: CreateNextContextOptions) => {
   const req = opts?.req;
   const res = opts?.res;
 
-  console.log(parse(req?.headers.cookie || ""));
+  // console.log(parse(req?.headers.cookie || ""));
 
   return {
     req,

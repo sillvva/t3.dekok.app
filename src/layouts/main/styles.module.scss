@@ -40,10 +40,6 @@
   @apply flex-1 hidden lg:block;
 }
 
-.PageMenu {
-  @apply hidden lg:flex justify-center gap-3 px-3 my-4;
-}
-
 .PageTitle {
   font-family: "Montserrat", sans-serif;
   @apply text-3xl text-center lg:mt-4 lg:mb-4 font-medium text-[color:var(--headers)];

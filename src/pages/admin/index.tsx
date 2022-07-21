@@ -2,9 +2,13 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { trpc } from "$src/utils/trpc";
+import { usePageProps } from "$src/utils/hooks";
 
 const Home: NextPage = () => {
   const { data } = trpc.useQuery(["posts.get"]);
+  usePageProps({
+    drawer: true,
+  });
 
   return (
     <>

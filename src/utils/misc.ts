@@ -25,11 +25,11 @@ export const debounce = (fn: Function) => {
   };
 };
 
-export const conClasses = (str: boolean | string | (string | boolean)[]) => {
+export const conClasses = (str: string | boolean | undefined | (string | boolean | undefined)[]) => {
   return (Array.isArray(str) ? str : typeof str == "string" ? str.split(" ") : []).filter(s => !!s && typeof s == "string").join(" ");
 };
 
-export const parseCSSModules = (module: { [key: string]: string }, styles?: (string | boolean)[]) => {
+export const parseCSSModules = (module: { [key: string]: string }, styles?: (string | boolean | undefined)[]) => {
   const parsed = (styles || [])
     .map(c =>
       typeof c === "string"

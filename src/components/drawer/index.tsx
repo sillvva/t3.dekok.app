@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import MainLayoutContext, { menuItems } from "$src/layouts/main/context";
-// import HexMenu from "$src/components/hex-menu";
+import HexMenu from "$src/components/hex-menu";
 import styles from "./Drawer.module.scss";
 
 const defaultMenuClasses = ["sm:scale-100", "md:scale-125"];
@@ -25,7 +25,7 @@ const Drawer = () => {
 
   return (
     <nav className={`${styles.Drawer} ${drawerClasses}`} data-action={drawer.action} onClick={drawer.toggle}>
-      {/* <HexMenu items={menuItems} maxLength={3} classes={menuClasses} itemClasses={["menu-bounce"]} rotated={menuItems.length % 2 == 0} /> */}
+      <HexMenu items={menuItems} maxLength={3} classes={menuClasses} itemClasses={["menu-bounce"]} rotated={menuItems.length % 2 == 0} />
     </nav>
   );
 };

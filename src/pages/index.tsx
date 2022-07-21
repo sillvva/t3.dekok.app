@@ -1,8 +1,11 @@
+import { usePageProps } from "$src/utils/hooks";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 
 const Home: NextPage = () => {
+  usePageProps({});
+
   return (
     <>
       <Head>
@@ -11,7 +14,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-slate-800">
+      <main className="flex flex-col items-center justify-center">
         <h1 className="text-5xl md:text-[5rem] leading-normal font-extrabold text-gray-300">
           Create <span className="text-purple-300">T3</span> App
         </h1>

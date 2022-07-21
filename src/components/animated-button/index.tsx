@@ -19,10 +19,10 @@ export default function AnimatedButton(props: AnimatedButtonProps) {
   const {
     active = false,
     itemClasses = ["Button5"],
-    color = "var(--link)",
-    hoverColor = "var(--linkHover)",
-    activeColor = "var(--linkHover)",
-    textColor = "var(--linkText)",
+    color = "var(--color-text-link)",
+    hoverColor = "rgb(var(--color-bg-body))",
+    activeColor = "rgb(var(--color-bg-body))",
+    textColor = "var(--color-text-link)",
     link = "",
     label,
     clickRipple

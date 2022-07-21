@@ -1,4 +1,4 @@
-import styles from "../../../layouts/main/MainLayout.module.scss";
+import styles from "$src/layouts/main/styles.module.scss";
 import { useRouter } from "next/router";
 import AnimatedButton from "../../animated-button";
 
@@ -24,10 +24,10 @@ const PageMenu = (props: PageMenuProps) => {
   const {
     maxLength = 0,
     itemClasses = [],
-    color = "var(--link)",
-    hoverColor = "var(--linkHover)",
-    activeColor = "var(--linkHover)",
-    textColor = "var(--linkText)",
+    color = "var(--color-text-link)",
+    hoverColor = "rgb(var(--color-bg-body))",
+    activeColor = "rgb(var(--color-bg-body))",
+    textColor = "var(--color-text-link)",
     items
   } = props;
 
@@ -46,7 +46,7 @@ const PageMenu = (props: PageMenuProps) => {
     <>
       {menuRows.map((row, r) => {
         return (
-          <div className={styles.PageMenu} key={`menu-row${r}`}>
+          <div className="hidden lg:flex justify-center gap-3 px-3" key={`menu-row${r}`}>
             {row.map((item, i) => {
               return (
                 <AnimatedButton

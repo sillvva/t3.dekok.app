@@ -10,12 +10,14 @@ import Page from "$src/components/layouts/main/page";
 import PageHeader from "$src/components/layouts/main/page-header";
 import NextNProgress from "$src/components/progress";
 import PageMeta from "$src/components/meta";
+import { useQuery } from "@tanstack/react-query";
 
 const Drawer = dynamic(() => import("$src/components/drawer"));
 
 const Layout = (props: React.PropsWithChildren<PageHeadProps>) => {
   const { drawer } = useContext(MainLayoutContext);
   const { theme, setTheme } = useTheme();
+  const { data: head } = useQuery<PageHeadProps>(["page-props"]);
   const [oldTheme, setOldTheme] = useState(theme || "");
   const init = useRef(false);
 
@@ -46,12 +48,11 @@ const Layout = (props: React.PropsWithChildren<PageHeadProps>) => {
   return (
     <div id="app" className="min-h-screen min-w-screen">
       {theme && theme !== oldTheme && <Page.Bg theme={oldTheme || ""} />}
-      <Page.Bg key={theme} theme={theme || ""} init={init.current} />
-      <PageHeader head={{ ...props, headerClasses: props.headerClasses || headerClasses }} layoutMotion={mainMotion} onThemeChange={themeChangeHandler} />
+      <Page.Bg key={theme} theme={theme || "dark"} init={init.current} />
       <AnimatePresence initial={false} exitBeforeEnter>
         <motion.main
           key={`main${props.path}`}
-          className={conClasses(["relative flex-col justify-center items-center z-[2] px-2 pb-4 md:px-4", "mt-24 lg:mt-36"])}
+          className={conClasses(["relative flex-col justify-center items-center z-[2] px-2 pb-4 md:px-4", head?.title ? "mt-24 lg:mt-36" : "mt-20"])}
           variants={mainMotion.variants}
           initial="hidden"
           animate="enter"
@@ -61,6 +62,7 @@ const Layout = (props: React.PropsWithChildren<PageHeadProps>) => {
         </motion.main>
       </AnimatePresence>
       {drawer.state ? <Drawer /> : ""}
+      <PageHeader layoutMotion={mainMotion} onThemeChange={themeChangeHandler} />
     </div>
   );
 };
@@ -95,6 +97,7 @@ export const mainMotion: { variants?: Variants; transition?: Transition } = {
 export type PageHeadProps = {
   title?: string;
   menu?: boolean;
+  drawer?: boolean;
   path?: string;
   meta?: LayoutMeta;
   headerClasses?: string[];

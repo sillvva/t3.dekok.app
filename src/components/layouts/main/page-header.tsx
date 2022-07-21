@@ -3,28 +3,26 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import Icon from "@mdi/react";
 import { mdiChevronLeft, mdiMenu, mdiBrightness6 } from "@mdi/js";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Transition, Variants } from "framer-motion";
 import MainLayoutContext, { menuItems } from "$src/layouts/main/context";
-import styles from "$src/layouts/main/styles.module.scss";
 import type { PageHeadProps } from "../../../layouts/main";
 import { conClasses } from "$src/utils/misc";
 
-// const PageMenu = dynamic(() => import("./page-menu"));
+const PageMenu = dynamic(() => import("./page-menu"));
 
 type PageHeaderProps = {
-  head: PageHeadProps;
   layoutMotion?: { variants?: Variants; transition?: Transition };
   onThemeChange?: (theme: string) => void;
 };
 
-const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
+const PageHeader = ({ layoutMotion, onThemeChange }: PageHeaderProps) => {
   const router = useRouter();
-  const { data } = useQuery<string>(["backTo", head?.backTo]);
   const { drawer } = useContext(MainLayoutContext);
+  const { data: head } = useQuery<PageHeadProps>(["page-props"]);
   const { theme, setTheme, themes } = useTheme();
   const [menu, setMenu] = useState(true);
 
@@ -63,21 +61,38 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
               <Icon path={mdiChevronLeft} />
             </a>
           ) : head?.backTo ? (
-            <Link href={data || head?.backTo}>
+            <Link href={head?.backTo}>
               <a type="button" className="fab">
                 <Icon path={mdiChevronLeft} />
               </a>
             </Link>
-          ) : (
-            <button type="button" aria-label="Open Drawer" onClick={drawer.toggle} className="fab">
+          ) : head?.drawer ? (
+            <button
+              type="button"
+              aria-label="Open Drawer"
+              onClick={drawer.toggle}
+              className={conClasses(["fab", head?.drawer && head?.menu && "inline lg:hidden"])}>
               <Icon path={mdiMenu} />
             </button>
-          )}
+          ) : null}
         </div>
         <div className="flex-1 block relative h-14">
-          <nav className={conClasses(["hidden justify-center gap-3 px-3 lg:flex"])}>
-            {/* {items.length ? <PageMenu items={items} /> : ""} */}
-          </nav>
+          {head?.menu ? <nav className={conClasses(["hidden justify-center gap-3 px-3 lg:flex"])}>{items.length ? <PageMenu items={items} /> : ""}</nav> : ""}
+          <motion.h1
+            variants={layoutMotion?.variants}
+            key={`title: ${head?.title}`}
+            initial="hidden"
+            animate="enter"
+            exit="exit"
+            transition={layoutMotion?.transition}
+            className={conClasses([
+              "text-3xl text-center text-theme-heading font-medium font-montserrat",
+              "drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
+              "block lg:hidden flex-1 p-2 absolute inset-0",
+              smallTitle && "text-sm sm:text-lg md:text-2xl flex lg:hidden justify-center items-center"
+            ])}>
+            {head?.title || ""}
+          </motion.h1>
         </div>
         <div className="hidden xs:block w-12">
           <button
@@ -101,7 +116,11 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
             animate="enter"
             exit="exit"
             transition={layoutMotion?.transition}
-            className={`${styles.PageTitle} hidden lg:block`}>
+            className={conClasses([
+              "text-3xl text-center text-theme-heading font-medium font-montserrat",
+              "drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
+              "hidden lg:block"
+            ])}>
             {head?.title}
           </motion.h1>
         )}
