@@ -9,12 +9,12 @@ import MainLayoutContext, { MainLayoutContextProvider } from "./context";
 import Page from "$src/components/layouts/main/page";
 import PageHeader from "$src/components/layouts/main/page-header";
 import NextNProgress from "$src/components/progress";
-import PageMeta from "$src/components/meta";
 import { useQuery } from "@tanstack/react-query";
 
 const Drawer = dynamic(() => import("$src/components/drawer"));
 
 const Layout = (props: React.PropsWithChildren<PageHeadProps>) => {
+  const router = useRouter();
   const { drawer } = useContext(MainLayoutContext);
   const { theme, setTheme } = useTheme();
   const { data: head } = useQuery<PageHeadProps>(["page-props"]);
@@ -52,7 +52,10 @@ const Layout = (props: React.PropsWithChildren<PageHeadProps>) => {
       <AnimatePresence initial={false} exitBeforeEnter>
         <motion.main
           key={`main${props.path}`}
-          className={concatenate("relative flex-col justify-center items-center z-[2] px-2 pb-4 md:px-4", head?.title ? "mt-24 lg:mt-36" : "mt-20")}
+          className={concatenate(
+            "relative flex-col justify-center items-center z-[2] px-2 md:px-4",
+            router.asPath == "/" ? "h-screen" : head?.title ? "pt-24 lg:pt-36 pb-4" : "pt-20 pb-4"
+          )}
           variants={mainMotion.variants}
           initial="hidden"
           animate="enter"

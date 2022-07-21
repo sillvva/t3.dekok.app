@@ -73,15 +73,15 @@ const PageHeader = ({ layoutMotion, onThemeChange }: PageHeaderProps) => {
                 <Icon path={mdiChevronLeft} />
               </a>
             </Link>
-          ) : head?.drawer ? (
+          ) : (
             <button
               type="button"
               aria-label="Open Drawer"
               onClick={drawer.toggle}
-              className={concatenate("fab", head?.drawer && head?.menu && "inline lg:hidden")}>
+              className={concatenate("fab", "flex", (head?.menu || router.asPath === "/") && "lg:hidden")}>
               <Icon path={mdiMenu} />
             </button>
-          ) : null}
+          )}
         </div>
         <div className="flex-1 block relative h-14">
           {head?.menu ? <nav className={concatenate("hidden justify-center gap-3 px-3 lg:flex")}>{items.length ? <PageMenu items={items} /> : ""}</nav> : ""}

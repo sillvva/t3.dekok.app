@@ -46,11 +46,6 @@ module.exports = {
           link: "var(--color-text-link)"
         }
       },
-      dropShadow: {
-        "theme-text": "1px 1px 2px var(--color-bg-shadow)",
-        "theme-text-outline":
-          "1px 1px 0 var(--text-shadow-color), -1px -1px 0 var(--text-shadow-color), 1px -1px 0 var(--text-shadow-color), -1px 1px 0 var(--text-shadow-color)"
-      },
       opacity: {
         15: "0.15",
         33: "0.33"

@@ -7,7 +7,6 @@ import PageMeta from "$src/components/meta";
 const Home: NextPage = () => {
   const { data } = trpc.useQuery(["posts.get"]);
   usePageProps({
-    drawer: true,
     menu: true,
   });
 

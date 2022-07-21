@@ -104,7 +104,43 @@ type HexMenuItemProps = {
 };
 
 const HexMenuItem = (props: HexMenuItemProps) => {
-  return (
+  return props.link ? (
+    <Link href={props.link}>
+      <a className={parseCSSModules(styles, [styles.HexMenuItemContainer, props.rotated && styles.rotated, ...props.classes])}>
+        <svg
+          viewBox="0 0 800 800"
+          className={concatenate(styles.HexItem, props.rotated && styles.rotated, !props.label && styles.empty, props.active && styles.active)}
+          style={
+            {
+              ...(props.color && { "--color": props.color }),
+              ...(props.hoverColor && { "--hover-color": props.hoverColor }),
+              ...(props.activeColor && { "--active-color": props.activeColor }),
+              ...(props.textColor && { "--text-color": props.textColor })
+            } as React.CSSProperties
+          }
+          aria-hidden={!props.label}>
+          {props.rotated ? (
+            <g transform="matrix(-6.92 0 0 -6.92 400.24 400.24)">
+              <polygon
+                className={concatenate("h-hex", styles.hex, ...props.hexagonClasses)}
+                points="-19.9,34.5 -39.8,0 -19.9,-34.5 19.9,-34.5 39.8,0 19.9,34.5 "
+              />
+            </g>
+          ) : (
+            <g transform="matrix(0 6.92 -6.92 0 400.17 400.33)">
+              <polygon
+                className={concatenate("h-hex", styles.hex, ...props.hexagonClasses)}
+                points="-19.9,34.5 -39.8,0 -19.9,-34.5 19.9,-34.5 39.8,0 19.9,34.5 "
+              />
+            </g>
+          )}
+          <foreignObject className="hex-fo" x="0" y="0" width="100%" height="100%">
+            <span className={concatenate(styles.label, ...props.labelClasses)}>{props.label}</span>
+          </foreignObject>
+        </svg>
+      </a>
+    </Link>
+  ) : (
     <div className={parseCSSModules(styles, [styles.HexMenuItemContainer, props.rotated && styles.rotated, ...props.classes])}>
       <svg
         viewBox="0 0 800 800"
@@ -118,51 +154,24 @@ const HexMenuItem = (props: HexMenuItemProps) => {
           } as React.CSSProperties
         }
         aria-hidden={!props.label}>
-        {props.link ? (
-          <Link href={props.link}>
-            <a>
-              {props.rotated ? (
-                <g transform="matrix(-6.92 0 0 -6.92 400.24 400.24)">
-                  <polygon
-                    className={concatenate("h-hex", styles.hex, ...props.hexagonClasses)}
-                    points="-19.9,34.5 -39.8,0 -19.9,-34.5 19.9,-34.5 39.8,0 19.9,34.5 "
-                  />
-                </g>
-              ) : (
-                <g transform="matrix(0 6.92 -6.92 0 400.17 400.33)">
-                  <polygon
-                    className={concatenate("h-hex", styles.hex, ...props.hexagonClasses)}
-                    points="-19.9,34.5 -39.8,0 -19.9,-34.5 19.9,-34.5 39.8,0 19.9,34.5 "
-                  />
-                </g>
-              )}
-              <foreignObject className="hex-fo" x="0" y="0" width="100%" height="100%">
-                <span className={concatenate(styles.label, ...props.labelClasses)}>{props.label}</span>
-              </foreignObject>
-            </a>
-          </Link>
+        {props.rotated ? (
+          <g transform="matrix(-6.92 0 0 -6.92 400.24 400.24)">
+            <polygon
+              className={concatenate("h-hex", styles.hex, ...props.hexagonClasses)}
+              points="-19.9,34.5 -39.8,0 -19.9,-34.5 19.9,-34.5 39.8,0 19.9,34.5 "
+            />
+          </g>
         ) : (
-          <>
-            {props.rotated ? (
-              <g transform="matrix(-6.92 0 0 -6.92 400.24 400.24)">
-                <polygon
-                  className={concatenate("h-hex", styles.hex, ...props.hexagonClasses)}
-                  points="-19.9,34.5 -39.8,0 -19.9,-34.5 19.9,-34.5 39.8,0 19.9,34.5 "
-                />
-              </g>
-            ) : (
-              <g transform="matrix(0 6.92 -6.92 0 400.17 400.33)">
-                <polygon
-                  className={concatenate("h-hex", styles.hex, ...props.hexagonClasses)}
-                  points="-19.9,34.5 -39.8,0 -19.9,-34.5 19.9,-34.5 39.8,0 19.9,34.5 "
-                />
-              </g>
-            )}
-            <foreignObject className="hex-fo" x="0" y="0" width="100%" height="100%">
-              <span className={concatenate(styles.label, ...props.labelClasses)}>{props.label}</span>
-            </foreignObject>
-          </>
+          <g transform="matrix(0 6.92 -6.92 0 400.17 400.33)">
+            <polygon
+              className={concatenate("h-hex", styles.hex, ...props.hexagonClasses)}
+              points="-19.9,34.5 -39.8,0 -19.9,-34.5 19.9,-34.5 39.8,0 19.9,34.5 "
+            />
+          </g>
         )}
+        <foreignObject className="hex-fo" x="0" y="0" width="100%" height="100%">
+          <span className={concatenate(styles.label, ...props.labelClasses)}>{props.label}</span>
+        </foreignObject>
       </svg>
     </div>
   );

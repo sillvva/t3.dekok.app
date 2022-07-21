@@ -37,6 +37,7 @@
   --color-text-link-hover: rgb(15, 76, 117);
   --color-text-button: rgb(255, 255, 255);
   --color-text-heading: rgb(0, 0, 0);
+  --color-text-shadow: rgb(255, 255, 255, 0.5);
 
   --ratingOn: rgb(240, 160, 0);
   --ratingOff: rgb(var(--color-bg-body));
@@ -64,6 +65,7 @@
   --color-text-link-hover: rgb(0, 84, 84);
   --color-text-button: rgb(255, 255, 255);
   --color-text-heading: rgb(189, 250, 225);
+  --color-text-shadow: rgb(0, 0, 0, 0.5);
 
   --ratingOn: rgb(255, 200, 0);
   --ratingOff: rgb(var(--color-bg-body));
@@ -91,6 +93,7 @@
   --color-text-link-hover: rgb(35, 66, 135);
   --color-text-button: rgb(255, 255, 255);
   --color-text-heading: rgb(187, 225, 250);
+  --color-text-shadow: rgb(0, 0, 0, 0.5);
 
   --ratingOn: rgb(255, 200, 0);
   --ratingOff: rgb(var(--color-bg-body));
@@ -157,6 +160,21 @@
 
   p {
     font-size: 0.95rem;
+  }
+}
+
+@layer utilities {
+  .drop-shadow-theme-text {
+    --tw-drop-shadow: drop-shadow(1px 1px 2px var(--color-text-shadow));
+    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+  }
+  .drop-shadow-theme-text-thick {
+    --tw-drop-shadow: drop-shadow(1px 1px 2px var(--color-text-shadow)) drop-shadow(1px 1px 2px var(--color-text-shadow));
+    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+  }
+  .drop-shadow-theme-text-outline {
+    --tw-drop-shadow: drop-shadow(1px 1px 0 var(--color-text-shadow)) drop-shadow(-1px -1px 0 var(--color-text-shadow)) drop-shadow(1px -1px 0 var(--color-text-shadow)) drop-shadow(-1px 1px 0 var(--color-text-shadow));
+    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
   }
 }
 
