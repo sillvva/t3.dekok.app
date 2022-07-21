@@ -1,0 +1,159 @@
+.HexWrapper {
+  display: inline-block;
+  --scale: 0.8;
+  margin: 50px 0;
+  @media (max-width: 1264px) {
+    --scale: 0.6;
+  }
+  @media (max-width: 359px) {
+    --scale: 0.4;
+  }
+  &.Rotated {
+    margin: 20px 0 calc(120px * var(--tw-scale-y) * var(--scale));
+  }
+  .HexRow {
+    &.Shift {
+      margin-left: calc(98px * var(--tw-scale-y) * var(--scale));
+    }
+  }
+}
+
+.HexRow {
+  display: flex;
+}
+
+.HexMenuItem {
+  --baseYMargin: 172px;
+  --baseXMargin: 4px;
+  --item-color: var(--menu);
+  --active-color: var(--menuHover);
+  --hover-color: var(--menuHover);
+  --text-color: var(--menuText);
+  position: relative;
+  margin: 0 calc(var(--baseXMargin) * var(--scale)) calc(var(--baseYMargin) * var(--scale));
+  // margin-left: calc(2px * var(--scale));
+  width: calc(190px * var(--scale));
+  height: 0;
+  z-index: 1;
+  text-decoration: none;
+  text-align: center;
+  &.Active,
+  &.Empty {
+    cursor: default;
+  }
+  &.Empty {
+    .Face {
+      background-color: transparent;
+    }
+  }
+  &.Active {
+    .Face {
+      background-color: var(--active-color);
+    }
+  }
+  &:hover,
+  &:focus {
+    &:not(.Empty) {
+      z-index: 2;
+      .Face {
+        background: var(--hover-color);
+        transition: background-color 500ms ease, -webkit-transform 1s ease-in-out;
+      }
+      &:active {
+        .Face {
+          &::after {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+  .ItemLabel {
+    line-height: calc(110px * var(--scale));
+    font-family: sans-serif;
+    white-space: nowrap;
+    font-size: calc(1.8em * var(--scale));
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    color: var(--text-color);
+    letter-spacing: 1px;
+  }
+  .Face {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(110px * var(--scale));
+    overflow: hidden;
+    background: inherit;
+    background: var(--item-color);
+    transition: background 0.5s linear;
+    z-index: -1;
+    backface-visibility: hidden;
+    &::after {
+      content: "";
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      transition: opacity 500ms ease;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .BackFace {
+    transition: all;
+    box-shadow: 0 0 3px rgb(var(--background)), 0 0 8px rgb(var(--background));
+  }
+  .Face1 {
+    transform: rotate(60deg);
+  }
+  .Face2 {
+    transform: rotate(0);
+  }
+  .Face3 {
+    transform: rotate(-60deg);
+  }
+  &.Rotated {
+    --baseYMargin: 200px;
+    --baseXMargin: -8px;
+    &:nth-child(2n) {
+      top: calc(100px * var(--scale));
+    }
+    .Face1 {
+      transform: rotate(30deg);
+    }
+    .Face2 {
+      transform: rotate(90deg);
+    }
+    .Face3 {
+      transform: rotate(-30deg);
+    }
+  }
+}
+
+.Bounce:hover:not(.active):not(.empty) {
+  animation: bounce 500ms ease-in-out forwards;
+  stroke: rgb(var(--background));
+  stroke-width: 0;
+  .BackFace {
+    box-shadow: none;
+  }
+}
+@keyframes bounce {
+  40% {
+    transform: scale(1.1);
+    stroke-width: 2;
+  }
+  60% {
+    transform: scale(1);
+  }
+  80% {
+    transform: scale(1.05);
+    stroke-width: 2;
+  }
+  100% {
+    transform: scale(1);
+  }
+}

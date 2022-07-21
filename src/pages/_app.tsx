@@ -3,10 +3,27 @@ import { withTRPC } from "@trpc/next";
 import type { AppRouter } from "../server/router";
 import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
-import "../styles/globals.css";
+import { ThemeProvider } from "next-themes";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { UserProvider } from "@supabase/auth-helpers-react";
+import { supabaseClient } from "@supabase/auth-helpers-nextjs";
+import MainLayout from "$src/layouts/main";
+import "../styles/globals.scss";
+
+const queryClient = new QueryClient();
 
 const MyApp: AppType = ({ Component, pageProps }) => {
-  return <Component {...pageProps} />;
+  return (
+    <UserProvider supabaseClient={supabaseClient}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider themes={["dark", "light", "blue"]}>
+          <MainLayout>
+            <Component {...pageProps} />
+          </MainLayout>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </UserProvider>
+  );
 };
 
 const getBaseUrl = () => {
@@ -26,7 +43,7 @@ export default withTRPC<AppRouter>({
 
     return {
       url,
-      transformer: superjson,
+      transformer: superjson
       /**
        * @link https://react-query.tanstack.com/reference/QueryClient
        */
@@ -36,5 +53,5 @@ export default withTRPC<AppRouter>({
   /**
    * @link https://trpc.io/docs/ssr
    */
-  ssr: false,
+  ssr: false
 })(MyApp);

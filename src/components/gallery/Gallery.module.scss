@@ -1,0 +1,45 @@
+.GalleryItem,
+.LinkedGalleryItem {
+  @apply w-full relative block shadow-lg rounded-md overflow-hidden transition-all duration-500 p-2;
+  background-color: var(--article);
+  --tw-shadow-color: var(--shadowColor);
+  --tw-shadow: var(--tw-shadow-colored);
+  > span {
+    @apply aspect-video;
+    display: block !important;
+  }
+  .Cover {
+    @apply absolute inset-0 m-2 p-2 flex flex-col justify-end;
+    background: rgba(255, 255, 255, 0.01);
+    background: -moz-linear-gradient(top, rgba(255, 255, 255, 0.01) 40%, black 100%);
+    background: -webkit-gradient(left top, left bottom, color-stop(40%, rgba(255, 255, 255, 0.01)), color-stop(100%, black));
+    background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.01) 40%, black 100%);
+    background: -o-linear-gradient(top, rgba(255, 255, 255, 0.01) 40%, black 100%);
+    background: -ms-linear-gradient(top, rgba(255, 255, 255, 0.01) 40%, black 100%);
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.01) 40%, black 100%);
+    * {
+      @apply text-white;
+      filter: drop-shadow(1px 1px 1px black);
+    }
+    h3 {
+      @apply text-lg font-medium my-0;
+      line-height: 1.5rem;
+      filter: drop-shadow(1px 1px 1px black);
+    }
+    h4 {
+      @apply text-base font-light m-0;
+      line-height: 1.3rem;
+      filter: drop-shadow(1px 1px 1px black);
+    }
+    div {
+      @apply text-sm font-light mt-1;
+      filter: drop-shadow(1px 1px 1px black);
+    }
+  }
+}
+.LinkedGalleryItem:hover {
+  @apply shadow-xl;
+  --tw-shadow-color: var(--shadowHover);
+  --tw-shadow: var(--tw-shadow-colored);
+  // @apply outline outline-1;
+}

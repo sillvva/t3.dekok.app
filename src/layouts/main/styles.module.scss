@@ -1,0 +1,166 @@
+.Page {
+  @apply min-h-screen;
+}
+
+.PageBg {
+  @apply fixed inset-0 scale-x-[var(--bgScaleX)];
+  @apply bg-fixed bg-cover bg-no-repeat bg-[color:rgb(var(--background))] bg-[image:var(--bgImg)];
+  &.FixedBg {
+    opacity: 1 !important;
+  }
+}
+
+.PageHeader {
+  @apply flex flex-col items-center z-10;
+  @media (max-width: 1023px) {
+    @apply fixed top-0 left-0 right-0 text-center;
+  }
+  html[data-scroll]:not([data-scroll="0"]) & {
+    @apply backdrop-blur-lg bg-[color:rgba(var(--background),var(--headerOpacity))];
+  }
+}
+
+.PageNav {
+  @apply flex w-full px-3 items-center max-h-[80px];
+  .PageTitle {
+    @apply p-2;
+    &.SmallTitle {
+      @apply text-sm sm:text-lg md:text-2xl;
+    }
+  }
+  @media (max-width: 400px) {
+    @apply px-0;
+    .Fab {
+      @apply w-9 h-9 my-2 mx-2;
+    }
+  }
+}
+
+.PageMenuContainer {
+  @apply flex-1 hidden lg:block;
+}
+
+.PageMenu {
+  @apply hidden lg:flex justify-center gap-3 px-3 my-4;
+}
+
+.PageTitle {
+  font-family: "Montserrat", sans-serif;
+  @apply text-3xl text-center lg:mt-4 lg:mb-4 font-medium text-[color:var(--headers)];
+  text-shadow: 1px 1px 0 rgba(var(--background), var(--headerOpacity)), -1px -1px 0 rgba(var(--background), var(--headerOpacity)),
+    1px -1px 0 rgba(var(--background), var(--headerOpacity)), -1px 1px 0 rgba(var(--background), var(--headerOpacity));
+}
+
+.PageBody {
+  @apply flex flex-col justify-center items-center relative px-2 md:px-4 pt-24 lg:pt-0 pb-4;
+}
+
+.PageArticle {
+  @apply shadow-xl ring-1 rounded-lg ring-gray-900/5 overflow-hidden;
+  @apply bg-[color:var(--article)];
+  @media (max-width: 960px) {
+    .PageHeader + & {
+      @apply mt-20;
+    }
+  }
+  section {
+    @apply p-5 border-solid border-b-black/25 border-b-[1px] text-[color:var(--text)];
+    &:last-child {
+      @apply border-b-0;
+    }
+    h2 {
+      @apply text-xl font-semibold mb-4 text-[color:var(--text)];
+      font-family: "Montserrat", sans-serif;
+      @media (max-width: 576px) {
+        @apply text-center font-semibold mb-2;
+      }
+    }
+    figure {
+      @apply font-light mb-2;
+      strong {
+        @apply font-medium;
+      }
+      div > div:last-child {
+        @apply text-right;
+      }
+      @media (max-width: 576px) {
+        @apply text-center;
+        div > div:last-child {
+          @apply text-center;
+        }
+      }
+    }
+    .SectionItems {
+      @apply grid grid-cols-2 gap-y-5 gap-x-2;
+      @media (max-width: 991px) {
+        @apply grid-cols-1;
+      }
+      .SectionItem {
+        @apply text-[color:var(--text)] min-h-[60px] overflow-hidden;
+        @media (max-width: 991px) {
+          @apply pb-5;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+          &:last-child {
+            @apply pb-0 border-0;
+          }
+        }
+        .SectionItem__Image {
+          @apply float-left w-14 h-14 grid justify-center items-center bg-white rounded-sm relative;
+          img {
+            @apply max-w-[56px] max-h-[56px] rounded-sm;
+          }
+        }
+        .SectionItem__Content {
+          @apply ml-20;
+          h3 {
+            @apply text-base font-medium m-0;
+            font-family: "Montserrat", sans-serif;
+          }
+          h4 {
+            @apply text-sm font-light mb-1;
+            a {
+              @apply font-normal;
+            }
+          }
+          h5 {
+            @apply text-sm font-light m-0;
+            a {
+              @apply font-normal;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.Fab {
+  @apply flex justify-center items-center w-14 h-14 rounded-full text-2xl cursor-pointer;
+  @apply transition-[background] duration-500 ease-linear bg-transparent;
+  &.MenuFab {
+    @apply lg:hidden;
+  }
+  svg {
+    @apply w-7 text-[color:var(--text)] transition-all duration-500;
+  }
+  &:hover {
+    @apply bg-[color:var(--link)];
+    svg {
+      @apply text-[color:var(--menuText)];
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+.MeDetails__Name {
+  @apply w-6/12 sm:w-3/12 md:w-6/12 2xl:w-3/12 text-right md:text-right py-1 px-1.5 font-semibold;
+  &.Full {
+    @apply w-full text-center pb-0 sm:w-3/12 sm:text-right md:w-full md:text-center 2xl:w-3/12 2xl:text-right;
+  }
+}
+.MeDetails__Value {
+  @apply w-6/12 sm:w-3/12 md:w-6/12 2xl:w-3/12 text-left md:text-left py-1 px-1.5;
+  &.Full {
+    @apply w-full text-center pt-0 sm:w-9/12 sm:text-left md:w-full md:text-center 2xl:w-9/12 2xl:text-left;
+  }
+}
