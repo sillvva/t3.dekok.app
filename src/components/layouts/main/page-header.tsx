@@ -11,6 +11,7 @@ import type { Transition, Variants } from "framer-motion";
 import MainLayoutContext, { menuItems } from "$src/layouts/main/context";
 import type { PageHeadProps } from "../../../layouts/main";
 import { concatenate } from "$src/utils/misc";
+import Head from "next/head";
 
 const PageMenu = dynamic(() => import("./page-menu"));
 
@@ -37,7 +38,7 @@ const PageHeader = ({ layoutMotion, onThemeChange }: PageHeaderProps) => {
     router.events.on("routeChangeStart", listener);
     return () => router.events.off("routeChangeStart", listener);
   }, [router.events]);
-  
+
   useEffect(() => {
     setTitle(head?.title);
   }, [head?.title]);

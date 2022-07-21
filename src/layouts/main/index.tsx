@@ -73,7 +73,6 @@ const MainLayout = (props: React.PropsWithChildren<PageHeadProps>) => {
   return (
     <MainLayoutContextProvider>
       <NextNProgress color="var(--link)" height={1} options={{ showSpinner: false }} />
-      <PageMeta title={props.title} description={props.meta?.description} articleMeta={props.meta?.articleMeta} />
       <Layout {...{ ...props, path: router.pathname }}>{props.children}</Layout>
     </MainLayoutContextProvider>
   );
