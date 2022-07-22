@@ -194,18 +194,6 @@
     filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia)
       var(--tw-drop-shadow);
   }
-}
-
-@layer components {
-  .page-background {
-    z-index: 0;
-    + .page-background {
-      z-index: 1;
-    }
-  }
-  .section-divider {
-    @apply border-solid border-b-black/25 border-b-[1px];
-  }
   .post-focused {
     @apply relative z-0;
     &::before {
@@ -229,6 +217,19 @@
       @apply absolute -z-10 inset-1 rounded-[5px] bg-theme-article;
     }
   }
+}
+
+@layer components {
+  .page-background {
+    z-index: 0;
+    + .page-background {
+      z-index: 1;
+    }
+  }
+  .section-divider {
+    @apply border-solid border-b-black/25 border-b-[1px];
+  }
+  
   .cover-img {
     @apply -left-20 bottom-36 md:bottom-0 xs:-left-0 sm:-left-8 md:-left-28 lg:left-0;
     @apply [--gto:60%] md:[--gto:100%];

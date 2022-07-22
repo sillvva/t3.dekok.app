@@ -11,6 +11,7 @@ import MainLayout, { mainMotion } from "$src/layouts/main";
 import Pagination from "$src/components/pagination";
 import PageMessage from "$src/components/page-message";
 import { useRipple } from "$src/components/ripple";
+import { useState } from "react";
 
 const Blog: NextPageWithLayout = () => {
   const { query } = useRouter();
@@ -58,6 +59,7 @@ export default Blog;
 
 export const PostCard = (post: inferQueryOutput<"posts.get">[number]) => {
   const { ripples, mouseHandler, rippleClass } = useRipple();
+  const [focused, setFocused] = useState(false);
 
   return (
     <Link href={post.link || `/blog/${post.slug}`}>
@@ -65,8 +67,10 @@ export const PostCard = (post: inferQueryOutput<"posts.get">[number]) => {
         className={concatenate(
           "flex justify-start duration-500 bg-theme-article rounded-lg overflow-hidden",
           "shadow-md shadow-black/15 motion-safe:hover:scale-105 hover:shadow-lg hover:shadow-black/25",
-          rippleClass
+          rippleClass,
+          focused && !post.link && "motion-safe:post-focused"
         )}
+        onClick={() => setFocused(true)}
         onPointerDown={mouseHandler}>
         <div className="relative h-full min-w-[8rem] max-w-[8rem]">
           <Image src={post.image} alt={post.title} width={100} height={100} className="w-full h-full object-cover object-center" />

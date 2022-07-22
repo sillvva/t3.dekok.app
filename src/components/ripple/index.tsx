@@ -24,7 +24,7 @@ function Ripple({ onUnload, index, x, y }: RippleProps) {
       <span
         className={concatenate(
           "absolute block top-[var(--y)] left-[var(--x)] -translate-x-1/2 -translate-y-1/2 opacity-0 -z-[1]",
-          "w-[120%] aspect-square rounded-full bg-theme-link animate-ripple"
+          "w-[120%] aspect-square rounded-full bg-theme-link motion-safe:animate-ripple"
         )}></span>
     </div>
   );
