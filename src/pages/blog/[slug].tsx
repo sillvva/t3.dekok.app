@@ -132,38 +132,28 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
         );
       },
 
-      pre(pre: any) {
-        const { node, children } = pre;
-        try {
-          if (node.children[0].tagName === "code") {
-            const code = node.children[0];
-            const { properties, children2 } = code;
-            const { className } = properties;
-            const { value } = children2[0];
-            const language = ((className || [""])[0] || "").split("-")[1];
-            if (language == "codepen") {
-              const codepen = JSON.parse(value.trim());
-              return <ReactCodepen {...codepen} />;
-            }
-          }
-        } catch (err) {
-          // console.log(err);
-        }
-        return <pre>{children}</pre>;
-      },
-
       code(code: any) {
         const { className, children, inline } = code;
+
+        if (inline) return <code>{children}</code>;
+
         let language = (className || "").split("-")[1];
-        console.log(code)
-        if (inline) return <code>{children}</code>
         if (!language)
           return (
             <pre className="language-raw-container">
               <code className="language-raw">{children}</code>
             </pre>
           );
-        if (language == "codepen") return <code>{children}</code>;
+
+        if (language == "codepen") {
+          try {
+            const cpProps = JSON.parse(children[0]);
+            return <ReactCodepen {...cpProps} />;
+          } catch (err: any) {
+            return <code>{children}</code>;
+          }
+        }
+
         if (language.startsWith("svelte")) {
           return (
             <p className="whitespace-normal">
@@ -176,9 +166,9 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
           );
         }
 
-        const bashes = ["npm", "pnpm", "yarn"];
-        const bashInstructions = ["npm install", "pnpm add", "yarn add"];
-        if (language == "bash" && children[0].includes("npm install"))
+        if (language == "bash" && children[0].includes("npm install")) {
+          const bashes = ["npm", "pnpm", "yarn"];
+          const bashInstructions = ["npm install", "pnpm add", "yarn add"];
           return (
             <>
               <p className="mb-4 text-white">
@@ -186,11 +176,11 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
                 <a href="https://npmjs.org" target="_blank" rel="noreferrer noopener" className="text-theme-link">
                   npm
                 </a>
-                ,&nbsp;
+                ,{" "}
                 <a href="https://classic.yarnpkg.com" target="_blank" rel="noreferrer noopener" className="text-theme-link">
                   yarn
                 </a>
-                , or&nbsp;
+                , or{" "}
                 <a href="https://pnpm.js.org" target="_blank" rel="noreferrer noopener" className="text-theme-link">
                   pnpm
                 </a>
@@ -227,6 +217,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
               </div>
             </>
           );
+        }
 
         return (
           <SyntaxHighlighter style={atomDark} language={language}>

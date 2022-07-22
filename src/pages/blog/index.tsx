@@ -6,9 +6,9 @@ import { trpc } from "$src/utils/trpc";
 import type { inferQueryOutput } from "$src/utils/trpc";
 import { concatenate } from "$src/utils/misc";
 import { itemsPerPage } from "$src/utils/constants";
+import type { NextPageWithLayout } from "../_app";
 import MainLayout, { mainMotion } from "$src/layouts/main";
 import Pagination from "$src/components/pagination";
-import type { NextPageWithLayout } from "../_app";
 import PageMessage from "$src/components/page-message";
 import { useRipple } from "$src/components/ripple";
 
