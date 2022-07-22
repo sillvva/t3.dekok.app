@@ -1,5 +1,5 @@
-import Page from "../components/layouts/main/page";
-import AnimatedButton from "../components/animated-button";
+import Page from "$src/components/layouts/main/page";
+import AnimatedButton from "$src/components/animated-button";
 import { NextPageWithLayout } from "./_app";
 import MainLayout from "$src/layouts/main";
 

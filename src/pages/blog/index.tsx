@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/future/image";
@@ -11,7 +12,6 @@ import MainLayout, { mainMotion } from "$src/layouts/main";
 import Pagination from "$src/components/pagination";
 import PageMessage from "$src/components/page-message";
 import { useRipple } from "$src/components/ripple";
-import { useState } from "react";
 
 const Blog: NextPageWithLayout = () => {
   const { query } = useRouter();
