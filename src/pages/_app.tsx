@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { UserProvider } from "@supabase/auth-helpers-react";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import "../styles/globals.scss";
+import { Router } from "next/router";
 
 export type NextPageWithLayout<P = {}> = NextPage<P> & {
   getLayout?: (page: ReactElement, props: P) => ReactNode;
@@ -32,6 +33,21 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
     </UserProvider>
   );
 };
+
+const routeChange = () => {
+  // Temporary fix to avoid flash of unstyled content
+  // during route transitions. Keep an eye on this
+  // issue and remove this code when resolved:
+  // https://github.com/vercel/next.js/issues/17464
+
+  const allStyleElems = document.querySelectorAll('style[media="x"]');
+  allStyleElems.forEach(elem => {
+    elem.removeAttribute("media");
+  });
+};
+
+Router.events.on("routeChangeStart", routeChange);
+Router.events.on("routeChangeComplete", routeChange);
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return "";
