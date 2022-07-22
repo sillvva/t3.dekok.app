@@ -7,8 +7,9 @@ import matter from "gray-matter";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 
-import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
-import atomDark from "react-syntax-highlighter/dist/cjs/styles/prism/atom-dark";
+import { PrismAsyncLight as SyntaxHighlighter } from "react-syntax-highlighter";
+import darkStyles from "react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus";
+import lightStyles from "react-syntax-highlighter/dist/cjs/styles/prism/vs";
 import yaml from "react-syntax-highlighter/dist/cjs/languages/prism/yaml";
 import json from "react-syntax-highlighter/dist/cjs/languages/prism/json";
 import javascript from "react-syntax-highlighter/dist/cjs/languages/prism/javascript";
@@ -31,6 +32,8 @@ import type { blog } from "@prisma/client";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { prisma } from "$src/server/db/client";
 import { concatenate } from "$src/utils/misc";
+import { useTheme } from "next-themes";
+import { CSSProperties, useEffect, useState } from "react";
 
 const ReactCodepen = dynamic(() => import("../../components/codepen"));
 
@@ -63,6 +66,7 @@ type ServerProps = {
 
 const Blog: NextPageWithLayout<ServerProps> = props => {
   const { data, content, slug } = props;
+  const { theme } = useTheme();
 
   try {
     if (!data) throw new Error("Could not load post");
@@ -75,24 +79,28 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
           const image = node.children[0];
 
           return (
-            <figure className={blogStyles.BlogFigure}>
-              <a href={image.properties.src} target="_blank" rel="noreferrer noopener" className={blogStyles.BlogImage}>
-                <Image src={image.properties.src} alt={image.alt} layout="fill" objectFit="contain" />
+            <figure className="flex flex-col mb-6 mt-6">
+              <a
+                href={image.properties.src}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="relative flex justify-center w-full max-w-[800px] mb-2 mx-auto aspect-video">
+                <Image src={image.properties.src} alt={image.alt} layout="fill" objectFit="contain" className="!object-cover !md:object-contain" />
               </a>
-              <figcaption>Click to open full screen</figcaption>
+              <figcaption className="block text-white/70 text-sm text-center">Click to open full screen</figcaption>
             </figure>
           );
         }
 
-        return <p>{paragraph.children}</p>;
+        return <p className="mb-3">{paragraph.children}</p>;
       },
 
       h1(h: any) {
         const { children } = h;
         const text = flattenChildren(children);
         return (
-          <h1 className="text-theme-heading">
-            <span id={text.replace(/[^a-z0-9]{1,}/gi, "-").toLowerCase()}></span>
+          <h1 className="text-theme-heading text-4xl font-semibold mb-2 mt-4 relative">
+            <span className="absolute -top-40" id={text.replace(/[^a-z0-9]{1,}/gi, "-").toLowerCase()}></span>
             {children}
           </h1>
         );
@@ -102,8 +110,8 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
         const { children } = h;
         const text = flattenChildren(children);
         return (
-          <h2 className="text-theme-heading">
-            <span id={text.replace(/[^a-z0-9]{1,}/gi, "-").toLowerCase()}></span>
+          <h2 className="text-theme-heading text-2xl font-semibold mb-2 mt-4 relative">
+            <span className="absolute -top-40" id={text.replace(/[^a-z0-9]{1,}/gi, "-").toLowerCase()}></span>
             {children}
           </h2>
         );
@@ -113,8 +121,8 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
         const { children } = h;
         const text = flattenChildren(children);
         return (
-          <h3 className="text-theme-heading">
-            <span id={text.replace(/[^a-z0-9]{1,}/gi, "-").toLowerCase()}></span>
+          <h3 className="text-theme-heading text-lg font-semibold mb-2 mt-4 relative">
+            <span className="absolute -top-40" id={text.replace(/[^a-z0-9]{1,}/gi, "-").toLowerCase()}></span>
             {children}
           </h3>
         );
@@ -132,10 +140,14 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
         );
       },
 
+      pre(pre: any) {
+        return <pre className="text-sm mb-4 md:p-4 bg-theme-pre text-theme-base rounded-lg overflow-x-auto">{pre.children}</pre>;
+      },
+
       code(code: any) {
         const { className, children, inline } = code;
 
-        if (inline) return <code>{children}</code>;
+        if (inline) return <code className="px-1 outline outline-1 rounded-sm bg-white/10">{children}</code>;
 
         let language = (className || "").split("-")[1];
         if (!language)
@@ -154,6 +166,8 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
           }
         }
 
+        if (language === "svelte") language = "html";
+
         if (language.startsWith("svelte")) {
           return (
             <p className="whitespace-normal">
@@ -171,7 +185,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
           const bashInstructions = ["npm install", "pnpm add", "yarn add"];
           return (
             <>
-              <p className="mb-4 text-white">
+              <p className="mb-4 text-theme-base">
                 Using{" "}
                 <a href="https://npmjs.org" target="_blank" rel="noreferrer noopener" className="text-theme-link">
                   npm
@@ -187,7 +201,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
                 , you can install the packages with:
               </p>
               <div className="code npm">
-                <div className="flex gap-2">
+                <div className="flex gap-2 mb-4">
                   {bashes.map(bash => (
                     <button
                       key={bash}
@@ -204,13 +218,21 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
                           else parent.querySelector(`.tab.${b}`)?.classList.add("hidden");
                         });
                       }}
-                      className={concatenate(bash, bash === bashes[0] ? "bg-theme-link" : "bg-theme-article", "text-theme-button p-2 rounded-md")}>
+                      className={concatenate(
+                        bash,
+                        bash === bashes[0] ? "bg-theme-link text-theme-button" : "bg-theme-article text-theme-base",
+                        "font-semibold p-2 rounded-md"
+                      )}>
                       {bash}
                     </button>
                   ))}
                 </div>
                 {bashes.map((bash, b) => (
-                  <SyntaxHighlighter key={bash} style={atomDark} language={language} className={concatenate("tab", bash, bash !== bashes[0] && "hidden")}>
+                  <SyntaxHighlighter
+                    key={bash}
+                    style={theme === "light" ? lightStyles : darkStyles}
+                    language={language}
+                    className={concatenate("tab !bg-theme-code rounded-md", bash, bash !== bashes[0] && "hidden")}>
                     {children.map((c: string) => c.replaceAll(bashInstructions[0], bashInstructions[b]))}
                   </SyntaxHighlighter>
                 ))}
@@ -220,8 +242,12 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
         }
 
         return (
-          <SyntaxHighlighter style={atomDark} language={language}>
-            {children}
+          <SyntaxHighlighter
+            style={theme === "light" ? lightStyles : darkStyles}
+            language={language}
+            showLineNumbers={!["bash"].includes(language)}
+            className="!bg-theme-code rounded-md">
+            {(children as string[]).map(c => c.trim())}
           </SyntaxHighlighter>
         );
       }
@@ -240,7 +266,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
               <span>{data.date}</span>
               <span>{data.updated && `(Updated: ${data.updated})`}</span>
             </p>
-            <div className={blogStyles.BlogContent}>
+            <div className="mb-4">
               <ReactMarkdown components={renderers} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>
                 {content}
               </ReactMarkdown>
