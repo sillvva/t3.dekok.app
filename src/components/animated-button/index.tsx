@@ -1,3 +1,4 @@
+import { concatenate } from "$src/utils/misc";
 import Link from "next/link";
 import { useState } from "react";
 import { useRipple } from "../ripple";
@@ -43,7 +44,7 @@ export default function AnimatedButton(props: AnimatedButtonProps) {
   } as React.CSSProperties;
 
   const btn = (
-    <a className={classes.join(" ")} style={style} onPointerDown={mouseHandler} onClick={e => active && e.preventDefault()}>
+    <a className={concatenate(...classes)} style={style} onPointerDown={mouseHandler} onClick={e => active && e.preventDefault()}>
       {ripples}
       {label}
     </a>

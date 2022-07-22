@@ -1,14 +1,14 @@
+import { useCallback, useContext, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-import { useCallback, useContext, useEffect, useState } from "react";
 import Icon from "@mdi/react";
 import { mdiChevronLeft, mdiMenu, mdiBrightness6 } from "@mdi/js";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Transition, Variants } from "framer-motion";
 import MainLayoutContext, { menuItems } from "$src/layouts/main/context";
-import type { PageHeadProps } from "../../../layouts/main";
+import type { PageHeadProps } from "$src/layouts/main";
 import { concatenate } from "$src/utils/misc";
 
 const PageMenu = dynamic(() => import("./page-menu"));

@@ -1,5 +1,5 @@
 import { Key, useEffect, useState, useCallback, MouseEventHandler } from "react";
-import { wait } from "$src/utils/misc";
+import { concatenate, wait } from "$src/utils/misc";
 import ripple from "./Ripple.module.scss";
 
 type RippleProps = {
@@ -20,8 +20,12 @@ function Ripple({ onUnload, index, x, y }: RippleProps) {
   } as React.CSSProperties;
 
   return (
-    <div className={ripple.RipEl} style={style}>
-      <span></span>
+    <div className="absolute inset-0 overflow-hidden" style={style}>
+      <span
+        className={concatenate(
+          "absolute block top-[var(--y)] left-[var(--x)] -translate-x-1/2 -translate-y-1/2 opacity-0 -z-[1]",
+          "w-[120%] aspect-square rounded-full bg-theme-link animate-ripple"
+        )}></span>
     </div>
   );
 }
@@ -46,12 +50,12 @@ export const useRipple = (props?: UseRippleProps) => {
     );
   }, [duration]);
 
-  const mouseHandler: MouseEventHandler<any> = (e:any) => {
+  const mouseHandler: MouseEventHandler<any> = (e: any) => {
     if (!enabled || active) return;
     const key = Math.max(-1, ...[...ripples.keys()].map(r => parseInt(r.toString() || ""))) + 1;
     const ripple = <Ripple key={key} index={key} onUnload={rippleUnload} x={e.nativeEvent.layerX} y={e.nativeEvent.layerY}></Ripple>;
     setRipples(new Map(ripples).set(key, ripple));
   };
 
-  return { ripples: [...ripples.values()], mouseHandler, rippleClass: enabled ? ripple.Ripple : "" };
+  return { ripples: [...ripples.values()], mouseHandler, rippleClass: enabled ? "isolate relative" : "" };
 };
