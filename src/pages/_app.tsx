@@ -9,17 +9,27 @@ import { UserProvider } from "@supabase/auth-helpers-react";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import MainLayout from "$src/layouts/main";
 import "../styles/globals.scss";
+import type { NextPage } from "next";
+import type { ReactElement, ReactNode } from "react";
+import { AppProps } from "next/app";
+
+export type NextPageWithLayout<P = {}> = NextPage<P> & {
+  getLayout?: (page: ReactElement, props: P) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
 
 const queryClient = new QueryClient();
 
-const MyApp: AppType = ({ Component, pageProps }) => {
+const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
+  const getLayout = Component.getLayout ?? (page => page);
   return (
     <UserProvider supabaseClient={supabaseClient}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider themes={["dark", "light", "blue"]}>
-          <MainLayout>
-            <Component {...pageProps} />
-          </MainLayout>
+          {getLayout(<Component {...pageProps} />, pageProps)}
         </ThemeProvider>
       </QueryClientProvider>
     </UserProvider>

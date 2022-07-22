@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Transition, Variants } from "framer-motion";
 import { concatenate, debounce } from "$src/utils/misc";
@@ -9,7 +9,7 @@ import MainLayoutContext, { MainLayoutContextProvider } from "./context";
 import Page from "$src/components/layouts/main/page";
 import PageHeader from "$src/components/layouts/main/page-header";
 import NextNProgress from "$src/components/progress";
-import { useQuery } from "@tanstack/react-query";
+import PageMeta from "$src/components/meta";
 
 const Drawer = dynamic(() => import("$src/components/drawer"));
 
@@ -19,9 +19,6 @@ const Layout = (props: React.PropsWithChildren<PageHeadProps>) => {
   const { theme, setTheme } = useTheme();
   const [oldTheme, setOldTheme] = useState(theme || "");
   const [mounted, setMounted] = useState(false);
-  const { data: head } = useQuery<PageHeadProps>(["page-props"], {
-    enabled: mounted
-  });
 
   useEffect(() => {
     const mm = matchMedia("(prefers-color-scheme: dark)");
@@ -53,12 +50,13 @@ const Layout = (props: React.PropsWithChildren<PageHeadProps>) => {
     <div id="app" className="min-h-screen min-w-screen">
       {theme && theme !== oldTheme && <Page.Bg theme={oldTheme || ""} />}
       <Page.Bg key={theme} theme={theme} init={mounted} />
+      <PageHeader head={props} layoutMotion={mainMotion} onThemeChange={themeChangeHandler} />
       <AnimatePresence initial={false} exitBeforeEnter>
         <motion.main
-          key={`main${router.pathname}`}
+          key={`main${props.path}`}
           className={concatenate(
             "relative flex-col justify-center items-center z-[2] px-2 md:px-4",
-            router.asPath == "/" ? "h-screen" : head?.title ? "pt-24 lg:pt-36 pb-4" : "pt-20 pb-4"
+            router.asPath == "/" ? "h-screen" : props.title ? "pt-24 lg:pt-36 pb-4" : "pt-20 pb-4"
           )}
           variants={mainMotion.variants}
           initial="hidden"
@@ -69,7 +67,6 @@ const Layout = (props: React.PropsWithChildren<PageHeadProps>) => {
         </motion.main>
       </AnimatePresence>
       {drawer.state ? <Drawer /> : ""}
-      <PageHeader layoutMotion={mainMotion} onThemeChange={themeChangeHandler} />
     </div>
   );
 };
@@ -80,6 +77,7 @@ const MainLayout = (props: React.PropsWithChildren<PageHeadProps>) => {
   return (
     <MainLayoutContextProvider>
       <NextNProgress color="var(--link)" height={1} options={{ showSpinner: false }} />
+      <PageMeta title={props.title} description={props.meta?.description} articleMeta={props.meta?.articleMeta} />
       <Layout {...{ ...props, path: router.pathname }}>{props.children}</Layout>
     </MainLayoutContextProvider>
   );

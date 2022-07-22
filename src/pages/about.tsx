@@ -1,8 +1,7 @@
-import { NextPage } from "next";
 import Page from "../components/layouts/main/page";
 import AnimatedButton from "../components/animated-button";
-import { usePageProps } from "$src/utils/hooks";
-import PageMeta from "$src/components/meta";
+import { NextPageWithLayout } from "./_app";
+import MainLayout from "$src/layouts/main";
 
 const age = (birthday: Date) => {
   const ageDifMs = Date.now() - birthday.getTime();
@@ -10,15 +9,9 @@ const age = (birthday: Date) => {
   return Math.abs(ageDate.getUTCFullYear() - 1970);
 };
 
-const AboutMe: NextPage = () => {
-  usePageProps({
-    title: "About Me",
-    menu: true
-  })
-
+const AboutMe: NextPageWithLayout = () => {
   return (
     <Page.Body>
-      <PageMeta title="About Me" />
       <Page.Article className="w-full md:w-9/12 lg:w-9/12 xl:w-8/12 2xl:w-7/12">
         <Page.Section>
           <div className="flex flex-col md:flex-row">
@@ -154,6 +147,14 @@ const AboutMe: NextPage = () => {
         </Page.Section>
       </Page.Article>
     </Page.Body>
+  );
+};
+
+AboutMe.getLayout = function (page) {
+  return (
+    <MainLayout title="About Me" menu>
+      {page}
+    </MainLayout>
   );
 };
 

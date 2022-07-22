@@ -1,11 +1,9 @@
-import type { NextPage } from "next";
-import { usePageProps } from "$src/utils/hooks";
 import HexMenu, { Item } from "$src/components/hex-menu";
 import Image from "next/future/image";
+import MainLayout from "$src/layouts/main";
+import type { NextPageWithLayout } from "./_app";
 
-const Home: NextPage = () => {
-  usePageProps({});
-
+const Home: NextPageWithLayout = () => {
   const items: (Item | null)[] = [
     { link: "/about", label: "About Me" },
     { link: "/experience", label: "Experience" },
@@ -30,6 +28,14 @@ const Home: NextPage = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+Home.getLayout = function (page) {
+  return (
+    <MainLayout>
+      {page}
+    </MainLayout>
   );
 };
 

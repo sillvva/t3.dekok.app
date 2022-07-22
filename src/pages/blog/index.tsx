@@ -1,40 +1,27 @@
-import type { NextPage } from "next";
 import Link from "next/link";
 import { inferQueryOutput, trpc } from "$src/utils/trpc";
-import { usePageProps } from "$src/utils/hooks";
-import PageMeta from "$src/components/meta";
 import Image from "next/future/image";
 import { concatenate } from "$src/utils/misc";
 import { useRouter } from "next/router";
 import Pagination from "$src/components/pagination";
 import { itemsPerPage } from "$src/utils/constants";
 import { AnimatePresence, motion } from "framer-motion";
-import { mainMotion } from "$src/layouts/main";
+import MainLayout, { mainMotion } from "$src/layouts/main";
+import { NextPageWithLayout } from "../_app";
 
-const Blog: NextPage = () => {
+const Blog: NextPageWithLayout = () => {
   const { query } = useRouter();
   const page = parseInt(query.page ? (Array.isArray(query.page) ? query.page[0] : query.page) : "1");
   const limit = parseInt(query.limit ? (Array.isArray(query.limit) ? query.limit[0] : query.limit) : itemsPerPage.toString());
-  const { data } = trpc.useQuery([
-    "posts.get",
-    {
-      q: Array.isArray(query.q) ? query.q.join(" ") : query.q
-    }
-  ]);
+  const { data: posts } = trpc.useQuery(["posts.get"]);
 
-  usePageProps({
-    title: "Blog",
-    menu: true
-  });
+  if (!posts) return <p className="col-span-full text-center">Loading...</p>;
+  if (!posts.length) return <p className="col-span-full text-center">No posts found</p>;
 
-  if (!data) return <p className="col-span-full text-center">Loading...</p>;
-  if (!data.posts) return <p className="col-span-full text-center">No posts found</p>;
-
-  const paginatedPosts = data.posts.slice((page - 1) * limit, page * limit);
+  const paginatedPosts = posts.slice((page - 1) * limit, page * limit);
 
   return (
     <>
-      <PageMeta title="Admin" />
       <AnimatePresence exitBeforeEnter>
         <motion.div
           key={paginatedPosts[0]?.slug}
@@ -49,14 +36,24 @@ const Blog: NextPage = () => {
           ))}
         </motion.div>
       </AnimatePresence>
-      <div className="flex justify-center">{data.num > itemsPerPage ? <Pagination page={page} pages={Math.ceil(data.num / itemsPerPage)} /> : null}</div>
+      <div className="flex justify-center">
+        {posts.length > itemsPerPage ? <Pagination page={page} pages={Math.ceil(posts.length / itemsPerPage)} /> : null}
+      </div>
     </>
+  );
+};
+
+Blog.getLayout = function (page) {
+  return (
+    <MainLayout title="Blog" menu>
+      {page}
+    </MainLayout>
   );
 };
 
 export default Blog;
 
-export const PostCard = (post: inferQueryOutput<"posts.get">["posts"][number]) => {
+export const PostCard = (post: inferQueryOutput<"posts.get">[number]) => {
   return (
     <Link href={post.link || `/blog/${post.slug}`}>
       <a

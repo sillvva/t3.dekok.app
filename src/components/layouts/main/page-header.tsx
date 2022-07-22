@@ -2,8 +2,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useCallback, useContext, useEffect, useState } from "react";
 import Icon from "@mdi/react";
 import { mdiChevronLeft, mdiMenu, mdiBrightness6 } from "@mdi/js";
 import { AnimatePresence, motion } from "framer-motion";
@@ -15,37 +14,28 @@ import { concatenate } from "$src/utils/misc";
 const PageMenu = dynamic(() => import("./page-menu"));
 
 type PageHeaderProps = {
+  head: PageHeadProps;
   layoutMotion?: { variants?: Variants; transition?: Transition };
   onThemeChange?: (theme: string) => void;
 };
 
-const PageHeader = ({ layoutMotion, onThemeChange }: PageHeaderProps) => {
+const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
   const router = useRouter();
   const { drawer } = useContext(MainLayoutContext);
-  const { data: head } = useQuery<PageHeadProps>(["page-props"]);
   const { theme, setTheme, themes } = useTheme();
   const [menu, setMenu] = useState(true);
-  const [title, setTitle] = useState(head?.title);
-  const oldPath = useRef(router.pathname);
 
   useEffect(() => {
     const listener = (ev: string) => {
       if (ev == "/") setMenu(false);
       else setMenu(true);
-      
-      if (ev.split("?")[0] !== oldPath.current) setTitle("");
-      oldPath.current = ev.split("?")[0];
     };
 
     router.events.on("routeChangeStart", listener);
     return () => router.events.off("routeChangeStart", listener);
   }, [router.events]);
 
-  useEffect(() => {
-    setTitle(head?.title);
-  }, [head?.title]);
-
-  const smallTitle = (title?.length || 0) > 12;
+  const smallTitle = (head?.title?.length || 0) > 12;
   const items = head?.menu && menu ? menuItems : [];
   const baseThemes = themes.filter(t => t !== "system");
   const nextTheme = baseThemes[(baseThemes.indexOf(theme || "") + 1) % baseThemes.length] || "";
@@ -88,10 +78,10 @@ const PageHeader = ({ layoutMotion, onThemeChange }: PageHeaderProps) => {
         <div className="flex-1 block relative h-14">
           {head?.menu ? <nav className={concatenate("hidden justify-center gap-3 px-3 lg:flex")}>{items.length ? <PageMenu items={items} /> : ""}</nav> : ""}
           <AnimatePresence initial={false} exitBeforeEnter>
-            {title && (
+            {head?.title && (
               <motion.h1
                 variants={layoutMotion?.variants}
-                key={`title: ${title} ${router.pathname}`}
+                key={`title: ${head?.title} ${router.pathname}`}
                 initial="hidden"
                 animate="enter"
                 exit="exit"
@@ -102,7 +92,7 @@ const PageHeader = ({ layoutMotion, onThemeChange }: PageHeaderProps) => {
                   "block lg:hidden flex-1 p-2 absolute inset-0",
                   smallTitle && "text-sm sm:text-lg md:text-2xl flex lg:hidden justify-center items-center"
                 )}>
-                {title || ""}
+                {head?.title}
               </motion.h1>
             )}
           </AnimatePresence>
@@ -121,10 +111,10 @@ const PageHeader = ({ layoutMotion, onThemeChange }: PageHeaderProps) => {
         </div>
       </div>
       <AnimatePresence initial={false} exitBeforeEnter>
-        {title && (
+        {head?.title && (
           <motion.h1
             variants={layoutMotion?.variants}
-            key={`title: ${title} ${router.pathname}`}
+            key={`title: ${head?.title} ${router.pathname}`}
             initial="hidden"
             animate="enter"
             exit="exit"
@@ -134,7 +124,7 @@ const PageHeader = ({ layoutMotion, onThemeChange }: PageHeaderProps) => {
               "drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
               "hidden lg:block"
             )}>
-            {title}
+            {head?.title}
           </motion.h1>
         )}
       </AnimatePresence>
