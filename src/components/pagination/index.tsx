@@ -1,7 +1,5 @@
+import { concatenate } from "$src/utils/misc";
 import { useRouter } from "next/router";
-import styles from "./Pagination.module.scss";
-
-export const blogStyles = styles;
 
 export type PaginationProps = {
   page: number | string;
@@ -32,8 +30,8 @@ function Pagination(props: PaginationProps) {
 
   const pageHandler = (page: number) => {
     const query = router.query;
-    query.p = page.toString();
-    if (page == 1) delete query.p;
+    query.page = page.toString();
+    if (page == 1) delete query.page;
     const params = Object.entries(query)
       .map(q => `${q[0]}=${q[1]}`)
       .join("&");
@@ -41,23 +39,31 @@ function Pagination(props: PaginationProps) {
   };
 
   return (
-    <div className={styles.Pagination}>
+    <div className="flex justify-center gap-2 my-4">
       {pagination.map((p, i) =>
         p == page ? (
-          <span key={`pg${i}`} className={[styles.Page, styles.Active].join(" ")}>
+          <span
+            key={`pg${i}`}
+            className={concatenate(
+              "inline-flex w-8 h-8 bg-theme-article justify-center items-center rounded-sm font-bold drop-shadow-sm",
+              "bg-theme-link text-white drop-shadow-theme-text"
+            )}>
             {p}
           </span>
         ) : p ? (
           <button
             key={`pg${i}`}
-            className={styles.Page}
+            className={concatenate(
+              "inline-flex w-8 h-8 bg-theme-article justify-center items-center rounded-sm font-bold drop-shadow-sm",
+              "hover:bg-theme-link hover:text-white hover:drop-shadow-theme-text"
+            )}
             onClick={() => {
               pageHandler(p);
             }}>
             {p}
           </button>
         ) : (
-          <span key={`pg${i}`} className={styles.PageSeparator}>
+          <span key={`pg${i}`} className="inline-flex w-8 h-8 justify-center items-center">
             |
           </span>
         )

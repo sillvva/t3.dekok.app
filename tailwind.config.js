@@ -50,6 +50,14 @@ module.exports = {
         15: "0.15",
         33: "0.33"
       },
+      boxShadowColor: {
+        theme: {
+          body: ({ opacityValue }) => {
+            if (opacityValue === undefined) opacityValue = 1;
+            return `rgba(var(--color-bg-body), ${opacityValue})`;
+          },
+        }
+      },
       fontFamily: {
         montserrat: ["Montserrat", "sans-serif"],
         "robo-flex": ["Robo-Flex", "sans-serif"]

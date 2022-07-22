@@ -18,5 +18,8 @@ export default defineNextConfig({
     images: {
       allowFutureImage: true
     }
+  },
+  images: {
+    domains: ["slxazldgfeytirfrculz.supabase.co"]
   }
 });

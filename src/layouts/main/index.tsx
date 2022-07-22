@@ -17,9 +17,11 @@ const Layout = (props: React.PropsWithChildren<PageHeadProps>) => {
   const router = useRouter();
   const { drawer } = useContext(MainLayoutContext);
   const { theme, setTheme } = useTheme();
-  const { data: head } = useQuery<PageHeadProps>(["page-props"]);
   const [oldTheme, setOldTheme] = useState(theme || "");
-  const init = useRef(false);
+  const [mounted, setMounted] = useState(false);
+  const { data: head } = useQuery<PageHeadProps>(["page-props"], {
+    enabled: mounted
+  });
 
   useEffect(() => {
     const mm = matchMedia("(prefers-color-scheme: dark)");
@@ -36,7 +38,7 @@ const Layout = (props: React.PropsWithChildren<PageHeadProps>) => {
       document.documentElement.dataset.scroll = window.scrollY.toString();
     });
 
-    init.current = true;
+    setMounted(true);
     window.addEventListener("scroll", scrollHandler, { passive: true });
     return () => window.removeEventListener("scroll", scrollHandler);
   }, []);
@@ -45,13 +47,15 @@ const Layout = (props: React.PropsWithChildren<PageHeadProps>) => {
     setOldTheme(newTheme);
   };
 
+  if (!mounted) return null;
+
   return (
     <div id="app" className="min-h-screen min-w-screen">
       {theme && theme !== oldTheme && <Page.Bg theme={oldTheme || ""} />}
-      <Page.Bg key={theme} theme={theme} init={init.current} />
+      <Page.Bg key={theme} theme={theme} init={mounted} />
       <AnimatePresence initial={false} exitBeforeEnter>
         <motion.main
-          key={`main${props.path}`}
+          key={`main${router.pathname}`}
           className={concatenate(
             "relative flex-col justify-center items-center z-[2] px-2 md:px-4",
             router.asPath == "/" ? "h-screen" : head?.title ? "pt-24 lg:pt-36 pb-4" : "pt-20 pb-4"

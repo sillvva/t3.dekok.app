@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Icon from "@mdi/react";
 import { mdiChevronLeft, mdiMenu, mdiBrightness6 } from "@mdi/js";
@@ -11,7 +11,6 @@ import type { Transition, Variants } from "framer-motion";
 import MainLayoutContext, { menuItems } from "$src/layouts/main/context";
 import type { PageHeadProps } from "../../../layouts/main";
 import { concatenate } from "$src/utils/misc";
-import Head from "next/head";
 
 const PageMenu = dynamic(() => import("./page-menu"));
 
@@ -27,12 +26,15 @@ const PageHeader = ({ layoutMotion, onThemeChange }: PageHeaderProps) => {
   const { theme, setTheme, themes } = useTheme();
   const [menu, setMenu] = useState(true);
   const [title, setTitle] = useState(head?.title);
+  const oldPath = useRef(router.pathname);
 
   useEffect(() => {
     const listener = (ev: string) => {
       if (ev == "/") setMenu(false);
       else setMenu(true);
-      setTitle("");
+      
+      if (ev.split("?")[0] !== oldPath.current) setTitle("");
+      oldPath.current = ev.split("?")[0];
     };
 
     router.events.on("routeChangeStart", listener);
@@ -89,7 +91,7 @@ const PageHeader = ({ layoutMotion, onThemeChange }: PageHeaderProps) => {
             {title && (
               <motion.h1
                 variants={layoutMotion?.variants}
-                key={`title: ${title}`}
+                key={`title: ${title} ${router.pathname}`}
                 initial="hidden"
                 animate="enter"
                 exit="exit"
@@ -122,7 +124,7 @@ const PageHeader = ({ layoutMotion, onThemeChange }: PageHeaderProps) => {
         {title && (
           <motion.h1
             variants={layoutMotion?.variants}
-            key={`title: ${title}`}
+            key={`title: ${title} ${router.pathname}`}
             initial="hidden"
             animate="enter"
             exit="exit"
