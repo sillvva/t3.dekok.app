@@ -5,6 +5,7 @@ import { readFileSync, rmSync, existsSync, statSync, writeFileSync } from "node:
 import ReactMarkdown from "react-markdown";
 import matter from "gray-matter";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
 import atomDark from "react-syntax-highlighter/dist/cjs/styles/prism/atom-dark";
@@ -52,7 +53,7 @@ type SerializedBlog = Omit<Omit<Omit<Omit<blog, "date">, "updated">, "created_at
   updated: string | null;
   created_at: string;
   updated_at: string;
-}
+};
 
 type ServerProps = {
   data: SerializedBlog;
@@ -143,13 +144,6 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
             if (language == "codepen") {
               const codepen = JSON.parse(value.trim());
               return <ReactCodepen {...codepen} />;
-            } else if (language.startsWith("svelte")) {
-              return (
-                <p>
-                  If you&apos;re viewing this on matt.dekok.app, this demo will not work, because it was designed for Svelte. To view the demo, visit the post
-                  on <a href={`https://sveltekit.dekok.app/blog/${slug}`}>sveltekit.dekok.app</a>.
-                </p>
-              );
             }
           }
         } catch (err) {
@@ -159,11 +153,28 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
       },
 
       code(code: any) {
-        const { className, children } = code;
+        const { className, children, inline } = code;
         let language = (className || "").split("-")[1];
-        if (!language) return <code>{children}</code>;
+        console.log(code)
+        if (inline) return <code>{children}</code>
+        if (!language)
+          return (
+            <pre className="language-raw-container">
+              <code className="language-raw">{children}</code>
+            </pre>
+          );
         if (language == "codepen") return <code>{children}</code>;
-        if (language === "svelte") language = "html";
+        if (language.startsWith("svelte")) {
+          return (
+            <p className="whitespace-normal">
+              If you&apos;re viewing this on matt.dekok.app, this demo will not work, because it was designed for Svelte. To view the demo, visit the post on{" "}
+              <a href={`https://sveltekit.dekok.app/blog/${slug}`} target="_blank" className="text-theme-link" rel="noopener noreferrer">
+                sveltekit.dekok.app
+              </a>
+              .
+            </p>
+          );
+        }
 
         const bashes = ["npm", "pnpm", "yarn"];
         const bashInstructions = ["npm install", "pnpm add", "yarn add"];
@@ -239,7 +250,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
               <span>{data.updated && `(Updated: ${data.updated})`}</span>
             </p>
             <div className={blogStyles.BlogContent}>
-              <ReactMarkdown components={renderers} remarkPlugins={[remarkGfm]}>
+              <ReactMarkdown components={renderers} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>
                 {content}
               </ReactMarkdown>
             </div>

@@ -163,7 +163,9 @@
     font-size: 0.95rem;
   }
 
-  p, div, section {
+  p,
+  div,
+  section {
     font-family: "Montserrat", sans-serif;
   }
 }
@@ -171,15 +173,19 @@
 @layer utilities {
   .drop-shadow-theme-text {
     --tw-drop-shadow: drop-shadow(1px 1px 2px var(--color-text-shadow));
-    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia)
+      var(--tw-drop-shadow);
   }
   .drop-shadow-theme-text-thick {
     --tw-drop-shadow: drop-shadow(1px 1px 2px var(--color-text-shadow)) drop-shadow(1px 1px 2px var(--color-text-shadow));
-    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia)
+      var(--tw-drop-shadow);
   }
   .drop-shadow-theme-text-outline {
-    --tw-drop-shadow: drop-shadow(1px 1px 0 var(--color-text-shadow)) drop-shadow(-1px -1px 0 var(--color-text-shadow)) drop-shadow(1px -1px 0 var(--color-text-shadow)) drop-shadow(-1px 1px 0 var(--color-text-shadow));
-    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+    --tw-drop-shadow: drop-shadow(1px 1px 0 var(--color-text-shadow)) drop-shadow(-1px -1px 0 var(--color-text-shadow))
+      drop-shadow(1px -1px 0 var(--color-text-shadow)) drop-shadow(-1px 1px 0 var(--color-text-shadow));
+    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia)
+      var(--tw-drop-shadow);
   }
 }
 
@@ -240,5 +246,37 @@
     svg {
       @apply w-8 h-8;
     }
+  }
+  .language-raw-container {
+    color: rgb(197, 200, 198);
+    text-shadow: rgb(0 0 0 / 30%) 0px 1px;
+    font-family: Inconsolata, Monaco, Consolas, "Courier New", Courier, monospace;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    line-height: 1.5;
+    tab-size: 4;
+    hyphens: none;
+    padding: 1em;
+    margin: 0 !important;
+    overflow: auto;
+    border-radius: 0.3em;
+    background: rgb(29, 31, 33) !important;
+  }
+  .language-raw {
+    color: rgb(197, 200, 198);
+    text-shadow: rgb(0 0 0 / 30%) 0px 1px;
+    font-family: Inconsolata, Monaco, Consolas, "Courier New", Courier, monospace;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    line-height: 1.5;
+    tab-size: 4;
+    hyphens: none;
+
   }
 }
