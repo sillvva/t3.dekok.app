@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { inferQueryOutput, trpc } from "$src/utils/trpc";
-import Image from "next/future/image";
-import { concatenate } from "$src/utils/misc";
 import { useRouter } from "next/router";
-import Pagination from "$src/components/pagination";
-import { itemsPerPage } from "$src/utils/constants";
+import Image from "next/future/image";
 import { AnimatePresence, motion } from "framer-motion";
+import { trpc } from "$src/utils/trpc";
+import type { inferQueryOutput } from "$src/utils/trpc";
+import { concatenate } from "$src/utils/misc";
+import { itemsPerPage } from "$src/utils/constants";
 import MainLayout, { mainMotion } from "$src/layouts/main";
-import { NextPageWithLayout } from "../_app";
+import Pagination from "$src/components/pagination";
+import type { NextPageWithLayout } from "../_app";
+import PageMessage from "$src/components/page-message";
 
 const Blog: NextPageWithLayout = () => {
   const { query } = useRouter();
@@ -15,8 +17,8 @@ const Blog: NextPageWithLayout = () => {
   const limit = parseInt(query.limit ? (Array.isArray(query.limit) ? query.limit[0] : query.limit) : itemsPerPage.toString());
   const { data: posts } = trpc.useQuery(["posts.get"]);
 
-  if (!posts) return <p className="col-span-full text-center">Loading...</p>;
-  if (!posts.length) return <p className="col-span-full text-center">No posts found</p>;
+  if (!posts) return <PageMessage>Loading...</PageMessage>;
+  if (!posts.length) return <PageMessage>No posts found</PageMessage>;
 
   const paginatedPosts = posts.slice((page - 1) * limit, page * limit);
 

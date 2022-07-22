@@ -117,7 +117,6 @@
   * {
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
-    font-family: "Montserrat", sans-serif;
   }
 
   html {
@@ -162,6 +161,10 @@
 
   p {
     font-size: 0.95rem;
+  }
+
+  p, div, section {
+    font-family: "Montserrat", sans-serif;
   }
 }
 

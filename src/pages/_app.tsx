@@ -1,17 +1,14 @@
-// src/pages/_app.tsx
-import { withTRPC } from "@trpc/next";
-import type { AppRouter } from "../server/router";
-import type { AppType } from "next/dist/shared/lib/utils";
-import superjson from "superjson";
+import type { ReactElement, ReactNode } from "react";
+import type { NextPage } from "next";
+import { AppProps } from "next/app";
 import { ThemeProvider } from "next-themes";
+import { withTRPC } from "@trpc/next";
+import type { AppRouter } from "$src/server/router";
+import superjson from "superjson";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { UserProvider } from "@supabase/auth-helpers-react";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
-import MainLayout from "$src/layouts/main";
 import "../styles/globals.scss";
-import type { NextPage } from "next";
-import type { ReactElement, ReactNode } from "react";
-import { AppProps } from "next/app";
 
 export type NextPageWithLayout<P = {}> = NextPage<P> & {
   getLayout?: (page: ReactElement, props: P) => ReactNode;
@@ -63,5 +60,5 @@ export default withTRPC<AppRouter>({
   /**
    * @link https://trpc.io/docs/ssr
    */
-  ssr: false
+  ssr: true
 })(MyApp);
