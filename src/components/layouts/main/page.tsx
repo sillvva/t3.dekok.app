@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "next/future/image";
 import type { FunctionComponent, PropsWithChildren } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { mainMotion } from "$src/layouts/main";
@@ -68,7 +68,7 @@ const PageSection = (props: PropsWithChildren<PageSectionProps>) => {
 };
 
 const PageSectionItems = (props: PropsWithChildren<unknown>) => {
-  return <div className={styles.SectionItems}>{props.children}</div>;
+  return <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-5 gap-x-2">{props.children}</div>;
 };
 
 type PageSectionItemProps = {
@@ -77,11 +77,16 @@ type PageSectionItemProps = {
 
 const PageSectionItem = (props: PropsWithChildren<PageSectionItemProps>) => {
   return (
-    <div className={styles.SectionItem}>
-      <div className={styles.SectionItem__Image}>
-        <Image src={props.image} alt="" layout="fill" objectFit="contain" />
+    <div
+      className={concatenate(
+        "text-[color:var(--text)] min-h-[60px] overflow-hidden",
+        "border-[1px] border-solid border-black/15 lg:border-0 last:border-0",
+        "pb-5 lg:pb-0 last:pb-0"
+      )}>
+      <div className={"float-left w-14 h-14 grid justify-center items-center bg-white rounded-md p-1 relative"}>
+        <Image src={props.image} alt="" width={56} height={56} className="rounded-sm" />
       </div>
-      <div className={styles.SectionItem__Content}>{props.children}</div>
+      <div className="ml-20 section-content">{props.children}</div>
     </div>
   );
 };

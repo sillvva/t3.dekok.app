@@ -28,7 +28,7 @@ const RatingSection = (props: PropsWithChildren<RatingSectionProps>) => {
 
   return (
     <Page.Section className="sm:block md:block lg:block xl:block 2xl:block">
-      <h2 className={ratingStyles.Header}>{props.name}</h2>
+      <h2 className="section-heading">{props.name}</h2>
       <div className={ratingStyles.Columns}>
         {colClasses.map((col, c) => (
           <Fragment key={`col${c}`}>
