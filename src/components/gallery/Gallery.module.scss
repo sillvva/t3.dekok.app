@@ -1,7 +1,6 @@
 .GalleryItem,
 .LinkedGalleryItem {
-  @apply w-full relative block shadow-lg rounded-md overflow-hidden transition-all duration-500 p-2;
-  background-color: var(--article);
+  @apply w-full relative block bg-theme-article shadow-lg rounded-md overflow-hidden transition-all duration-500 p-2;
   --tw-shadow-color: var(--shadowColor);
   --tw-shadow: var(--tw-shadow-colored);
   > span {
