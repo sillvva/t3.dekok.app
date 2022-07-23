@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { Transition, Variants } from "framer-motion";
 import { concatenate, debounce } from "$src/utils/misc";
 import MainLayoutContext, { MainLayoutContextProvider, menuItems } from "./context";
-import { useAuthentication } from "$src/pages/admin/_hooks";
+import { useAuthentication } from "$src/utils/hooks";
 import Page from "./components/page";
 import Icon from "@mdi/react";
 import Link from "next/link";
