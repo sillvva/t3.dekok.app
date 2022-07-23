@@ -1,5 +1,5 @@
-import Page from "$src/components/layouts/main/page";
-import { NextPageWithLayout } from "../_app";
+import type { NextPageWithLayout } from "../_app";
+import Page from "$src/layouts/main/components/page";
 import MainLayout from "$src/layouts/main";
 
 const Admin: NextPageWithLayout = () => {

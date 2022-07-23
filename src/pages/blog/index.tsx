@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 import Image from "next/future/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { trpc } from "$src/utils/trpc";
@@ -9,9 +10,10 @@ import { concatenate } from "$src/utils/misc";
 import { itemsPerPage } from "$src/utils/constants";
 import type { NextPageWithLayout } from "../_app";
 import MainLayout, { mainMotion } from "$src/layouts/main";
-import Pagination from "$src/components/pagination";
 import PageMessage from "$src/components/page-message";
 import { useRipple } from "$src/components/ripple";
+
+const Pagination = dynamic(() => import("$src/components/pagination"));
 
 const Blog: NextPageWithLayout = () => {
   const { query } = useRouter();

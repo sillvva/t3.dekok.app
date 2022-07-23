@@ -1,6 +1,6 @@
-import Page from "$src/components/layouts/main/page";
+import type { NextPageWithLayout } from "./_app";
+import Page from "$src/layouts/main/components/page";
 import AnimatedButton from "$src/components/animated-button";
-import { NextPageWithLayout } from "./_app";
 import MainLayout from "$src/layouts/main";
 
 const age = (birthday: Date) => {

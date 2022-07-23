@@ -75,12 +75,24 @@ module.exports = {
           "100%": {
             opacity: 0
           }
+        },
+        "zoom-bounce": {
+          "0%": {
+            transform: "scale(0)",
+          },
+          "60%": {
+            transform: "scale(1.4)",
+          },
+          "100%": {
+            transform: "scale(1)",
+          }
         }
       },
       animation: {
         ripple: "ripple .5s linear",
         "spin-slow": "spin 4s linear infinite",
-        "spin-medium": "spin 2s linear infinite"
+        "spin-medium": "spin 2s linear infinite",
+        "zoom-bounce": "zoom-bounce 300ms linear forwards"
       },
       maxWidth: {
         "8xl": "100rem",

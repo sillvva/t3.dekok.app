@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import AnimatedButton from "../../animated-button";
+import AnimatedButton from "$src/components/animated-button";
 
 export type Item = {
   link: string;

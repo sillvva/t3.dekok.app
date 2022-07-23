@@ -6,8 +6,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { Transition, Variants } from "framer-motion";
 import { concatenate, debounce } from "$src/utils/misc";
 import MainLayoutContext, { MainLayoutContextProvider } from "./context";
-import Page from "$src/components/layouts/main/page";
-import PageHeader from "$src/components/layouts/main/page-header";
+import Page from "./components/page";
+import PageHeader from "./components/header";
 import NextNProgress from "$src/components/progress";
 import PageMeta from "$src/components/meta";
 
@@ -76,7 +76,7 @@ const MainLayout = (props: React.PropsWithChildren<PageHeadProps>) => {
 
   return (
     <MainLayoutContextProvider>
-      <NextNProgress color="var(--link)" height={1} options={{ showSpinner: false }} />
+      <NextNProgress color="var(--color-bg-link)" height={1} options={{ showSpinner: false }} />
       <PageMeta title={props.title} description={props.meta?.description} articleMeta={props.meta?.articleMeta} />
       <Layout {...{ ...props, path: router.pathname }}>{props.children}</Layout>
     </MainLayoutContextProvider>

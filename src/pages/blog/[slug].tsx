@@ -22,18 +22,16 @@ import bash from "react-syntax-highlighter/dist/cjs/languages/prism/bash";
 import docker from "react-syntax-highlighter/dist/cjs/languages/prism/docker";
 
 import type { NextPageWithLayout } from "../_app";
-import MainLayout from "../../layouts/main";
-import Page from "../../components/layouts/main/page";
-import { blogStyles } from "../../components/blog";
+import MainLayout from "$src/layouts/main";
+import Page from "$src/layouts/main/components/page";
 import { getContentDir } from "$src/utils/server.func";
-import PageMessage from "../../components/page-message";
+import PageMessage from "$src/components/page-message";
 
 import type { blog } from "@prisma/client";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { prisma } from "$src/server/db/client";
 import { concatenate } from "$src/utils/misc";
 import { useTheme } from "next-themes";
-import { CSSProperties, useEffect, useState } from "react";
 
 const ReactCodepen = dynamic(() => import("../../components/codepen"));
 
@@ -255,7 +253,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 
     return (
       <Page.Body>
-        <Page.Article className={[blogStyles.BlogArticle, "w-full xl:w-9/12 2xl:w-8/12"].join(" ")}>
+        <Page.Article className="w-full xl:w-9/12 2xl:w-8/12">
           {!data.full && (
             <div className="aspect-video relative">
               <Image src={data.image} alt={"Cover"} layout="fill" objectFit="cover" priority />

@@ -7,11 +7,11 @@ import Icon from "@mdi/react";
 import { mdiChevronLeft, mdiMenu, mdiBrightness6 } from "@mdi/js";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Transition, Variants } from "framer-motion";
-import MainLayoutContext, { menuItems } from "$src/layouts/main/context";
-import type { PageHeadProps } from "$src/layouts/main";
+import MainLayoutContext, { menuItems } from "../context";
+import type { PageHeadProps } from "../index";
 import { concatenate } from "$src/utils/misc";
 
-const PageMenu = dynamic(() => import("./page-menu"));
+const PageMenu = dynamic(() => import("./menu"));
 
 type PageHeaderProps = {
   head: PageHeadProps;
