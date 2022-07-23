@@ -304,6 +304,8 @@
     line-height: 1.5;
     tab-size: 4;
     hyphens: none;
-
+  }
+  .gallery-item {
+    @apply w-full relative block aspect-video bg-theme-article shadow-lg rounded-md overflow-hidden transition-all duration-500 p-2;
   }
 }
