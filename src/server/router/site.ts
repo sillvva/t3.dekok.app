@@ -26,11 +26,11 @@ export const siteRouter = createRouter()
         }
       } else {
         try {
-          await fetch(`${env.PROD_URL}/api/trpc/site.revalidate?batch=1`, {
+          const result = await fetch(`${env.PROD_URL}/api/trpc/site.revalidate?batch=1`, {
             method: "POST",
             body: JSON.stringify({ "0": { json: { paths: input.paths } } })
           });
-          revalidated.push(...input.paths);
+          revalidated.push(...(await result.json())[0].result.data.json.revalidated);
         } catch (err: any) {
           errors.push(err.message);
         }

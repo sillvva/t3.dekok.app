@@ -37,6 +37,7 @@ export const postsRouter = createRouter()
   })
   .mutation("post", {
     input: z.object({
+      slug: z.string(),
       file: z.string(),
       filename: z.string()
     }),

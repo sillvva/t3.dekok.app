@@ -39,14 +39,12 @@ const Admin: NextPageWithLayout = () => {
 
   const utils = trpc.useContext();
 
-  const {
-    data: posts,
-    isFetching,
-    refetch
-  } = trpc.useQuery(["posts.get"], {
+  const { data: posts, isFetching } = trpc.useQuery(["posts.get"], {
     enabled: !!user,
     refetchOnWindowFocus: false
   });
+
+  const revalidator = trpc.useMutation(["site.revalidate"]);
 
   const refresh = useCallback(() => {
     utils.invalidateQueries(["posts.get"]);
@@ -54,18 +52,20 @@ const Admin: NextPageWithLayout = () => {
   }, [utils]);
 
   const uploadMutation = trpc.useMutation(["posts.post"], {
-    onSuccess({ error }) {
+    onSuccess({ error }, { slug }) {
       // toasts.add("success", "Post uploaded successfully");
       // toasts.add("error", error);
       refresh();
+      revalidator.mutate({ paths: [`/blog/${slug}`] });
     }
   });
 
   const deleteMutation = trpc.useMutation(["posts.delete"], {
-    onSuccess({ error }) {
+    onSuccess({ error }, { slug }) {
       // toasts.add("success", "Post uploaded successfully");
       // toasts.add("error", error);
       refresh();
+      revalidator.mutate({ paths: [`/blog/${slug}`] });
     }
   });
 
@@ -79,14 +79,15 @@ const Admin: NextPageWithLayout = () => {
       if (!file.name.endsWith(".md")) return alert("Only markdown files are supported");
       const blob = new Blob([file], { type: file.type });
       const base64 = await toBase64(blob);
-      uploadMutation.mutate({ file: base64, filename: file.name });
+      uploadMutation.mutate({ file: base64, filename: file.name, slug: file.name.slice(0, -3) });
     };
     input.click();
   };
 
   const remove = async (slug: string) => {
-    if (!confirm("Are you sure you want to delete this post?")) return;
-    deleteMutation.mutate({ slug });
+    // if (!confirm("Are you sure you want to delete this post?")) return;
+    revalidator.mutate({ paths: [`/blog/${slug}`] });
+    // deleteMutation.mutate({ slug });
   };
 
   if (isLoading && !user) return <PageMessage>Authenticating...</PageMessage>;
