@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { PropsWithChildren } from "react";
 import { useTheme } from "next-themes";
+import { useRouter } from "next/router";
 
 type MetaProps = {
   title?: string;
@@ -17,6 +18,7 @@ const themeColors: { [key: string]: string } = {
 
 const PageMeta = (props: PropsWithChildren<MetaProps>) => {
   const { theme } = useTheme();
+  const router = useRouter();
   const color = themeColors[theme || "dark"] ?? "#111";
 
   const dtitle = props.title ? `${props.title} - Matt DeKok` : "Matt DeKok";
@@ -24,8 +26,8 @@ const PageMeta = (props: PropsWithChildren<MetaProps>) => {
   const ogProperties: any = {
     title: dtitle,
     description: description,
-    image: `https://matt.dekok.app${props.image || "/images/preview-me2.jpg"}`,
-    url: "https://matt.dekok.app"
+    image: `https://r3.dekok.app${props.image || "/images/preview-me2.jpg"}`,
+    url: "https://t3.dekok.app"
   };
   const twProperties: any = {
     site: "@sillvvasensei",
@@ -43,6 +45,7 @@ const PageMeta = (props: PropsWithChildren<MetaProps>) => {
       <link rel="icon" href="/favicon.png" />
       <link rel="apple-touch-icon" href={`${ogProperties.url}/icon_x128.png`}></link>
       <link rel="manifest" href="/manifest.webmanifest" />
+      <link rel="canonical" href={ogProperties.url + router.asPath} />
 
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="msapplication-TileColor" content={color} />

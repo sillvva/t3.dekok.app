@@ -43,6 +43,7 @@ module.exports = {
       },
       ringOffsetColor: {
         theme: {
+          base: "rgb(var(--color-bg-body))",
           link: "var(--color-text-link)"
         }
       },

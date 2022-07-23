@@ -1,20 +1,23 @@
+import { useContext, useEffect, useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-import { useContext, useEffect, useState } from "react";
+import { mdiChevronLeft, mdiMenu, mdiBrightness6 } from "@mdi/js";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Transition, Variants } from "framer-motion";
 import { concatenate, debounce } from "$src/utils/misc";
-import MainLayoutContext, { MainLayoutContextProvider } from "./context";
+import MainLayoutContext, { MainLayoutContextProvider, menuItems } from "./context";
+import { useAuthentication } from "$src/pages/admin/_hooks";
 import Page from "./components/page";
-import PageHeader from "./components/header";
+import Icon from "@mdi/react";
+import Link from "next/link";
+import Image from "next/future/image";
 import NextNProgress from "$src/components/progress";
 import PageMeta from "$src/components/meta";
 
 const Drawer = dynamic(() => import("$src/components/drawer"));
 
-const Layout = (props: React.PropsWithChildren<PageHeadProps>) => {
-  const router = useRouter();
+const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
   const { drawer } = useContext(MainLayoutContext);
   const { theme, setTheme } = useTheme();
   const [oldTheme, setOldTheme] = useState(theme || "");
@@ -51,27 +54,48 @@ const Layout = (props: React.PropsWithChildren<PageHeadProps>) => {
       {theme && theme !== oldTheme && <Page.Bg theme={oldTheme || ""} />}
       <Page.Bg key={theme} theme={theme} init={mounted} />
       <PageHeader head={props} layoutMotion={mainMotion} onThemeChange={themeChangeHandler} />
-      <AnimatePresence initial={false} exitBeforeEnter>
-        <motion.main
-          key={`main${props.path}`}
-          className={concatenate(
-            "relative flex-col justify-center items-center z-[2] px-2 md:px-4",
-            router.asPath == "/" ? "h-screen" : props.title ? "pt-24 lg:pt-36 pb-4" : "pt-20 pb-4"
-          )}
-          variants={mainMotion.variants}
-          initial="hidden"
-          animate="enter"
-          exit="exit"
-          transition={mainMotion.transition}>
-          {props.children}
-        </motion.main>
-      </AnimatePresence>
+      {props.layout == "admin" ? (
+        <div className="flex flex-col md:flex-row relative">
+          <div
+            className={concatenate(
+              "sticky w-full md:w-[300px] flex-col justify-center items-center z-[2] px-2 md:pl-4 md:pr-0",
+              props.title ? "pt-24 lg:pt-36 pb-4" : "pt-20 pb-4"
+            )}>
+            Menu
+          </div>
+          <LayoutBody {...props}>{props.children}</LayoutBody>
+        </div>
+      ) : (
+        <LayoutBody {...props}>{props.children}</LayoutBody>
+      )}
       {drawer.state ? <Drawer /> : ""}
     </div>
   );
 };
 
-const MainLayout = (props: React.PropsWithChildren<PageHeadProps>) => {
+const LayoutBody = (props: React.PropsWithChildren<MainLayoutProps>) => {
+  const router = useRouter();
+
+  return (
+    <AnimatePresence initial={false} exitBeforeEnter>
+      <motion.main
+        key={`main${props.path}`}
+        className={concatenate(
+          "relative flex-1 flex-col justify-center items-center z-[2] px-2 md:px-4",
+          router.pathname == "/" ? "h-screen" : props.layout === "admin" ? "md:pt-20 pb-4" : props.title ? "pt-24 lg:pt-36 pb-4" : "pt-20 pb-4"
+        )}
+        variants={mainMotion.variants}
+        initial="hidden"
+        animate="enter"
+        exit="exit"
+        transition={mainMotion.transition}>
+        {props.children}
+      </motion.main>
+    </AnimatePresence>
+  );
+};
+
+const MainLayout = (props: React.PropsWithChildren<MainLayoutProps>) => {
   const router = useRouter();
 
   return (
@@ -85,9 +109,9 @@ const MainLayout = (props: React.PropsWithChildren<PageHeadProps>) => {
 
 export default MainLayout;
 
-export const headerClasses = ["transition-all duration-1000 bg-transparent sticky z-10 top-0"];
+type Motion = { variants?: Variants; transition?: Transition };
 
-export const mainMotion: { variants?: Variants; transition?: Transition } = {
+export const mainMotion: Motion = {
   variants: {
     hidden: { opacity: 0 },
     enter: { opacity: 1 },
@@ -98,9 +122,10 @@ export const mainMotion: { variants?: Variants; transition?: Transition } = {
   }
 };
 
-export type PageHeadProps = {
+export type MainLayoutProps = {
   title?: string;
   menu?: boolean;
+  layout?: "admin";
   drawer?: boolean;
   path?: string;
   meta?: LayoutMeta;
@@ -112,4 +137,143 @@ type LayoutMeta = {
   description?: string;
   image?: string;
   articleMeta?: object;
+};
+
+
+const PageMenu = dynamic(() => import("./components/menu"));
+
+type PageHeaderProps = {
+  head: MainLayoutProps;
+  layoutMotion?: { variants?: Variants; transition?: Transition };
+  onThemeChange?: (theme: string) => void;
+};
+
+const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
+  const router = useRouter();
+  const { user } = useAuthentication();
+  const { drawer } = useContext(MainLayoutContext);
+  const { theme, setTheme, themes } = useTheme();
+  const [menu, setMenu] = useState(true);
+
+  useEffect(() => {
+    const listener = (ev: string) => {
+      if (ev == "/") setMenu(false);
+      else setMenu(true);
+    };
+
+    router.events.on("routeChangeStart", listener);
+    return () => router.events.off("routeChangeStart", listener);
+  }, [router.events]);
+
+  const smallTitle = (head?.title?.length || 0) > 12;
+  const items = head?.menu && menu ? menuItems : [];
+  const baseThemes = themes.filter(t => t !== "system");
+  const nextTheme = baseThemes[(baseThemes.indexOf(theme || "") + 1) % baseThemes.length] || "";
+
+  const themeChangeHandler = useCallback(
+    (theme: string) => {
+      if (!onThemeChange) return;
+      onThemeChange(theme);
+      setTimeout(() => {
+        onThemeChange(nextTheme);
+      }, 500);
+    },
+    [onThemeChange, nextTheme]
+  );
+
+  return (
+    <header className={concatenate("flex flex-col items-center transition-all duration-500", "fixed top-0 left-0 right-0 z-[3] scroll-blur")}>
+      <div className="flex gap-4 w-full py-4 px-2 2xs:px-3 items-center text-center max-h-[80px]">
+        <div className="w-12">
+          {head?.backTo === true ? (
+            <a type="button" className="fab" onClick={router.back}>
+              <Icon path={mdiChevronLeft} />
+            </a>
+          ) : head?.backTo ? (
+            <Link href={head?.backTo}>
+              <a type="button" className="fab">
+                <Icon path={mdiChevronLeft} />
+              </a>
+            </Link>
+          ) : (
+            <button
+              type="button"
+              aria-label="Open Drawer"
+              onClick={drawer.toggle}
+              className={concatenate("fab", "flex", (head?.menu || router.asPath === "/") && "lg:hidden")}>
+              <Icon path={mdiMenu} />
+            </button>
+          )}
+        </div>
+        <div className="flex-1 block relative h-14">
+          {head?.menu ? <nav className={concatenate("hidden justify-center gap-3 px-3 lg:flex")}>{items.length ? <PageMenu items={items} /> : ""}</nav> : ""}
+          <AnimatePresence initial={false} exitBeforeEnter>
+            {head?.title && (
+              <motion.h1
+                variants={layoutMotion?.variants}
+                key={`title: ${head?.title} ${router.pathname}`}
+                initial="hidden"
+                animate="enter"
+                exit="exit"
+                transition={layoutMotion?.transition}
+                className={concatenate(
+                  "text-3xl text-center text-theme-heading font-medium font-montserrat",
+                  "drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
+                  "block lg:hidden flex-1 p-2 absolute inset-0",
+                  smallTitle && "text-sm sm:text-lg md:text-2xl flex lg:hidden justify-center items-center"
+                )}>
+                {head?.title}
+              </motion.h1>
+            )}
+          </AnimatePresence>
+          {head?.layout == "admin" && user && (
+            <div className="flex flex-1 justify-end items-center w-full h-14 gap-4">
+              <a href="/api/auth/logout" className="text-theme-link">
+                Sign out
+              </a>
+              <span className="hidden xs:inline">|</span>
+              <a href={`https://github.com/${user.user_metadata.user_name}`} target="_blank" rel="noreferrer noopener" className="flex gap-4 items-center">
+                <span className="hidden xs:inline">{user.user_metadata.preferred_username}</span>
+                <div className="avatar">
+                  <div className="w-10 rounded-full ring ring-theme-link ring-offset-theme-base ring-offset-2">
+                    <Image src={user.user_metadata.avatar_url} alt={user.user_metadata.preferred_username} width={40} height={40} className="rounded-full" />
+                  </div>
+                </div>
+              </a>
+            </div>
+          )}
+        </div>
+        <div className="hidden xs:block w-12">
+          <button
+            type="button"
+            aria-label="Toggle Theme"
+            onClick={() => {
+              themeChangeHandler(theme || "");
+              setTheme(nextTheme);
+            }}
+            className={`fab my-3`}>
+            <Icon path={mdiBrightness6} />
+          </button>
+        </div>
+      </div>
+      <AnimatePresence initial={false} exitBeforeEnter>
+        {head?.title && (
+          <motion.h1
+            variants={layoutMotion?.variants}
+            key={`title: ${head?.title} ${router.pathname}`}
+            initial="hidden"
+            animate="enter"
+            exit="exit"
+            transition={layoutMotion?.transition}
+            className={concatenate(
+              "text-3xl text-center text-theme-heading font-medium font-montserrat",
+              "drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
+              "hidden lg:block"
+            )}>
+            {head?.title}
+          </motion.h1>
+        )}
+      </AnimatePresence>
+    </header>
+  );
 };

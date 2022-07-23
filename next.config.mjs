@@ -20,6 +20,6 @@ export default defineNextConfig({
     }
   },
   images: {
-    domains: ["slxazldgfeytirfrculz.supabase.co"]
+    domains: ["slxazldgfeytirfrculz.supabase.co", "avatars.githubusercontent.com"]
   }
 });
