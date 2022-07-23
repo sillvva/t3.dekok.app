@@ -85,9 +85,8 @@ const Admin: NextPageWithLayout = () => {
   };
 
   const remove = async (slug: string) => {
-    // if (!confirm("Are you sure you want to delete this post?")) return;
-    revalidator.mutate({ paths: [`/blog/${slug}`] });
-    // deleteMutation.mutate({ slug });
+    if (!confirm("Are you sure you want to delete this post?")) return;
+    deleteMutation.mutate({ slug });
   };
 
   if (isLoading && !user) return <PageMessage>Authenticating...</PageMessage>;

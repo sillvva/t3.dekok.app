@@ -15,7 +15,7 @@ export const siteRouter = createRouter()
 
       const revalidated = [];
       const errors = [];
-      if (env.PROD_URL.includes(req.headers.host || "xN/Ax")) {
+      if (env.PROD_URL.includes(`//${req.headers.host}`)) {
         for (let path of input.paths) {
           try {
             await res.revalidate(path);
@@ -26,12 +26,16 @@ export const siteRouter = createRouter()
         }
       } else {
         try {
-          const result = await fetch(`${env.PROD_URL}/api/trpc/site.revalidate?batch=1`, {
+          const url = `${env.PROD_URL}/api/trpc/site.revalidate?batch=1`;
+          const response = await fetch(url, {
             method: "POST",
             body: JSON.stringify({ "0": { json: { paths: input.paths } } })
           });
-          console.log((await result.json())[0].result.data.json)
-          revalidated.push(...(await result.json())[0].result.data.json.revalidated);
+          const result = await response.json();
+
+          if (!result) throw new Error(`No result at ${url}`);
+
+          revalidated.push(...result[0].result.data.json.revalidated);
         } catch (err: any) {
           errors.push(err.message);
         }
@@ -39,6 +43,7 @@ export const siteRouter = createRouter()
 
       return {
         host: req.headers.host,
+        referer: req.headers.referer,
         revalidated,
         errors
       };
