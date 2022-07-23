@@ -1,11 +1,15 @@
 import type { NextPageWithLayout } from "../_app";
-import Page from "$src/layouts/main/components/page";
 import MainLayout from "$src/layouts/main";
 import { useAuthentication } from "./_hooks";
 import PageMessage from "$src/components/page-message";
+import { trpc } from "$src/utils/trpc";
 
 const Admin: NextPageWithLayout = () => {
   const { user, isLoading } = useAuthentication({ login: true });
+  const { data } = trpc.useQuery(["posts.admin"], {
+    enabled: !!user,
+    refetchOnWindowFocus: false
+  });
 
   if (isLoading && !user) return <PageMessage>Authenticating...</PageMessage>;
 

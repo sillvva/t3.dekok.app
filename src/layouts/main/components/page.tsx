@@ -2,7 +2,6 @@ import Image from "next/future/image";
 import type { FunctionComponent, PropsWithChildren } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { mainMotion } from "$src/layouts/main";
-import styles from "$src/layouts/main/styles.module.scss";
 import { concatenate as concatenate } from "$src/utils/misc";
 
 type PageBgProps = {

@@ -386,17 +386,8 @@ export async function getStaticProps(context: any) {
 }
 
 export async function getStaticPaths() {
-  const dirPath = getContentDir();
-  const postsPath = `${dirPath}/posts.json`;
-
-  let posts: blog[];
-  if (existsSync(postsPath)) {
-    const data = readFileSync(postsPath, "utf8");
-    posts = JSON.parse(data);
-  } else {
-    const result = await prisma?.blog.findMany();
-    posts = result || [];
-  }
+  const result = await prisma?.blog.findMany();
+  const posts = result || [];
 
   return {
     paths: posts.map(p => ({

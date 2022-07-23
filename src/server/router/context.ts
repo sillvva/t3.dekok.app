@@ -1,4 +1,3 @@
-// src/server/router/context.ts
 import * as trpc from "@trpc/server";
 import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { prisma } from "../db/client";
@@ -10,7 +9,7 @@ export const createContext = (opts?: CreateNextContextOptions) => {
   return {
     req,
     res,
-    prisma,
+    prisma
   };
 };
 
