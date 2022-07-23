@@ -34,7 +34,7 @@ const Blog: NextPageWithLayout = () => {
           animate="enter"
           exit="exit"
           transition={mainMotion.transition}
-          className="grid gap-3 pt-3 mt-3 mx-auto md:grid-cols-2 xl:grid-cols-3 xl:max-w-7xl">
+          className="grid gap-3 pt-3 mt-3 mx-auto md:grid-cols-2 xl:grid-cols-3 max-w-8xl">
           {paginatedPosts.map(post => (
             <PostCard key={post.id} {...post} />
           ))}

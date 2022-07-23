@@ -81,6 +81,9 @@ module.exports = {
         ripple: "ripple .5s linear",
         "spin-slow": "spin 4s linear infinite",
         "spin-medium": "spin 2s linear infinite"
+      },
+      maxWidth: {
+        "8xl": "100rem",
       }
     },
     screens: {
