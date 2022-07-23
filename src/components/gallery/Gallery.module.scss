@@ -37,7 +37,7 @@
   }
 }
 .LinkedGalleryItem:hover {
-  @apply shadow-xl;
+  @apply shadow-xl motion-safe:scale-105;
   --tw-shadow-color: var(--shadowHover);
   --tw-shadow: var(--tw-shadow-colored);
   // @apply outline outline-1;
