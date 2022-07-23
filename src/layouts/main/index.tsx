@@ -14,6 +14,7 @@ import Link from "next/link";
 import Image from "next/future/image";
 import NextNProgress from "$src/components/progress";
 import PageMeta from "$src/components/meta";
+import { trpc } from "$src/utils/trpc";
 
 const Drawer = dynamic(() => import("$src/components/drawer"));
 
@@ -47,6 +48,11 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
     setOldTheme(newTheme);
   };
 
+  const { data: admin, isFetching } = trpc.useQuery(["site.admin"], {
+    enabled: props.layout == "admin",
+    refetchOnWindowFocus: false
+  });
+
   if (!mounted) return null;
 
   return (
@@ -61,7 +67,7 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
               "sticky w-full md:w-[300px] flex-col justify-center items-center z-[2] px-2 md:pl-4 md:pr-0",
               props.title ? "pt-24 lg:pt-36 pb-4" : "pt-20 pb-4"
             )}>
-            Menu
+            {!isFetching && JSON.stringify(admin, null, 2)}
           </div>
           <LayoutBody {...props}>{props.children}</LayoutBody>
         </div>
@@ -138,7 +144,6 @@ type LayoutMeta = {
   image?: string;
   articleMeta?: object;
 };
-
 
 const PageMenu = dynamic(() => import("./components/menu"));
 
@@ -228,9 +233,9 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
           </AnimatePresence>
           {head?.layout == "admin" && user && (
             <div className="flex flex-1 justify-end items-center w-full h-14 gap-4">
-              <a href="/api/auth/logout" className="text-theme-link">
-                Sign out
-              </a>
+              <Link href="/api/auth/logout">
+                <a className="text-theme-link">Sign out</a>
+              </Link>
               <span className="hidden xs:inline">|</span>
               <a href={`https://github.com/${user.user_metadata.user_name}`} target="_blank" rel="noreferrer noopener" className="flex gap-4 items-center">
                 <span className="hidden xs:inline">{user.user_metadata.preferred_username}</span>

@@ -42,3 +42,14 @@ export const parseCSSModules = (module: { [key: string]: string }, styles?: (str
     .filter(c => typeof c === "string");
   return concatenate(...parsed);
 };
+
+export const toBase64 = async (data: string | Uint8Array | Blob) => {
+  const base64url = await new Promise<string>(r => {
+    const reader = new FileReader();
+    reader.onload = () => r((reader.result || "").toString());
+    if (data instanceof Blob) reader.readAsDataURL(data);
+    else reader.readAsDataURL(new Blob([data]));
+  });
+
+  return base64url.split(",", 2)[1];
+};
