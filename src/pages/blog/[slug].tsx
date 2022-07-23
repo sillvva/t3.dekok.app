@@ -49,7 +49,7 @@ SyntaxHighlighter.registerLanguage("scss", scss);
 SyntaxHighlighter.registerLanguage("bash", bash);
 SyntaxHighlighter.registerLanguage("docker", docker);
 
-type SerializedBlog = Omit<Omit<Omit<Omit<blog, "date">, "updated">, "created_at">, "updated_at"> & {
+type SerializedBlog = Omit<blog, "date" | "updated" | "created_at" | "updated_at"> & {
   date: string;
   updated: string | null;
   created_at: string;
