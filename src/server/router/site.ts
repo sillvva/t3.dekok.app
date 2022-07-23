@@ -30,6 +30,7 @@ export const siteRouter = createRouter()
             method: "POST",
             body: JSON.stringify({ "0": { json: { paths: input.paths } } })
           });
+          console.log((await result.json())[0].result.data.json)
           revalidated.push(...(await result.json())[0].result.data.json.revalidated);
         } catch (err: any) {
           errors.push(err.message);
@@ -37,6 +38,7 @@ export const siteRouter = createRouter()
       }
 
       return {
+        host: req.headers.host,
         revalidated,
         errors
       };
