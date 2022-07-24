@@ -31,10 +31,10 @@ export const siteRouter = createRouter()
             method: "POST",
             body: JSON.stringify({ "0": { json: { paths: input.paths } } })
           });
+          
           const result = await response.json();
-
           if (!result) throw new Error(`No result at ${url}`);
-
+          
           revalidated.push(...result[0].result.data.json.revalidated);
         } catch (err: any) {
           errors.push(err.message);
@@ -42,6 +42,7 @@ export const siteRouter = createRouter()
       }
 
       return {
+        host: req.headers.host,
         revalidated,
         errors
       };
