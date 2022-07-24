@@ -66,7 +66,7 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
     if (!admin && !isFetching && router.pathname.startsWith("/admin")) {
       utils.invalidateQueries(["site.admin"]);
     }
-  }, [utils, router.pathname, admin, isFetching])
+  }, [utils, router.pathname, admin, isFetching]);
 
   if (!mounted) return null;
 
@@ -102,7 +102,12 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
               <li>
                 {paths.map(({ name, path, value, label }, i) =>
                   router.pathname === path ? (
-                    <a key={`admin${i}`} className={concatenate("md:flex justify-between", router.pathname === path && "bg-theme-hover/10")}>
+                    <a
+                      key={`admin${i}`}
+                      className={concatenate(
+                        "md:flex justify-between active:bg-theme-hover/10",
+                        router.pathname === path && "bg-theme-hover/10 md:bg-theme-link md:text-theme-button"
+                      )}>
                       <div>{name}</div>
                       {isFetching ? (
                         <div className="w-24 h-4">
@@ -137,8 +142,10 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
               </li>
               <li className={concatenate("hidden md:block", menuState && "!block")}>
                 {resources.map(({ name, path }, i) => (
-                  <Link key={`admin${i}`} href={path} target="_blank" rel="noreferrer noopener">
-                    <a>{name}</a>
+                  <Link key={`admin${i}`} href={path}>
+                    <a target="_blank" rel="noreferrer noopener" className="active:bg-theme-hover/10">
+                      {name}
+                    </a>
                   </Link>
                 ))}
               </li>
