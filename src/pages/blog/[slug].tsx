@@ -386,6 +386,15 @@ export async function getStaticProps(context: any) {
 }
 
 export async function getStaticPaths() {
+  // When this is true (in preview environments), don't prerender any static pages
+  // (faster builds, but slower initial page load)
+  if (process.env.SKIP_BUILD_STATIC_GENERATION) {
+    return { paths: [], fallback: "blocking" };
+  }
+
+  // Get the paths we want to prerender based on posts
+  // In production environments, prerender all pages
+  // (slower builds, but faster initial page load)
   const result = await prisma?.blog.findMany();
   const posts = result || [];
 
@@ -393,7 +402,7 @@ export async function getStaticPaths() {
     paths: posts.map(p => ({
       params: { slug: p.slug }
     })),
-    fallback: true
+    fallback: "blocking"
   };
 }
 
