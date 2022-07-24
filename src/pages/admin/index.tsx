@@ -147,7 +147,7 @@ const Admin: NextPageWithLayout = () => {
           ? paginatedPosts.map(post => (
               <div key={post.slug} className="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden">
                 <div className="aspect-video relative hidden sm:block">
-                  <a href="/blog/{post.slug}" target="_blank" className="relative block aspect-video overflow-hidden">
+                  <a href={`/blog/${post.slug}`} target="_blank" rel="noreferrer noopner" className="relative block aspect-video overflow-hidden">
                     <Image src={post.image} alt={post.title} className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
                   </a>
                   <a type="button" className="fab absolute top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text" onClick={() => remove(post.slug)}>
@@ -157,7 +157,7 @@ const Admin: NextPageWithLayout = () => {
                 <div className="flex flex-row items-center gap-2 px-3 py-2">
                   <div className="flex-1 flex flex-col">
                     <h4 className="font-semibold pb-1 font-robo-flex">
-                      <a href="/blog/{post.slug}" target="_blank" className="text-theme-link">
+                      <a href={`/blog/${post.slug}`} target="_blank" rel="noreferrer noopner" className="text-theme-link">
                         {post.title}
                         <Icon path={mdiOpenInNew} size={0.8} className="ml-1 inline" />
                       </a>
