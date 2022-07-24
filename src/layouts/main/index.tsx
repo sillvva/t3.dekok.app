@@ -87,7 +87,7 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
     <div id="app" className="min-h-screen min-w-screen">
       {theme && theme !== oldTheme && <Page.Bg theme={oldTheme || ""} />}
       <Page.Bg key={theme} theme={theme} init={mounted} />
-      <PageHeader head={props} layoutMotion={mainMotion} onThemeChange={themeChangeHandler} />
+      <PageHeader head={props} layoutMotion={fadeMotion} onThemeChange={themeChangeHandler} />
       {props.layout == "admin" ? (
         <div className="flex flex-col md:flex-row relative">
           <div
@@ -173,11 +173,11 @@ const LayoutBody = (props: React.PropsWithChildren<MainLayoutProps>) => {
           "relative flex-1 flex-col justify-center items-center z-[2] px-2 md:px-4",
           router.pathname == "/" ? "h-screen" : props.layout === "admin" ? "md:pt-20 pb-4" : props.title ? "pt-24 lg:pt-36 pb-4" : "pt-20 pb-4"
         )}
-        variants={mainMotion.variants}
+        variants={fadeMotion.variants}
         initial="hidden"
         animate="enter"
         exit="exit"
-        transition={mainMotion.transition}>
+        transition={fadeMotion.transition}>
         {props.children}
       </motion.main>
     </AnimatePresence>
@@ -200,22 +200,11 @@ export default MainLayout;
 
 type Motion = { variants?: Variants; transition?: Transition };
 
-export const mainMotion: Motion = {
+export const fadeMotion: Motion = {
   variants: {
     hidden: { opacity: 0 },
     enter: { opacity: 1 },
     exit: { opacity: 0 }
-  },
-  transition: {
-    duration: 0.25
-  }
-};
-
-const slideMotion: Motion = {
-  variants: {
-    hidden: { x: -100, opacity: 0 },
-    enter: { x: 0, opacity: 1 },
-    exit: { x: 100, opacity: 0 }
   },
   transition: {
     duration: 0.25

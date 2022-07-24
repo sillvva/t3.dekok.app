@@ -9,7 +9,7 @@ import type { inferQueryOutput } from "$src/utils/trpc";
 import { concatenate } from "$src/utils/misc";
 import { itemsPerPage } from "$src/utils/constants";
 import type { NextPageWithLayout } from "../_app";
-import MainLayout, { mainMotion } from "$src/layouts/main";
+import MainLayout, { fadeMotion } from "$src/layouts/main";
 import PageMessage from "$src/components/page-message";
 import { useRipple } from "$src/components/ripple";
 
@@ -31,11 +31,11 @@ const Blog: NextPageWithLayout = () => {
       <AnimatePresence exitBeforeEnter>
         <motion.div
           key={paginatedPosts[0]?.slug}
-          variants={mainMotion.variants}
+          variants={fadeMotion.variants}
           initial="hidden"
           animate="enter"
           exit="exit"
-          transition={mainMotion.transition}
+          transition={fadeMotion.transition}
           className="grid gap-3 pt-3 mt-3 mx-auto md:grid-cols-2 xl:grid-cols-3 max-w-8xl">
           {paginatedPosts.map(post => (
             <PostCard key={post.id} {...post} />

@@ -4,7 +4,7 @@ import Image from "next/future/image";
 import Icon from "@mdi/react";
 import { mdiOpenInNew, mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
 import { useRouter } from "next/router";
-import MainLayout from "$src/layouts/main";
+import MainLayout, { fadeMotion } from "$src/layouts/main";
 import PageMessage from "$src/components/page-message";
 import { trpc } from "$src/utils/trpc";
 import { useAuthentication } from "$src/utils/hooks";
@@ -12,6 +12,7 @@ import { itemsPerPage } from "$src/utils/constants";
 import { toBase64 } from "$src/utils/misc";
 import Pagination from "$src/components/pagination";
 import { toast } from "react-toastify";
+import { AnimatePresence, motion } from "framer-motion";
 
 const Images: NextPageWithLayout = () => {
   const router = useRouter();
@@ -76,9 +77,12 @@ const Images: NextPageWithLayout = () => {
     }
   });
 
-  const fileExists = useCallback((name: string) => {
-    return images?.find(image => image.name === name);
-  }, [images]);
+  const fileExists = useCallback(
+    (name: string) => {
+      return images?.find(image => image.name === name);
+    },
+    [images]
+  );
 
   const upload = useCallback(async () => {
     const input = document.createElement("input");
@@ -100,8 +104,7 @@ const Images: NextPageWithLayout = () => {
           let newName = prompt("Enter a new file name", `_${name}`) || "";
           if (newName.trim()) {
             const newParts = newName.trim().split(".");
-            newName =
-              newName + (parts[parts.length - 1] === newParts[newParts.length - 1] ? "" : "." + parts[parts.length - 1]);
+            newName = newName + (parts[parts.length - 1] === newParts[newParts.length - 1] ? "" : "." + parts[parts.length - 1]);
             if (newName.trim() === name) {
               while (fileExists(name)) {
                 name = `_${name}`;
@@ -136,9 +139,7 @@ const Images: NextPageWithLayout = () => {
     query.length > 2
       ? (images || [])
           .filter(image => {
-            return (
-              image.name.toLowerCase().includes(query.toLowerCase())
-            );
+            return image.name.toLowerCase().includes(query.toLowerCase());
           })
           .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
       : (images || []).sort((a, b) => (a.created_at > b.created_at ? -1 : 1));
@@ -161,51 +162,60 @@ const Images: NextPageWithLayout = () => {
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
-        {loaders == 0
-          ? paginatedImages.map(image => (
-              <div key={image.name} className="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden">
-                <div className="aspect-video relative hidden sm:block">
-                  <a href={image.url} target="_blank" rel="noreferrer noopner" className="relative block aspect-video overflow-hidden">
-                    <Image src={image.url} alt={image.name} className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
-                  </a>
-                  <a type="button" className="fab absolute top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text" onClick={() => remove(image.name)}>
-                    <Icon path={mdiTrashCan} size={0.8} />
-                  </a>
-                </div>
-                <div className="flex flex-row items-center gap-2 px-3 py-2">
-                  <div className="flex-1 flex flex-col">
-                    <h4 className="font-semibold pb-1 font-robo-flex">
-                      <a href={image.url} target="_blank" rel="noreferrer noopner" className="text-theme-link">
-                        {image.name}
-                        <Icon path={mdiOpenInNew} size={0.8} className="ml-1 inline" />
-                      </a>
-                    </h4>
-                    <div className="text-sm">Posted: {new Date(image.created_at).toLocaleDateString()}</div>
+        <AnimatePresence exitBeforeEnter>
+          {loaders == 0
+            ? paginatedImages.map(image => (
+                <motion.div
+                  key={image.name}
+                  variants={fadeMotion.variants}
+                  initial="hidden"
+                  animate="enter"
+                  exit="exit"
+                  transition={fadeMotion.transition}
+                  className="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden">
+                  <div className="aspect-video relative hidden sm:block">
+                    <a href={image.url} target="_blank" rel="noreferrer noopner" className="relative block aspect-video overflow-hidden">
+                      <Image src={image.url} alt={image.name} className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
+                    </a>
+                    <a type="button" className="fab absolute top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text" onClick={() => remove(image.name)}>
+                      <Icon path={mdiTrashCan} size={0.8} />
+                    </a>
                   </div>
-                  <a
-                    type="button"
-                    className="fab !w-9 !h-9 bg-red-700 drop-shadow-theme-text sm:hidden inline-flex justify-center items-center"
-                    onClick={() => remove(image.name)}>
-                    <Icon path={mdiTrashCan} size={0.8} />
-                  </a>
-                </div>
-              </div>
-            ))
-          : Array(loaders)
-              .fill(1)
-              .map((l, i) => (
-                <div className="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden" key={i}>
-                  <div className="aspect-video motion-safe:animate-pulse bg-theme-hover bg-opacity-15 hidden sm:block" />
-                  <div className="flex-1 flex flex-col p-3 gap-2">
-                    <div className="w-2/3 h-6 flex items-center max-w-xs">
-                      <span className="motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15" />
+                  <div className="flex flex-row items-center gap-2 px-3 py-2">
+                    <div className="flex-1 flex flex-col">
+                      <h4 className="font-semibold pb-1 font-robo-flex">
+                        <a href={image.url} target="_blank" rel="noreferrer noopner" className="text-theme-link">
+                          {image.name}
+                          <Icon path={mdiOpenInNew} size={0.8} className="ml-1 inline" />
+                        </a>
+                      </h4>
+                      <div className="text-sm">Posted: {new Date(image.created_at).toLocaleDateString()}</div>
                     </div>
-                    <div className="w-full h-4 flex items-center">
-                      <span className="motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15" />
+                    <a
+                      type="button"
+                      className="fab !w-9 !h-9 bg-red-700 drop-shadow-theme-text sm:hidden inline-flex justify-center items-center"
+                      onClick={() => remove(image.name)}>
+                      <Icon path={mdiTrashCan} size={0.8} />
+                    </a>
+                  </div>
+                </motion.div>
+              ))
+            : Array(loaders)
+                .fill(1)
+                .map((l, i) => (
+                  <div className="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden" key={i}>
+                    <div className="aspect-video motion-safe:animate-pulse bg-theme-hover bg-opacity-15 hidden sm:block" />
+                    <div className="flex-1 flex flex-col p-3 gap-2">
+                      <div className="w-2/3 h-6 flex items-center max-w-xs">
+                        <span className="motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15" />
+                      </div>
+                      <div className="w-full h-4 flex items-center">
+                        <span className="motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15" />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+        </AnimatePresence>
       </div>
       {pages > 0 && loaders == 0 && <Pagination page={page} pages={pages} />}
     </div>
