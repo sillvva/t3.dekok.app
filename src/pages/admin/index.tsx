@@ -16,7 +16,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 const Admin: NextPageWithLayout = () => {
   const router = useRouter();
-  const { user, isLoading } = useAuthentication({ login: true });
+  const { user, isLoading } = useAuthentication();
 
   const page = parseInt(router.query.page ? (Array.isArray(router.query.page) ? router.query.page[0] : router.query.page) : "1");
   const qSearch = Array.isArray(router.query.search) ? router.query.search[0] : router.query.search;

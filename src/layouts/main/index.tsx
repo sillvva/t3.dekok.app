@@ -30,6 +30,7 @@ const menuItems = [
 const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
+  const { user } = useAuthentication({ login: props.layout === "admin" });
   const [oldTheme, setOldTheme] = useState(theme || "");
   const [mounted, setMounted] = useState(false);
   const [menuState, setMenuState] = useState(false);
@@ -76,6 +77,7 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
   }, [utils, router.pathname, admin, isFetching]);
 
   if (!mounted) return null;
+  if (props.layout == "admin" && !user) return null;
 
   const paths = [
     { name: "Blog", path: "/admin", value: admin?.numposts, label: "posts" },
