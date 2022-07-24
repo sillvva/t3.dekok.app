@@ -78,7 +78,7 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
     // { name: "Projects", path: "/admin/projects", value: $admin.numprojects, label: "projects" }
   ];
   const resources = [
-    { name: "Github", path: "https://github.com/sillvva/sveltekit.dekok.app" },
+    { name: "Github", path: "https://github.com/sillvva/t3.dekok.app" },
     { name: "Vercel", path: "https://vercel.com/dashboard" },
     { name: "Supabase", path: "https://app.supabase.com/" }
   ];
