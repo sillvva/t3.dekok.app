@@ -1,4 +1,5 @@
-import { useContext, useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
+import ReactDom from "react-dom";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
@@ -6,7 +7,6 @@ import { mdiChevronLeft, mdiMenu, mdiBrightness6 } from "@mdi/js";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Transition, Variants } from "framer-motion";
 import { concatenate, debounce } from "$src/utils/misc";
-import MainLayoutContext, { MainLayoutContextProvider, menuItems } from "./context";
 import { useAuthentication } from "$src/utils/hooks";
 import Page from "./components/page";
 import Icon from "@mdi/react";
@@ -18,10 +18,17 @@ import { trpc } from "$src/utils/trpc";
 import { Slide, ToastContainer } from "react-toastify";
 
 const Drawer = dynamic(() => import("$src/components/drawer"));
+const menuItems = [
+  { link: "/", label: "Intro" },
+  { link: "/about", label: "About Me" },
+  { link: "/experience", label: "Experience" },
+  { link: "/skills", label: "Skills" },
+  { link: "/projects", label: "Projects" },
+  { link: "/blog", label: "Blog" }
+];
 
 const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
   const router = useRouter();
-  const { drawer } = useContext(MainLayoutContext);
   const { theme, setTheme } = useTheme();
   const [oldTheme, setOldTheme] = useState(theme || "");
   const [mounted, setMounted] = useState(false);
@@ -156,7 +163,7 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
       ) : (
         <LayoutBody {...props}>{props.children}</LayoutBody>
       )}
-      {drawer.state ? <Drawer /> : ""}
+      <div id="drawer-root" />
       <ToastContainer position="top-center" transition={Slide} autoClose={10000} pauseOnHover pauseOnFocusLoss closeOnClick toastClassName="!alert" />
     </div>
   );
@@ -188,11 +195,11 @@ const MainLayout = (props: React.PropsWithChildren<MainLayoutProps>) => {
   const router = useRouter();
 
   return (
-    <MainLayoutContextProvider>
+    <>
       <NextNProgress color="var(--color-bg-link)" height={1} options={{ showSpinner: false }} />
       <PageMeta title={props.title} description={props.meta?.description} articleMeta={props.meta?.articleMeta} />
       <Layout {...{ ...props, path: router.pathname }}>{props.children}</Layout>
-    </MainLayoutContextProvider>
+    </>
   );
 };
 
@@ -239,9 +246,17 @@ type PageHeaderProps = {
 const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
   const router = useRouter();
   const { user } = useAuthentication();
-  const { drawer } = useContext(MainLayoutContext);
   const { theme, setTheme, themes } = useTheme();
   const [menu, setMenu] = useState(true);
+  const [drawer, setDrawer] = useState({
+    state: false,
+    action: ""
+  });
+  const [drawerRoot, setDrawerRoot] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setDrawerRoot(document.getElementById("drawer-root"));
+  }, []);
 
   useEffect(() => {
     const listener = (ev: string) => {
@@ -269,6 +284,21 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
     [onThemeChange, nextTheme]
   );
 
+  function drawerToggleHandler() {
+    if (drawer.state) {
+      setDrawer({ state: true, action: "closing" });
+      setTimeout(() => {
+        setDrawer({ state: false, action: "" });
+      }, 500);
+    } else {
+      setDrawer({ state: true, action: "opening" });
+      setTimeout(() => {
+        drawer.action = "";
+        setDrawer({ state: true, action: "" });
+      }, 500);
+    }
+  }
+
   return (
     <header className={concatenate("flex flex-col items-center transition-all duration-500", "fixed top-0 left-0 right-0 z-[3] scroll-blur")}>
       <div className="flex gap-4 w-full py-4 px-2 2xs:px-3 items-center text-center max-h-[80px]">
@@ -287,12 +317,13 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
             <button
               type="button"
               aria-label="Open Drawer"
-              onClick={drawer.toggle}
+              onClick={drawerToggleHandler}
               className={concatenate("fab", "flex", (head?.menu || router.asPath === "/") && "lg:hidden")}>
               <Icon path={mdiMenu} />
             </button>
           )}
         </div>
+        {drawerRoot && drawer.state && ReactDom.createPortal(<Drawer {...drawer} toggle={drawerToggleHandler} menuItems={menuItems} />, drawerRoot)}
         <div className="flex-1 block relative h-14">
           {head?.menu ? <nav className={concatenate("hidden justify-center gap-3 px-3 lg:flex")}>{items.length ? <PageMenu items={items} /> : ""}</nav> : ""}
           <AnimatePresence initial={false} exitBeforeEnter>
