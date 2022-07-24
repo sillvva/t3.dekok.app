@@ -121,7 +121,7 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
                     </a>
                   ) : (
                     <Link key={`admin${i}`} href={path}>
-                      <a className={concatenate("md:flex justify-between", !menuState && "hidden")}>
+                      <a className={concatenate("md:flex justify-between active:bg-theme-hover/10", !menuState && "hidden")}>
                         <div>{name}</div>
                         {isFetching ? (
                           <div className="w-24 h-4">
