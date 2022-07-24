@@ -56,10 +56,17 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
     setMenuState(!state);
   }, []);
 
+  const utils = trpc.useContext();
   const { data: admin, isFetching } = trpc.useQuery(["site.admin"], {
     enabled: props.layout == "admin",
     refetchOnWindowFocus: false
   });
+
+  useEffect(() => {
+    if (!admin && !isFetching && router.pathname.startsWith("/admin")) {
+      utils.invalidateQueries(["site.admin"]);
+    }
+  }, [utils, router.pathname, admin, isFetching])
 
   if (!mounted) return null;
 
