@@ -15,6 +15,7 @@ import Image from "next/future/image";
 import NextNProgress from "$src/components/progress";
 import PageMeta from "$src/components/meta";
 import { trpc } from "$src/utils/trpc";
+import { Slide, ToastContainer } from "react-toastify";
 
 const Drawer = dynamic(() => import("$src/components/drawer"));
 
@@ -142,6 +143,7 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
         <LayoutBody {...props}>{props.children}</LayoutBody>
       )}
       {drawer.state ? <Drawer /> : ""}
+      <ToastContainer position="top-center" transition={Slide} autoClose={10000} pauseOnHover pauseOnFocusLoss closeOnClick toastClassName="!alert" />
     </div>
   );
 };
@@ -189,6 +191,17 @@ export const mainMotion: Motion = {
     hidden: { opacity: 0 },
     enter: { opacity: 1 },
     exit: { opacity: 0 }
+  },
+  transition: {
+    duration: 0.25
+  }
+};
+
+const slideMotion: Motion = {
+  variants: {
+    hidden: { x: -100, opacity: 0 },
+    enter: { x: 0, opacity: 1 },
+    exit: { x: 100, opacity: 0 }
   },
   transition: {
     duration: 0.25

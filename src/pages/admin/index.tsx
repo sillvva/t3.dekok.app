@@ -1,4 +1,4 @@
-import type { NextPageWithLayout } from "../_app";
+import { NextPageWithLayout } from "../_app";
 import { KeyboardEventHandler, useCallback, useState } from "react";
 import Image from "next/future/image";
 import Icon from "@mdi/react";
@@ -11,6 +11,7 @@ import { useAuthentication } from "$src/utils/hooks";
 import { itemsPerPage } from "$src/utils/constants";
 import { toBase64 } from "$src/utils/misc";
 import Pagination from "$src/components/pagination";
+import { toast } from "react-toastify";
 
 const Admin: NextPageWithLayout = () => {
   const router = useRouter();
@@ -38,10 +39,14 @@ const Admin: NextPageWithLayout = () => {
   );
 
   const utils = trpc.useContext();
+  const [mutating, setMutating] = useState(true);
 
   const { data: posts, isFetching } = trpc.useQuery(["posts.get"], {
     enabled: !!user,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    onSuccess() {
+      setMutating(false);
+    }
   });
 
   const revalidator = trpc.useMutation(["site.revalidate"]);
@@ -52,24 +57,32 @@ const Admin: NextPageWithLayout = () => {
   }, [utils]);
 
   const uploadMutation = trpc.useMutation(["posts.post"], {
-    onSuccess({ error }, { slug }) {
-      // toasts.add("success", "Post uploaded successfully");
-      // toasts.add("error", error);
+    onSuccess({ success }, { slug }) {
+      if (success) {
+        toast("Post uploaded successfully", { type: "success", className: "!alert !alert-success !rounded-lg" });
+        revalidator.mutate({ paths: [`/blog/${slug}`] });
+      } else toast("Post upload failed", { type: "error", className: "!bg-red-400 !text-white !rounded-lg" });
       refresh();
-      revalidator.mutate({ paths: [`/blog/${slug}`] });
+    },
+    onMutate() {
+      setMutating(true);
     }
   });
 
   const deleteMutation = trpc.useMutation(["posts.delete"], {
-    onSuccess({ error }, { slug }) {
-      // toasts.add("success", "Post uploaded successfully");
-      // toasts.add("error", error);
+    onSuccess({ success, error }, { slug }) {
+      if (success) {
+        toast("Post deleted successfully", { type: "success", className: "!alert !alert-success !rounded-lg" });
+        revalidator.mutate({ paths: [`/blog/${slug}`] });
+      } else toast(error, { type: "error", className: "!bg-red-400 !text-white !rounded-lg" });
       refresh();
-      revalidator.mutate({ paths: [`/blog/${slug}`] });
+    },
+    onMutate() {
+      setMutating(true);
     }
   });
 
-  const upload = async () => {
+  const upload = useCallback(async () => {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "*/*";
@@ -82,17 +95,20 @@ const Admin: NextPageWithLayout = () => {
       uploadMutation.mutate({ file: base64, filename: file.name, slug: file.name.slice(0, -3) });
     };
     input.click();
-  };
+  }, [uploadMutation]);
 
-  const remove = async (slug: string) => {
-    if (!confirm("Are you sure you want to delete this post?")) return;
-    deleteMutation.mutate({ slug });
-  };
+  const remove = useCallback(
+    async (slug: string) => {
+      if (!confirm("Are you sure you want to delete this post?")) return;
+      deleteMutation.mutate({ slug });
+    },
+    [deleteMutation]
+  );
 
   if (isLoading && !user) return <PageMessage>Authenticating...</PageMessage>;
   if (!posts || !posts.length) return <PageMessage>No posts found</PageMessage>;
 
-  const loading = !(posts && !isFetching);
+  const loading = !(posts && !isFetching) || mutating;
   const numloaders = Math.min(itemsPerPage, posts.length ?? itemsPerPage);
   const loaders = loading ? numloaders : 0;
   const filteredPosts =

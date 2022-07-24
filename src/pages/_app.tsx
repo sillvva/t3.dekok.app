@@ -8,8 +8,10 @@ import superjson from "superjson";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { UserProvider } from "@supabase/auth-helpers-react";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
-import "../styles/globals.scss";
 import { Router } from "next/router";
+
+import "../styles/globals.scss";
+import 'react-toastify/dist/ReactToastify.css';
 
 export type NextPageWithLayout<P = {}> = NextPage<P> & {
   getLayout?: (page: ReactElement, props: P) => ReactNode;

@@ -35,6 +35,7 @@ specifiers:
   react-markdown: ^8.0.3
   react-query: ^3.37.0
   react-syntax-highlighter: ^15.5.0
+  react-toastify: ^9.0.7
   rehype-raw: ^6.1.1
   remark-gfm: ^3.0.1
   sass: ^1.53.0
@@ -68,6 +69,7 @@ dependencies:
   react-markdown: 8.0.3_luyos4mouogwq6z3wafb3re4ce
   react-query: 3.39.2_biqbaboplfbrettd7655fr4n2y
   react-syntax-highlighter: 15.5.0_react@18.2.0
+  react-toastify: 9.0.7_biqbaboplfbrettd7655fr4n2y
   rehype-raw: 6.1.1
   remark-gfm: 3.0.1
   sass: 1.53.0
@@ -937,6 +939,11 @@ packages:
       readdirp: 3.6.0
     optionalDependencies:
       fsevents: 2.3.2
+
+  /clsx/1.2.1:
+    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
+    engines: {node: '>=6'}
+    dev: false
 
   /color-convert/2.0.1:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
@@ -3088,6 +3095,17 @@ packages:
       prismjs: 1.28.0
       react: 18.2.0
       refractor: 3.6.0
+    dev: false
+
+  /react-toastify/9.0.7_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-UG5P/2F/fYdbK+v3XRWHM6xfMkWeLM+k2swKvwU8oO9DXx31GkeoH7Z6slBTkavZ0VjoQ+n/YD6xOBqEwN7HRg==}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      clsx: 1.2.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /react/18.2.0:
