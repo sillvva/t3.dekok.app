@@ -70,11 +70,11 @@ const Admin: NextPageWithLayout = () => {
   });
 
   const deleteMutation = trpc.useMutation(["posts.delete"], {
-    onSuccess({ success, error }, { slug }) {
+    onSuccess({ success }, { slug }) {
       if (success) {
         toast("Post deleted successfully", { type: "success", className: "!alert !alert-success !rounded-lg" });
         revalidator.mutate({ paths: [`/blog/${slug}`] });
-      } else toast(error, { type: "error", className: "!bg-red-400 !text-white !rounded-lg" });
+      } else toast("Post delete failed", { type: "error", className: "!bg-red-400 !text-white !rounded-lg" });
       refresh();
     },
     onMutate() {

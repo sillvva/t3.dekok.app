@@ -15,7 +15,7 @@ export const siteRouter = createRouter()
 
       const revalidated = [];
       const errors = [];
-      if (env.PROD_URL.includes(`//${req.headers.host}`)) {
+      if (env.NODE_ENV === "production") {
         for (let path of input.paths) {
           try {
             await res.revalidate(path);
@@ -42,8 +42,6 @@ export const siteRouter = createRouter()
       }
 
       return {
-        host: req.headers.host,
-        referer: req.headers.referer,
         revalidated,
         errors
       };

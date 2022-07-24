@@ -48,7 +48,7 @@ export const postsRouter = createRouter()
       if (extname !== ".md") throw new TRPCError({ message: "Invalid file extension", code: "INTERNAL_SERVER_ERROR" });
 
       const buffer = Buffer.from(file, "base64");
-      const { error } = await supabaseClient.storage.from("blog").upload(filename, buffer, {
+      const { error, data } = await supabaseClient.storage.from("blog").upload(filename, buffer, {
         contentType: "text/markdown",
         upsert: true
       });
@@ -57,8 +57,7 @@ export const postsRouter = createRouter()
       await fetchPosts();
 
       return {
-        success: true,
-        error
+        success: true
       };
     }
   })
@@ -76,8 +75,7 @@ export const postsRouter = createRouter()
       await fetchPosts();
 
       return {
-        success: true,
-        error: ""
+        success: true
       };
     }
   })
