@@ -88,7 +88,7 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
               "sticky w-full md:w-[300px] flex-col justify-center items-center z-[2] px-2 md:pl-4 md:pr-0",
               props.title ? "pt-24 lg:pt-36 pb-4" : "pt-20 pb-4"
             )}>
-            <ul className="menu bg-theme-article w-full p-2 rounded-lg" onClick={() => toggleMenu(menuState)}>
+            <ul className="menu bg-theme-article w-full p-2 rounded-lg shadow-md" onClick={() => toggleMenu(menuState)}>
               <li className={concatenate("menu-title hidden md:block", menuState && "!block")}>
                 <span>Admin</span>
               </li>

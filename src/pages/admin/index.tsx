@@ -106,14 +106,15 @@ const Admin: NextPageWithLayout = () => {
   );
 
   if (isLoading && !user) return <PageMessage>Authenticating...</PageMessage>;
-  if (!posts || !posts.length) return <PageMessage>No posts found</PageMessage>;
 
   const loading = !(posts && !isFetching) || mutating;
-  const numloaders = Math.min(itemsPerPage, posts.length ?? itemsPerPage);
+  if (!loading && !posts.length) return <PageMessage>No posts found</PageMessage>;
+
+  const numloaders = Math.min(itemsPerPage, (posts || []).length ?? itemsPerPage);
   const loaders = loading ? numloaders : 0;
   const filteredPosts =
     query.length > 2
-      ? posts
+      ? (posts || [])
           .filter(post => {
             return (
               post.title.toLowerCase().includes(query.toLowerCase()) ||
@@ -122,7 +123,7 @@ const Admin: NextPageWithLayout = () => {
             );
           })
           .sort((a, b) => (a.date > b.date ? -1 : 1))
-      : posts.sort((a, b) => (a.date > b.date ? -1 : 1));
+      : (posts || []).sort((a, b) => (a.date > b.date ? -1 : 1));
   const pages = Math.ceil(filteredPosts.length / itemsPerPage);
   const paginatedPosts = filteredPosts.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
@@ -130,7 +131,7 @@ const Admin: NextPageWithLayout = () => {
     <div className="flex flex-col gap-4">
       <div className="flex gap-2">
         <div className="flex-1">
-          <input type="text" value={qSearch} onKeyUp={queryHandler} placeholder="Search" className="p-2 rounded-md w-full shadow-md" />
+          <input type="text" value={qSearch} onKeyUp={queryHandler} placeholder="Search" className="input bg-theme-article w-full shadow-md" />
         </div>
         <div className="md:flex-1 flex justify-end gap-4">
           <button onClick={() => refresh()}>
