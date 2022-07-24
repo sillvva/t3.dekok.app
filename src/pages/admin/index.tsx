@@ -1,4 +1,4 @@
-import type { NextPageWithLayout } from "../_app";
+import { NextPageWithLayout } from "../_app";
 import { KeyboardEventHandler, useCallback, useState } from "react";
 import Image from "next/future/image";
 import Icon from "@mdi/react";
@@ -11,6 +11,7 @@ import { useAuthentication } from "$src/utils/hooks";
 import { itemsPerPage } from "$src/utils/constants";
 import { toBase64 } from "$src/utils/misc";
 import Pagination from "$src/components/pagination";
+import { toast } from "react-toastify";
 
 const Admin: NextPageWithLayout = () => {
   const router = useRouter();
@@ -38,10 +39,14 @@ const Admin: NextPageWithLayout = () => {
   );
 
   const utils = trpc.useContext();
+  const [mutating, setMutating] = useState(true);
 
   const { data: posts, isFetching } = trpc.useQuery(["posts.get"], {
     enabled: !!user,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    onSuccess() {
+      setMutating(false);
+    }
   });
 
   const revalidator = trpc.useMutation(["site.revalidate"]);
@@ -52,24 +57,32 @@ const Admin: NextPageWithLayout = () => {
   }, [utils]);
 
   const uploadMutation = trpc.useMutation(["posts.post"], {
-    onSuccess({ error }, { slug }) {
-      // toasts.add("success", "Post uploaded successfully");
-      // toasts.add("error", error);
+    onSuccess({ success }, { slug }) {
+      if (success) {
+        toast("Post uploaded successfully", { type: "success", className: "!alert !alert-success !rounded-lg" });
+        revalidator.mutate({ paths: [`/blog/${slug}`] });
+      } else toast("Post upload failed", { type: "error", className: "!bg-red-400 !text-white !rounded-lg" });
       refresh();
-      revalidator.mutate({ paths: [`/blog/${slug}`] });
+    },
+    onMutate() {
+      setMutating(true);
     }
   });
 
   const deleteMutation = trpc.useMutation(["posts.delete"], {
-    onSuccess({ error }, { slug }) {
-      // toasts.add("success", "Post uploaded successfully");
-      // toasts.add("error", error);
+    onSuccess({ success }, { slug }) {
+      if (success) {
+        toast("Post deleted successfully", { type: "success", className: "!alert !alert-success !rounded-lg" });
+        revalidator.mutate({ paths: [`/blog/${slug}`] });
+      } else toast("Post delete failed", { type: "error", className: "!bg-red-400 !text-white !rounded-lg" });
       refresh();
-      revalidator.mutate({ paths: [`/blog/${slug}`] });
+    },
+    onMutate() {
+      setMutating(true);
     }
   });
 
-  const upload = async () => {
+  const upload = useCallback(async () => {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "*/*";
@@ -82,23 +95,26 @@ const Admin: NextPageWithLayout = () => {
       uploadMutation.mutate({ file: base64, filename: file.name, slug: file.name.slice(0, -3) });
     };
     input.click();
-  };
+  }, [uploadMutation]);
 
-  const remove = async (slug: string) => {
-    // if (!confirm("Are you sure you want to delete this post?")) return;
-    revalidator.mutate({ paths: [`/blog/${slug}`] });
-    // deleteMutation.mutate({ slug });
-  };
+  const remove = useCallback(
+    async (slug: string) => {
+      if (!confirm("Are you sure you want to delete this post?")) return;
+      deleteMutation.mutate({ slug });
+    },
+    [deleteMutation]
+  );
 
   if (isLoading && !user) return <PageMessage>Authenticating...</PageMessage>;
-  if (!posts || !posts.length) return <PageMessage>No posts found</PageMessage>;
 
-  const loading = !(posts && !isFetching);
-  const numloaders = Math.min(itemsPerPage, posts.length ?? itemsPerPage);
+  const loading = !(posts && !isFetching) || mutating;
+  if (!loading && !posts.length) return <PageMessage>No posts found</PageMessage>;
+
+  const numloaders = Math.min(itemsPerPage, (posts || []).length ?? itemsPerPage);
   const loaders = loading ? numloaders : 0;
   const filteredPosts =
     query.length > 2
-      ? posts
+      ? (posts || [])
           .filter(post => {
             return (
               post.title.toLowerCase().includes(query.toLowerCase()) ||
@@ -107,7 +123,7 @@ const Admin: NextPageWithLayout = () => {
             );
           })
           .sort((a, b) => (a.date > b.date ? -1 : 1))
-      : posts.sort((a, b) => (a.date > b.date ? -1 : 1));
+      : (posts || []).sort((a, b) => (a.date > b.date ? -1 : 1));
   const pages = Math.ceil(filteredPosts.length / itemsPerPage);
   const paginatedPosts = filteredPosts.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
@@ -115,7 +131,7 @@ const Admin: NextPageWithLayout = () => {
     <div className="flex flex-col gap-4">
       <div className="flex gap-2">
         <div className="flex-1">
-          <input type="text" value={qSearch} onKeyUp={queryHandler} placeholder="Search" className="p-2 rounded-md w-full shadow-md" />
+          <input type="text" value={qSearch} onKeyUp={queryHandler} placeholder="Search" className="input bg-theme-article w-full shadow-md" />
         </div>
         <div className="md:flex-1 flex justify-end gap-4">
           <button onClick={() => refresh()}>
@@ -131,7 +147,7 @@ const Admin: NextPageWithLayout = () => {
           ? paginatedPosts.map(post => (
               <div key={post.slug} className="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden">
                 <div className="aspect-video relative hidden sm:block">
-                  <a href="/blog/{post.slug}" target="_blank" className="relative block aspect-video overflow-hidden">
+                  <a href={`/blog/${post.slug}`} target="_blank" rel="noreferrer noopner" className="relative block aspect-video overflow-hidden">
                     <Image src={post.image} alt={post.title} className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
                   </a>
                   <a type="button" className="fab absolute top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text" onClick={() => remove(post.slug)}>
@@ -141,7 +157,7 @@ const Admin: NextPageWithLayout = () => {
                 <div className="flex flex-row items-center gap-2 px-3 py-2">
                   <div className="flex-1 flex flex-col">
                     <h4 className="font-semibold pb-1 font-robo-flex">
-                      <a href="/blog/{post.slug}" target="_blank" className="text-theme-link">
+                      <a href={`/blog/${post.slug}`} target="_blank" rel="noreferrer noopner" className="text-theme-link">
                         {post.title}
                         <Icon path={mdiOpenInNew} size={0.8} className="ml-1 inline" />
                       </a>

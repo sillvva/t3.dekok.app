@@ -198,7 +198,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
                 </a>
                 , you can install the packages with:
               </p>
-              <div className="code npm">
+              <>
                 <div className="flex gap-2 mb-4">
                   {bashes.map(bash => (
                     <button
@@ -211,9 +211,9 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
                           else parent.querySelector(`button.${b}`)?.classList.replace("bg-theme-link", "bg-theme-article");
                         });
                         bashes.forEach(b => {
-                          console.log(parent.querySelector(`.tab.${b}`), parent);
-                          if (b === bash) parent.querySelector(`.tab.${b}`)?.classList.remove("hidden");
-                          else parent.querySelector(`.tab.${b}`)?.classList.add("hidden");
+                          console.log(parent.querySelector(`.tab-body.${b}`), parent);
+                          if (b === bash) parent.querySelector(`.tab-body.${b}`)?.classList.remove("hidden");
+                          else parent.querySelector(`.tab-body.${b}`)?.classList.add("hidden");
                         });
                       }}
                       className={concatenate(
@@ -230,11 +230,11 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
                     key={bash}
                     style={theme === "light" ? lightStyles : darkStyles}
                     language={language}
-                    className={concatenate("tab !bg-theme-code rounded-md", bash, bash !== bashes[0] && "hidden")}>
+                    className={concatenate("tab-body !bg-theme-code rounded-md", bash, bash !== bashes[0] && "hidden")}>
                     {children.map((c: string) => c.replaceAll(bashInstructions[0], bashInstructions[b]))}
                   </SyntaxHighlighter>
                 ))}
-              </div>
+              </>
             </>
           );
         }
@@ -251,6 +251,8 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
       }
     };
 
+    const mdContent = content.replace(/(```[^\n ]+) /g, "$1\n// ")
+
     return (
       <Page.Body>
         <Page.Article className="w-full xl:w-9/12 2xl:w-8/12">
@@ -266,7 +268,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
             </p>
             <div className="mb-4">
               <ReactMarkdown components={renderers} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>
-                {content}
+                {mdContent}
               </ReactMarkdown>
             </div>
             {!!(data.tags as string[]).length && (
@@ -386,6 +388,15 @@ export async function getStaticProps(context: any) {
 }
 
 export async function getStaticPaths() {
+  // When this is true (in preview environments), don't prerender any static pages
+  // (faster builds, but slower initial page load)
+  if (process.env.SKIP_BUILD_STATIC_GENERATION) {
+    return { paths: [], fallback: "blocking" };
+  }
+
+  // Get the paths we want to prerender based on posts
+  // In production environments, prerender all pages
+  // (slower builds, but faster initial page load)
   const result = await prisma?.blog.findMany();
   const posts = result || [];
 
@@ -393,7 +404,7 @@ export async function getStaticPaths() {
     paths: posts.map(p => ({
       params: { slug: p.slug }
     })),
-    fallback: true
+    fallback: "blocking"
   };
 }
 

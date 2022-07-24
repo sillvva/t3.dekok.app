@@ -57,8 +57,7 @@ export const postsRouter = createRouter()
       await fetchPosts();
 
       return {
-        success: true,
-        error
+        success: true
       };
     }
   })
@@ -76,8 +75,7 @@ export const postsRouter = createRouter()
       await fetchPosts();
 
       return {
-        success: true,
-        error: ""
+        success: true
       };
     }
   })

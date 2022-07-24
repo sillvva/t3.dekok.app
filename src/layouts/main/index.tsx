@@ -15,14 +15,17 @@ import Image from "next/future/image";
 import NextNProgress from "$src/components/progress";
 import PageMeta from "$src/components/meta";
 import { trpc } from "$src/utils/trpc";
+import { Slide, ToastContainer } from "react-toastify";
 
 const Drawer = dynamic(() => import("$src/components/drawer"));
 
 const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
+  const router = useRouter();
   const { drawer } = useContext(MainLayoutContext);
   const { theme, setTheme } = useTheme();
   const [oldTheme, setOldTheme] = useState(theme || "");
   const [mounted, setMounted] = useState(false);
+  const [menuState, setMenuState] = useState(false);
 
   useEffect(() => {
     const mm = matchMedia("(prefers-color-scheme: dark)");
@@ -48,12 +51,37 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
     setOldTheme(newTheme);
   };
 
+  const toggleMenu = useCallback((state: boolean) => {
+    if (window.innerWidth >= 768) return false;
+    setMenuState(!state);
+  }, []);
+
+  const utils = trpc.useContext();
   const { data: admin, isFetching } = trpc.useQuery(["site.admin"], {
     enabled: props.layout == "admin",
     refetchOnWindowFocus: false
   });
 
+  useEffect(() => {
+    if (!admin && !isFetching && router.pathname.startsWith("/admin")) {
+      utils.invalidateQueries(["site.admin"]);
+    }
+  }, [utils, router.pathname, admin, isFetching]);
+
   if (!mounted) return null;
+
+  const paths = [
+    { name: "Blog", path: "/admin", value: admin?.numposts, label: "posts" },
+    { name: "Images", path: "/admin/images", value: admin?.numimages, label: "images" }
+    // { name: "Experience", path: "/admin/experience", value: $admin.numexperience, label: "items" },
+    // { name: "Skills", path: "/admin/skills", value: $admin.numskills, label: "skills" },
+    // { name: "Projects", path: "/admin/projects", value: $admin.numprojects, label: "projects" }
+  ];
+  const resources = [
+    { name: "Github", path: "https://github.com/sillvva/t3.dekok.app" },
+    { name: "Vercel", path: "https://vercel.com/dashboard" },
+    { name: "Supabase", path: "https://app.supabase.com/" }
+  ];
 
   return (
     <div id="app" className="min-h-screen min-w-screen">
@@ -67,7 +95,61 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
               "sticky w-full md:w-[300px] flex-col justify-center items-center z-[2] px-2 md:pl-4 md:pr-0",
               props.title ? "pt-24 lg:pt-36 pb-4" : "pt-20 pb-4"
             )}>
-            {!isFetching && JSON.stringify(admin, null, 2)}
+            <ul className="menu bg-theme-article w-full p-2 rounded-lg shadow-md" onClick={() => toggleMenu(menuState)}>
+              <li className={concatenate("menu-title hidden md:block", menuState && "!block")}>
+                <span>Admin</span>
+              </li>
+              <li>
+                {paths.map(({ name, path, value, label }, i) =>
+                  router.pathname === path ? (
+                    <a
+                      key={`admin${i}`}
+                      className={concatenate(
+                        "md:flex justify-between active:bg-theme-hover/10",
+                        router.pathname === path && "bg-theme-hover/10 md:bg-theme-link md:text-theme-button"
+                      )}>
+                      <div>{name}</div>
+                      {isFetching ? (
+                        <div className="w-24 h-4">
+                          <span className="motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15" />
+                        </div>
+                      ) : (
+                        <div className="flex justify-end">
+                          {value} {label}
+                        </div>
+                      )}
+                    </a>
+                  ) : (
+                    <Link key={`admin${i}`} href={path}>
+                      <a className={concatenate("md:flex justify-between active:bg-theme-hover/10", !menuState && "hidden")}>
+                        <div>{name}</div>
+                        {isFetching ? (
+                          <div className="w-24 h-4">
+                            <span className="motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15" />
+                          </div>
+                        ) : (
+                          <div className="flex justify-end">
+                            {value} {label}
+                          </div>
+                        )}
+                      </a>
+                    </Link>
+                  )
+                )}
+              </li>
+              <li className={concatenate("menu-title hidden md:block", menuState && "!block")}>
+                <span>Resources</span>
+              </li>
+              <li className={concatenate("hidden md:block", menuState && "!block")}>
+                {resources.map(({ name, path }, i) => (
+                  <Link key={`admin${i}`} href={path}>
+                    <a target="_blank" rel="noreferrer noopener" className="active:bg-theme-hover/10">
+                      {name}
+                    </a>
+                  </Link>
+                ))}
+              </li>
+            </ul>
           </div>
           <LayoutBody {...props}>{props.children}</LayoutBody>
         </div>
@@ -75,6 +157,7 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
         <LayoutBody {...props}>{props.children}</LayoutBody>
       )}
       {drawer.state ? <Drawer /> : ""}
+      <ToastContainer position="top-center" transition={Slide} autoClose={10000} pauseOnHover pauseOnFocusLoss closeOnClick toastClassName="!alert" />
     </div>
   );
 };
@@ -122,6 +205,17 @@ export const mainMotion: Motion = {
     hidden: { opacity: 0 },
     enter: { opacity: 1 },
     exit: { opacity: 0 }
+  },
+  transition: {
+    duration: 0.25
+  }
+};
+
+const slideMotion: Motion = {
+  variants: {
+    hidden: { x: -100, opacity: 0 },
+    enter: { x: 0, opacity: 1 },
+    exit: { x: 100, opacity: 0 }
   },
   transition: {
     duration: 0.25
