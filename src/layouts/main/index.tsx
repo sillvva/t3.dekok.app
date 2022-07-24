@@ -6,16 +6,16 @@ import { useTheme } from "next-themes";
 import { mdiChevronLeft, mdiMenu, mdiBrightness6 } from "@mdi/js";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Transition, Variants } from "framer-motion";
+import { Slide, ToastContainer } from "react-toastify";
 import { concatenate, debounce } from "$src/utils/misc";
 import { useAuthentication } from "$src/utils/hooks";
-import Page from "./components/page";
-import Icon from "@mdi/react";
 import Link from "next/link";
 import Image from "next/future/image";
+import Page from "./components/page";
+import Icon from "@mdi/react";
 import NextNProgress from "$src/components/progress";
 import PageMeta from "$src/components/meta";
 import { trpc } from "$src/utils/trpc";
-import { Slide, ToastContainer } from "react-toastify";
 
 const Drawer = dynamic(() => import("$src/components/drawer"));
 const menuItems = [
