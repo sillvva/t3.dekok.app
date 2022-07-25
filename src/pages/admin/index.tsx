@@ -113,7 +113,7 @@ const Admin: NextPageWithLayout = () => {
   const loading = !(posts && !isFetching) || mutating;
   if (!loading && !posts.length) return <PageMessage>No posts found</PageMessage>;
 
-  const numloaders = Math.min(itemsPerPage, (posts || []).length ?? itemsPerPage);
+  const numloaders = Math.min(itemsPerPage, posts?.length ?? itemsPerPage);
   const loaders = loading ? numloaders : 0;
   const filteredPosts =
     query.length > 2

@@ -135,7 +135,7 @@ const Images: NextPageWithLayout = () => {
   const loading = !(images && !isFetching) || mutating;
   if (!loading && !images.length) return <PageMessage>No images found</PageMessage>;
 
-  const numloaders = Math.min(itemsPerPage, (images || []).length ?? itemsPerPage);
+  const numloaders = Math.min(itemsPerPage, images?.length ?? itemsPerPage);
   const loaders = loading ? numloaders : 0;
   const filteredImages =
     query.length > 2
