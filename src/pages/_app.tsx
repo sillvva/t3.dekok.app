@@ -11,7 +11,7 @@ import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { Router } from "next/router";
 
 import "../styles/globals.scss";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 export type NextPageWithLayout<P = {}> = NextPage<P> & {
   getLayout?: (page: ReactElement, props: P) => ReactNode;

@@ -1,21 +1,22 @@
 import { NextPageWithLayout } from "../_app";
 import { KeyboardEventHandler, useCallback, useState } from "react";
-import Image from "next/future/image";
-import Icon from "@mdi/react";
-import { mdiOpenInNew, mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
 import { useRouter } from "next/router";
-import MainLayout from "$src/layouts/main";
-import PageMessage from "$src/components/page-message";
+import { mdiOpenInNew, mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
+import { toast } from "react-toastify";
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { trpc } from "$src/utils/trpc";
 import { useAuthentication } from "$src/utils/hooks";
 import { itemsPerPage } from "$src/utils/constants";
 import { toBase64 } from "$src/utils/misc";
+import MainLayout from "$src/layouts/main";
+import PageMessage from "$src/components/page-message";
+import Image from "next/future/image";
+import Icon from "@mdi/react";
 import Pagination from "$src/components/pagination";
-import { toast } from "react-toastify";
 
 const Admin: NextPageWithLayout = () => {
   const router = useRouter();
-  const { user, isLoading } = useAuthentication({ login: true });
+  const { user, isLoading } = useAuthentication();
 
   const page = parseInt(router.query.page ? (Array.isArray(router.query.page) ? router.query.page[0] : router.query.page) : "1");
   const qSearch = Array.isArray(router.query.search) ? router.query.search[0] : router.query.search;
@@ -105,6 +106,8 @@ const Admin: NextPageWithLayout = () => {
     [deleteMutation]
   );
 
+  const [parent] = useAutoAnimate<HTMLDivElement>();
+
   if (isLoading && !user) return <PageMessage>Authenticating...</PageMessage>;
 
   const loading = !(posts && !isFetching) || mutating;
@@ -142,12 +145,12 @@ const Admin: NextPageWithLayout = () => {
           </button>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2" ref={parent}>
         {loaders == 0
           ? paginatedPosts.map(post => (
-              <div key={post.slug} className="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden">
-                <div className="aspect-video relative hidden sm:block">
-                  <a href={`/blog/${post.slug}`} target="_blank" rel="noreferrer noopner" className="relative block aspect-video overflow-hidden">
+              <div key={post.slug} className="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden h-64">
+                <div className="relative hidden sm:block">
+                  <a href={`/blog/${post.slug}`} target="_blank" rel="noreferrer noopner" className="relative block overflow-hidden h-40">
                     <Image src={post.image} alt={post.title} className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
                   </a>
                   <a type="button" className="fab absolute top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text" onClick={() => remove(post.slug)}>

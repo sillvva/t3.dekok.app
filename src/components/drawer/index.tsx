@@ -1,12 +1,20 @@
-import { useContext, useEffect, useState } from "react";
-import MainLayoutContext, { menuItems } from "$src/layouts/main/context";
+import { useEffect, useState } from "react";
 import HexMenu from "$src/components/hex-menu";
 import styles from "./Drawer.module.scss";
 
 const defaultMenuClasses = ["sm:scale-100", "md:scale-125"];
 
-const Drawer = () => {
-  const { drawer } = useContext(MainLayoutContext);
+type DrawerProps = {
+  state: boolean;
+  action: string;
+  toggle: () => void;
+  menuItems: {
+    link: string;
+    label: string;
+  }[];
+};
+
+const Drawer = (drawer: DrawerProps) => {
   let [menuClasses, setMenuClasses] = useState(defaultMenuClasses);
   let [drawerClasses, setDrawerClasses] = useState("hidden opacity-0");
 
@@ -25,7 +33,7 @@ const Drawer = () => {
 
   return (
     <nav className={`${styles.Drawer} ${drawerClasses}`} data-action={drawer.action} onClick={drawer.toggle}>
-      <HexMenu items={menuItems} maxLength={3} classes={menuClasses} itemClasses={["menu-bounce"]} rotated={menuItems.length % 2 == 0} />
+      <HexMenu items={drawer.menuItems} maxLength={3} classes={menuClasses} itemClasses={["menu-bounce"]} rotated={drawer.menuItems.length % 2 == 0} />
     </nav>
   );
 };

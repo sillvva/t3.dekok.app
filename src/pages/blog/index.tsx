@@ -3,15 +3,15 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import Image from "next/future/image";
-import { AnimatePresence, motion } from "framer-motion";
 import { trpc } from "$src/utils/trpc";
 import type { inferQueryOutput } from "$src/utils/trpc";
 import { concatenate } from "$src/utils/misc";
 import { itemsPerPage } from "$src/utils/constants";
 import type { NextPageWithLayout } from "../_app";
-import MainLayout, { mainMotion } from "$src/layouts/main";
+import MainLayout from "$src/layouts/main";
 import PageMessage from "$src/components/page-message";
 import { useRipple } from "$src/components/ripple";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 const Pagination = dynamic(() => import("$src/components/pagination"));
 
@@ -21,6 +21,10 @@ const Blog: NextPageWithLayout = () => {
   const limit = parseInt(query.limit ? (Array.isArray(query.limit) ? query.limit[0] : query.limit) : itemsPerPage.toString());
   const { data: posts } = trpc.useQuery(["posts.get"]);
 
+  const [parent] = useAutoAnimate<HTMLDivElement>({
+    duration: 500
+  });
+
   if (!posts) return <div className="grid gap-3 pt-3 mt-3 mx-auto md:grid-cols-2 xl:grid-cols-3 max-w-8xl">{Array(itemsPerPage).fill(<PostLoader />)}</div>;
   if (!posts.length) return <PageMessage>No posts found</PageMessage>;
 
@@ -28,20 +32,11 @@ const Blog: NextPageWithLayout = () => {
 
   return (
     <>
-      <AnimatePresence exitBeforeEnter>
-        <motion.div
-          key={paginatedPosts[0]?.slug}
-          variants={mainMotion.variants}
-          initial="hidden"
-          animate="enter"
-          exit="exit"
-          transition={mainMotion.transition}
-          className="grid gap-3 pt-3 mt-3 mx-auto md:grid-cols-2 xl:grid-cols-3 max-w-8xl">
-          {paginatedPosts.map(post => (
-            <PostCard key={post.id} {...post} />
-          ))}
-        </motion.div>
-      </AnimatePresence>
+      <div className="grid gap-3 pt-3 mt-3 mx-auto md:grid-cols-2 xl:grid-cols-3 max-w-8xl" ref={parent}>
+        {paginatedPosts.map(post => (
+          <PostCard key={post.id} {...post} />
+        ))}
+      </div>
       <div className="flex justify-center">
         {posts.length > itemsPerPage ? <Pagination page={page} pages={Math.ceil(posts.length / itemsPerPage)} /> : null}
       </div>

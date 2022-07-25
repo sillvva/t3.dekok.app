@@ -1,21 +1,22 @@
 import { NextPageWithLayout } from "../_app";
 import { KeyboardEventHandler, useCallback, useState } from "react";
-import Image from "next/future/image";
-import Icon from "@mdi/react";
-import { mdiOpenInNew, mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
 import { useRouter } from "next/router";
-import MainLayout from "$src/layouts/main";
-import PageMessage from "$src/components/page-message";
+import { mdiOpenInNew, mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
+import { toast } from "react-toastify";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { trpc } from "$src/utils/trpc";
 import { useAuthentication } from "$src/utils/hooks";
 import { itemsPerPage } from "$src/utils/constants";
 import { toBase64 } from "$src/utils/misc";
+import MainLayout from "$src/layouts/main";
+import PageMessage from "$src/components/page-message";
+import Image from "next/future/image";
+import Icon from "@mdi/react";
 import Pagination from "$src/components/pagination";
-import { toast } from "react-toastify";
 
 const Images: NextPageWithLayout = () => {
   const router = useRouter();
-  const { user, isLoading } = useAuthentication({ login: true });
+  const { user, isLoading } = useAuthentication();
 
   const page = parseInt(router.query.page ? (Array.isArray(router.query.page) ? router.query.page[0] : router.query.page) : "1");
   const qSearch = Array.isArray(router.query.search) ? router.query.search[0] : router.query.search;
@@ -76,9 +77,12 @@ const Images: NextPageWithLayout = () => {
     }
   });
 
-  const fileExists = useCallback((name: string) => {
-    return images?.find(image => image.name === name);
-  }, [images]);
+  const fileExists = useCallback(
+    (name: string) => {
+      return images?.find(image => image.name === name);
+    },
+    [images]
+  );
 
   const upload = useCallback(async () => {
     const input = document.createElement("input");
@@ -100,8 +104,7 @@ const Images: NextPageWithLayout = () => {
           let newName = prompt("Enter a new file name", `_${name}`) || "";
           if (newName.trim()) {
             const newParts = newName.trim().split(".");
-            newName =
-              newName + (parts[parts.length - 1] === newParts[newParts.length - 1] ? "" : "." + parts[parts.length - 1]);
+            newName = newName + (parts[parts.length - 1] === newParts[newParts.length - 1] ? "" : "." + parts[parts.length - 1]);
             if (newName.trim() === name) {
               while (fileExists(name)) {
                 name = `_${name}`;
@@ -125,6 +128,8 @@ const Images: NextPageWithLayout = () => {
     [deleteMutation]
   );
 
+  const [parent] = useAutoAnimate<HTMLDivElement>();
+
   if (isLoading && !user) return <PageMessage>Authenticating...</PageMessage>;
 
   const loading = !(images && !isFetching) || mutating;
@@ -136,9 +141,7 @@ const Images: NextPageWithLayout = () => {
     query.length > 2
       ? (images || [])
           .filter(image => {
-            return (
-              image.name.toLowerCase().includes(query.toLowerCase())
-            );
+            return image.name.toLowerCase().includes(query.toLowerCase());
           })
           .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
       : (images || []).sort((a, b) => (a.created_at > b.created_at ? -1 : 1));
@@ -160,12 +163,12 @@ const Images: NextPageWithLayout = () => {
           </button>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2" ref={parent}>
         {loaders == 0
           ? paginatedImages.map(image => (
-              <div key={image.name} className="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden">
-                <div className="aspect-video relative hidden sm:block">
-                  <a href={image.url} target="_blank" rel="noreferrer noopner" className="relative block aspect-video overflow-hidden">
+              <div key={image.name} className="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden max-h-64">
+                <div className="relative hidden sm:block">
+                  <a href={image.url} target="_blank" rel="noreferrer noopner" className="relative block overflow-hidden h-40">
                     <Image src={image.url} alt={image.name} className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
                   </a>
                   <a type="button" className="fab absolute top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text" onClick={() => remove(image.name)}>

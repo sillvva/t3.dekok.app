@@ -10,6 +10,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@formkit/auto-animate": "1.0.0-beta.1",
     "@mdi/js": "^7.0.96",
     "@mdi/react": "^1.6.0",
     "@prisma/client": "^4.1.0",

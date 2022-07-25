@@ -1,7 +1,7 @@
 import Image from "next/future/image";
 import type { FunctionComponent, PropsWithChildren } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { mainMotion } from "$src/layouts/main";
+import { fadeMotion } from "$src/layouts/main";
 import { concatenate as concatenate } from "$src/utils/misc";
 
 type PageBgProps = {
@@ -14,7 +14,7 @@ const PageBg: FunctionComponent<PageBgProps> = ({ theme, init }) => {
     <AnimatePresence initial={!!init}>
       <motion.div
         key={theme}
-        variants={mainMotion.variants}
+        variants={fadeMotion.variants}
         initial="hidden"
         animate="enter"
         exit="exit"
