@@ -104,6 +104,7 @@
   --darkBackground: rgb(34, 38, 41);
   --blogHeaderShade: rgb(24, 24, 24);
   --blogHeaderText: rgb(245, 245, 245);
+  --headerOpacity: 0.6;
   --shadowColor: rgba(0, 0, 0, 0.2);
   --shadowHover: rgba(0, 0, 0, var(--shadowHoverOpacity));
   --PayPal1: rgb(0, 48, 135);
@@ -256,7 +257,7 @@
   }
   .scroll-blur {
     html[data-scroll]:not([data-scroll="0"]) & {
-      @apply backdrop-blur-lg bg-[color:rgba(var(--background),var(--headerOpacity))];
+      @apply backdrop-blur-lg bg-[color:rgba(var(--color-bg-body),var(--headerOpacity))];
     }
   }
   .fab {

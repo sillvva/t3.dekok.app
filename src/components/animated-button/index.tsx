@@ -21,7 +21,7 @@ export default function AnimatedButton(props: AnimatedButtonProps) {
     active = false,
     itemClasses = ["Button5"],
     color = "var(--color-text-link)",
-    hoverColor = "rgb(var(--color-bg-body))",
+    hoverColor = "rgba(var(--color-bg-body), 0.6)",
     activeColor = "rgb(var(--color-bg-body))",
     textColor = "var(--color-text-link)",
     link = "",
