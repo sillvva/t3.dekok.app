@@ -180,7 +180,7 @@ const MeDetails = (props: MeDetailsProps) => {
       </div>
       <div
         className={[
-          "w-6/12 sm:w-3/12 md:w-6/12 2xl:w-3/12 text-left md:text-left py-1 px-1.5",
+          "w-6/12 sm:w-3/12 md:w-6/12 2xl:w-3/12 text-left md:text-left py-1 px-1.5 font-robo-flex",
           props.full && "w-full text-center pt-0 sm:w-9/12 sm:text-left md:w-full md:text-center 2xl:w-9/12 2xl:text-left"
         ]
           .filter(c => !!c)

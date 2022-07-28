@@ -307,12 +307,12 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
       <div className="flex gap-4 w-full py-4 px-2 2xs:px-3 items-center text-center max-h-[80px]">
         <div className="w-12">
           {head?.backTo === true ? (
-            <a type="button" className="fab" onClick={router.back}>
+            <button className="fab" onClick={router.back}>
               <Icon path={mdiChevronLeft} />
-            </a>
+            </button>
           ) : head?.backTo ? (
             <Link href={head?.backTo}>
-              <a type="button" className="fab">
+              <a className="fab">
                 <Icon path={mdiChevronLeft} />
               </a>
             </Link>

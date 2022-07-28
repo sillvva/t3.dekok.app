@@ -192,9 +192,9 @@
     @apply relative z-0;
     &::before {
       content: "";
-      @apply absolute -left-1/2 -top-1/2 -z-20 w-[200%] h-[200%] animate-spin-medium;
-      @apply left-[calc(50%-max(60vw,50vh))] top-[calc(50%-max(60vw,50vh))] w-[max(120vw,100vh)] h-[max(120vw,100vh)];
-      @apply bg-theme-body bg-no-repeat;
+      @apply absolute -z-20 w-[max(120vw,100vh)] h-[max(120vw,100vh)];
+      @apply left-[calc(50%-max(60vw,50vh))] top-[calc(50%-max(60vw,50vh))];
+      @apply animate-spin-medium bg-theme-body bg-no-repeat;
       background-image: conic-gradient(
         var(--color-bg-article) 0deg,
         var(--color-bg-link) 90deg,
