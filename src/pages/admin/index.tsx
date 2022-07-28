@@ -5,7 +5,6 @@ import { mdiOpenInNew, mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
 import { toast } from "react-toastify";
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { trpc } from "$src/utils/trpc";
-import { useAuthentication } from "$src/utils/hooks";
 import { itemsPerPage } from "$src/utils/constants";
 import { toBase64 } from "$src/utils/misc";
 import MainLayout from "$src/layouts/main";
@@ -16,7 +15,6 @@ import Pagination from "$src/components/pagination";
 
 const Admin: NextPageWithLayout = () => {
   const router = useRouter();
-  const { user, isLoading } = useAuthentication();
 
   const page = parseInt(router.query.page ? (Array.isArray(router.query.page) ? router.query.page[0] : router.query.page) : "1");
   const qSearch = Array.isArray(router.query.search) ? router.query.search[0] : router.query.search;
@@ -43,7 +41,6 @@ const Admin: NextPageWithLayout = () => {
   const [mutating, setMutating] = useState(true);
 
   const { data: posts, isFetching } = trpc.useQuery(["posts.get"], {
-    enabled: !!user,
     refetchOnWindowFocus: false,
     onSuccess() {
       setMutating(false);
@@ -108,12 +105,10 @@ const Admin: NextPageWithLayout = () => {
 
   const [parent] = useAutoAnimate<HTMLDivElement>();
 
-  if (isLoading && !user) return <PageMessage>Authenticating...</PageMessage>;
-
   const loading = !(posts && !isFetching) || mutating;
   if (!loading && !posts.length) return <PageMessage>No posts found</PageMessage>;
 
-  const numloaders = Math.min(itemsPerPage, (posts || []).length ?? itemsPerPage);
+  const numloaders = Math.min(itemsPerPage, posts?.length ?? itemsPerPage);
   const loaders = loading ? numloaders : 0;
   const filteredPosts =
     query.length > 2

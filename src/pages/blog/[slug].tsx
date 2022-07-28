@@ -131,7 +131,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
         const isExternal = href.startsWith("http");
         return (
           <Link href={href} scroll={false}>
-            <a target={isExternal ? "_blank" : ""} rel={isExternal ? "noreferrer noopener" : ""}>
+            <a target={isExternal ? "_blank" : ""} rel={isExternal ? "noreferrer noopener" : ""} className="text-theme-link">
               {children}
             </a>
           </Link>
@@ -263,7 +263,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
           )}
           <Page.Section>
             <p className="mb-4 text-gray-400mb-2 text-sm underline text-theme-link decoration-dotted underline-offset-2" aria-label="Date published">
-              <span>{data.date}</span>
+              <span>{data.date}</span>{" "}
               <span>{data.updated && `(Updated: ${data.updated})`}</span>
             </p>
             <div className="mb-4">

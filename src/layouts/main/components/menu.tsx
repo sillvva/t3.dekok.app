@@ -24,7 +24,7 @@ const PageMenu = (props: PageMenuProps) => {
     maxLength = 0,
     itemClasses = [],
     color = "var(--color-text-link)",
-    hoverColor = "rgb(var(--color-bg-body))",
+    hoverColor = "rgba(var(--color-bg-body), 0.6)",
     activeColor = "rgb(var(--color-bg-body))",
     textColor = "var(--color-text-link)",
     items

@@ -16,6 +16,7 @@ import Icon from "@mdi/react";
 import NextNProgress from "$src/components/progress";
 import PageMeta from "$src/components/meta";
 import { trpc } from "$src/utils/trpc";
+import PageMessage from "$src/components/page-message";
 
 const Drawer = dynamic(() => import("$src/components/drawer"));
 const menuItems = [
@@ -30,7 +31,7 @@ const menuItems = [
 const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const { user } = useAuthentication({ login: props.layout === "admin" });
+  const { user, isLoading } = useAuthentication({ login: props.layout === "admin" });
   const [oldTheme, setOldTheme] = useState(theme || "");
   const [mounted, setMounted] = useState(false);
   const [menuState, setMenuState] = useState(false);
@@ -160,7 +161,7 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
               </li>
             </ul>
           </div>
-          <LayoutBody {...props}>{props.children}</LayoutBody>
+          {!user ? <PageMessage>{isLoading ? "Authenticating..." : "Not logged in"}</PageMessage> : <LayoutBody {...props}>{props.children}</LayoutBody>}
         </div>
       ) : (
         <LayoutBody {...props}>{props.children}</LayoutBody>
@@ -306,12 +307,12 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
       <div className="flex gap-4 w-full py-4 px-2 2xs:px-3 items-center text-center max-h-[80px]">
         <div className="w-12">
           {head?.backTo === true ? (
-            <a type="button" className="fab" onClick={router.back}>
+            <button className="fab" onClick={router.back}>
               <Icon path={mdiChevronLeft} />
-            </a>
+            </button>
           ) : head?.backTo ? (
             <Link href={head?.backTo}>
-              <a type="button" className="fab">
+              <a className="fab">
                 <Icon path={mdiChevronLeft} />
               </a>
             </Link>
