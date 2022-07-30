@@ -302,4 +302,11 @@
   .gallery-item {
     @apply w-full relative block aspect-video bg-theme-article shadow-lg rounded-md overflow-hidden transition-all duration-500 p-2;
   }
+  .loader-line {
+    @apply flex items-center;
+    &::before {
+      content: "";
+      @apply motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15;
+    }
+  }
 }

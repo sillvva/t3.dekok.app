@@ -177,12 +177,8 @@ const Admin: NextPageWithLayout = () => {
                 <div className="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden" key={i}>
                   <div className="aspect-video motion-safe:animate-pulse bg-theme-hover bg-opacity-15 hidden sm:block" />
                   <div className="flex-1 flex flex-col p-3 gap-2">
-                    <div className="w-2/3 h-6 flex items-center max-w-xs">
-                      <span className="motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15" />
-                    </div>
-                    <div className="w-full h-4 flex items-center">
-                      <span className="motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15" />
-                    </div>
+                    <div className="loader-line w-2/3 h-6 max-w-xs" />
+                    <div className="loader-line w-full h-4" />
                   </div>
                 </div>
               ))}

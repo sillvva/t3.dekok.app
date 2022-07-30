@@ -15,7 +15,7 @@ import Page from "./components/page";
 import Icon from "@mdi/react";
 import NextNProgress from "$src/components/progress";
 import PageMeta from "$src/components/meta";
-import { inferQueryOutput, trpc } from "$src/utils/trpc";
+import { trpc } from "$src/utils/trpc";
 import PageMessage from "$src/components/page-message";
 
 const PageMenu = dynamic(() => import("./components/menu"));

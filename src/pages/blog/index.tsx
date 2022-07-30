@@ -98,18 +98,10 @@ export const PostLoader = () => {
       )}>
       <div className="relative h-full min-w-[8rem] max-w-[8rem] motion-safe:animate-pulse bg-gray-500/50"></div>
       <div className="flex flex-col flex-1 p-4 gap-2">
-        <div className="w-2/3 h-6 flex items-center">
-          <span className="motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15"></span>
-        </div>
-        <div className="w-1/2 h-4 flex items-center">
-          <span className="motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15"></span>
-        </div>
-        <div className="w-full h-4 flex items-center">
-          <span className="motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15"></span>
-        </div>
-        <div className="w-full h-4 flex items-center">
-          <span className="motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15"></span>
-        </div>
+        <div className="loader-line w-2/3 h-6" />
+        <div className="loader-line w-1/2 h-4" />
+        <div className="loader-line w-full h-4" />
+        <div className="loader-line w-full h-4" />
       </div>
     </div>
   );
