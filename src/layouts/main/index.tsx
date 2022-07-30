@@ -15,9 +15,10 @@ import Page from "./components/page";
 import Icon from "@mdi/react";
 import NextNProgress from "$src/components/progress";
 import PageMeta from "$src/components/meta";
-import { trpc } from "$src/utils/trpc";
+import { inferQueryOutput, trpc } from "$src/utils/trpc";
 import PageMessage from "$src/components/page-message";
 
+const PageMenu = dynamic(() => import("./components/menu"));
 const Drawer = dynamic(() => import("$src/components/drawer"));
 const menuItems = [
   { link: "/", label: "Intro" },
@@ -28,13 +29,11 @@ const menuItems = [
   { link: "/blog", label: "Blog" }
 ];
 
-const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
-  const router = useRouter();
+const MainLayout = (props: React.PropsWithChildren<MainLayoutProps>) => {
   const { theme, setTheme } = useTheme();
   const { user, isLoading } = useAuthentication({ login: props.layout === "admin" });
   const [oldTheme, setOldTheme] = useState(theme || "");
   const [mounted, setMounted] = useState(false);
-  const [menuState, setMenuState] = useState(false);
 
   useEffect(() => {
     const mm = matchMedia("(prefers-color-scheme: dark)");
@@ -60,107 +59,19 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
     setOldTheme(newTheme);
   };
 
-  const toggleMenu = useCallback((state: boolean) => {
-    if (window.innerWidth >= 768) return false;
-    setMenuState(!state);
-  }, []);
-
-  const utils = trpc.useContext();
-  const { data: admin, isFetching } = trpc.useQuery(["site.admin"], {
-    enabled: props.layout == "admin",
-    refetchOnWindowFocus: false
-  });
-
-  useEffect(() => {
-    if (!admin && !isFetching && router.pathname.startsWith("/admin")) {
-      utils.invalidateQueries(["site.admin"]);
-    }
-  }, [utils, router.pathname, admin, isFetching]);
-
   if (!mounted) return null;
   if (props.layout == "admin" && !user) return null;
 
-  const paths = [
-    { name: "Blog", path: "/admin", value: admin?.numposts, label: "posts" },
-    { name: "Images", path: "/admin/images", value: admin?.numimages, label: "images" }
-    // { name: "Experience", path: "/admin/experience", value: $admin.numexperience, label: "items" },
-    // { name: "Skills", path: "/admin/skills", value: $admin.numskills, label: "skills" },
-    // { name: "Projects", path: "/admin/projects", value: $admin.numprojects, label: "projects" }
-  ];
-  const resources = [
-    { name: "Github", path: "https://github.com/sillvva/t3.dekok.app" },
-    { name: "Vercel", path: "https://vercel.com/dashboard" },
-    { name: "Supabase", path: "https://app.supabase.com/" }
-  ];
-
   return (
     <div id="app" className="min-h-screen min-w-screen">
+      <NextNProgress color="var(--color-bg-link)" height={1} options={{ showSpinner: false }} />
+      <PageMeta title={props.title} description={props.meta?.description} articleMeta={props.meta?.articleMeta} />
       {theme && theme !== oldTheme && <Page.Bg theme={oldTheme || ""} />}
       <Page.Bg key={theme} theme={theme} init={mounted} />
       <PageHeader head={props} layoutMotion={fadeMotion} onThemeChange={themeChangeHandler} />
       {props.layout == "admin" ? (
         <div className="flex flex-col md:flex-row relative">
-          <div
-            className={concatenate(
-              "sticky w-full md:w-[300px] flex-col justify-center items-center z-[2] px-2 md:pl-4 md:pr-0",
-              props.title ? "pt-24 lg:pt-36 pb-4" : "pt-20 pb-4"
-            )}>
-            <ul className="menu bg-theme-article w-full p-2 rounded-lg shadow-md" onClick={() => toggleMenu(menuState)}>
-              <li className={concatenate("menu-title hidden md:block", menuState && "!block")}>
-                <span>Admin</span>
-              </li>
-              <li>
-                {paths.map(({ name, path, value, label }, i) =>
-                  router.pathname === path ? (
-                    <a
-                      key={`admin${i}`}
-                      className={concatenate(
-                        "md:flex justify-between active:bg-theme-hover/10",
-                        router.pathname === path && "bg-theme-hover/10 md:bg-theme-link md:text-theme-button"
-                      )}>
-                      <div>{name}</div>
-                      {isFetching ? (
-                        <div className="w-24 h-4">
-                          <span className="motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15" />
-                        </div>
-                      ) : (
-                        <div className="flex justify-end">
-                          {value} {label}
-                        </div>
-                      )}
-                    </a>
-                  ) : (
-                    <Link key={`admin${i}`} href={path}>
-                      <a className={concatenate("md:flex justify-between active:bg-theme-hover/10", !menuState && "hidden")}>
-                        <div>{name}</div>
-                        {isFetching ? (
-                          <div className="w-24 h-4">
-                            <span className="motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15" />
-                          </div>
-                        ) : (
-                          <div className="flex justify-end">
-                            {value} {label}
-                          </div>
-                        )}
-                      </a>
-                    </Link>
-                  )
-                )}
-              </li>
-              <li className={concatenate("menu-title hidden md:block", menuState && "!block")}>
-                <span>Resources</span>
-              </li>
-              <li className={concatenate("hidden md:block", menuState && "!block")}>
-                {resources.map(({ name, path }, i) => (
-                  <Link key={`admin${i}`} href={path}>
-                    <a target="_blank" rel="noreferrer noopener" className="active:bg-theme-hover/10">
-                      {name}
-                    </a>
-                  </Link>
-                ))}
-              </li>
-            </ul>
-          </div>
+          <AdminMenu {...props} />
           {!user ? <PageMessage>{isLoading ? "Authenticating..." : "Not logged in"}</PageMessage> : <LayoutBody {...props}>{props.children}</LayoutBody>}
         </div>
       ) : (
@@ -171,6 +82,8 @@ const Layout = (props: React.PropsWithChildren<MainLayoutProps>) => {
     </div>
   );
 };
+
+export default MainLayout;
 
 const LayoutBody = (props: React.PropsWithChildren<MainLayoutProps>) => {
   const router = useRouter();
@@ -193,20 +106,6 @@ const LayoutBody = (props: React.PropsWithChildren<MainLayoutProps>) => {
     </AnimatePresence>
   );
 };
-
-const MainLayout = (props: React.PropsWithChildren<MainLayoutProps>) => {
-  const router = useRouter();
-
-  return (
-    <>
-      <NextNProgress color="var(--color-bg-link)" height={1} options={{ showSpinner: false }} />
-      <PageMeta title={props.title} description={props.meta?.description} articleMeta={props.meta?.articleMeta} />
-      <Layout {...{ ...props, path: router.pathname }}>{props.children}</Layout>
-    </>
-  );
-};
-
-export default MainLayout;
 
 type Motion = { variants?: Variants; transition?: Transition };
 
@@ -238,8 +137,6 @@ type LayoutMeta = {
   articleMeta?: object;
 };
 
-const PageMenu = dynamic(() => import("./components/menu"));
-
 type PageHeaderProps = {
   head: MainLayoutProps;
   layoutMotion?: { variants?: Variants; transition?: Transition };
@@ -251,15 +148,11 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
   const { user } = useAuthentication();
   const { theme, setTheme, themes } = useTheme();
   const [menu, setMenu] = useState(true);
+  const [drawerRoot, setDrawerRoot] = useState<HTMLElement | null>(null);
   const [drawer, setDrawer] = useState({
     state: false,
     action: ""
   });
-  const [drawerRoot, setDrawerRoot] = useState<HTMLElement | null>(null);
-
-  useEffect(() => {
-    setDrawerRoot(document.getElementById("drawer-root"));
-  }, []);
 
   useEffect(() => {
     const listener = (ev: string) => {
@@ -288,6 +181,7 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
   );
 
   function drawerToggleHandler() {
+    if (!drawerRoot) setDrawerRoot(document.getElementById("drawer-root"));
     if (drawer.state) {
       setDrawer({ state: true, action: "closing" });
       setTimeout(() => {
@@ -397,5 +291,104 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
         )}
       </AnimatePresence>
     </header>
+  );
+};
+
+const AdminMenu = (layoutProps: MainLayoutProps) => {
+  const router = useRouter();
+  const [menuState, setMenuState] = useState(false);
+
+  const toggleMenu = useCallback((state: boolean) => {
+    if (window.innerWidth >= 768) return false;
+    setMenuState(!state);
+  }, []);
+
+  const utils = trpc.useContext();
+  const { data: admin, isFetching } = trpc.useQuery(["site.admin"], {
+    enabled: layoutProps.layout == "admin",
+    refetchOnWindowFocus: false
+  });
+
+  useEffect(() => {
+    if (!admin && !isFetching && router.pathname.startsWith("/admin")) {
+      utils.invalidateQueries(["site.admin"]);
+    }
+  }, [utils, router.pathname, admin, isFetching]);
+
+  const paths = [
+    { name: "Blog", path: "/admin", value: admin?.numposts, label: "posts" },
+    { name: "Images", path: "/admin/images", value: admin?.numimages, label: "images" }
+    // { name: "Experience", path: "/admin/experience", value: $admin.numexperience, label: "items" },
+    // { name: "Skills", path: "/admin/skills", value: $admin.numskills, label: "skills" },
+    // { name: "Projects", path: "/admin/projects", value: $admin.numprojects, label: "projects" }
+  ];
+  const resources = [
+    { name: "Github", path: "https://github.com/sillvva/t3.dekok.app" },
+    { name: "Vercel", path: "https://vercel.com/dashboard" },
+    { name: "Supabase", path: "https://app.supabase.com/" }
+  ];
+
+  return (
+    <div
+      className={concatenate(
+        "sticky w-full md:w-[300px] flex-col justify-center items-center z-[2] px-2 md:pl-4 md:pr-0",
+        layoutProps.title ? "pt-24 lg:pt-36 pb-4" : "pt-20 pb-4"
+      )}>
+      <ul className="menu bg-theme-article w-full p-2 rounded-lg shadow-md" onClick={() => toggleMenu(menuState)}>
+        <li className={concatenate("menu-title hidden md:block", menuState && "!block")}>
+          <span>Admin</span>
+        </li>
+        <li>
+          {paths.map(({ name, path, value, label }, i) =>
+            router.pathname === path ? (
+              <a
+                key={`admin${i}`}
+                className={concatenate(
+                  "md:flex justify-between active:bg-theme-hover/10",
+                  router.pathname === path && "bg-theme-hover/10 md:bg-theme-link md:text-theme-button"
+                )}>
+                <div>{name}</div>
+                {!admin ? (
+                  <div className="w-24 h-4">
+                    <span className="motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15" />
+                  </div>
+                ) : (
+                  <div className="flex justify-end">
+                    {value} {label}
+                  </div>
+                )}
+              </a>
+            ) : (
+              <Link key={`admin${i}`} href={path}>
+                <a className={concatenate("md:flex justify-between active:bg-theme-hover/10", !menuState && "hidden")}>
+                  <div>{name}</div>
+                  {!admin ? (
+                    <div className="w-24 h-4">
+                      <span className="motion-safe:animate-pulse bg-gray-500/50 block overflow-hidden w-full h-full rounded-full bg-theme-hover bg-opacity-15" />
+                    </div>
+                  ) : (
+                    <div className="flex justify-end">
+                      {value} {label}
+                    </div>
+                  )}
+                </a>
+              </Link>
+            )
+          )}
+        </li>
+        <li className={concatenate("menu-title hidden md:block", menuState && "!block")}>
+          <span>Resources</span>
+        </li>
+        <li className={concatenate("hidden md:block", menuState && "!block")}>
+          {resources.map(({ name, path }, i) => (
+            <Link key={`admin${i}`} href={path}>
+              <a target="_blank" rel="noreferrer noopener" className="active:bg-theme-hover/10">
+                {name}
+              </a>
+            </Link>
+          ))}
+        </li>
+      </ul>
+    </div>
   );
 };

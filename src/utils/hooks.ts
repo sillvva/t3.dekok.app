@@ -9,7 +9,22 @@ export const useAuthentication = (options?: { login?: boolean }) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (login && !userState.isLoading && !userState.user) {
+    if (userState.user) return;
+
+    // If auth helpers is not working, handle session manually
+    const [url, hash] = router.asPath.split("#");
+    if (hash && hash.includes("access_token=")) {
+      const parts = hash.split("&");
+      const refreshToken = parts.find(p => p.startsWith("refresh_token="));
+      if (refreshToken) {
+        const [, refreshTokenValue] = refreshToken.split("=");
+        supabaseClient.auth.setSession(refreshTokenValue);
+        history.replaceState(null, "", url);
+      }
+      return;
+    }
+
+    if (login && !userState.isLoading) {
       supabaseClient.auth.signIn(
         {
           provider: "github"
@@ -19,22 +34,7 @@ export const useAuthentication = (options?: { login?: boolean }) => {
         }
       );
     }
-  }, [login, router, userState.isLoading, userState.user]);
-
-  useEffect(() => {
-    // If auth helpers is not working, handle session manually
-    if (userState.user) return;
-    const [url, hash] = router.asPath.split("#");
-    if (hash && hash.startsWith("access_token=")) {
-      const parts = hash.split("&");
-      const refreshToken = parts.find(p => p.startsWith("refresh_token="));
-      if (refreshToken) {
-        const [, refreshTokenValue] = refreshToken.split("=");
-        supabaseClient.auth.setSession(refreshTokenValue);
-        history.replaceState(null, "", url);
-      }
-    }
-  }, [router, userState]);
+  }, [login, router, userState]);
 
   return userState;
 };
