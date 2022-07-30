@@ -106,7 +106,7 @@ type HexMenuItemProps = {
 const HexMenuItem = (props: HexMenuItemProps) => {
   return props.link ? (
     <Link href={props.link}>
-      <a className={parseCSSModules(styles, [styles.HexMenuItemContainer, props.rotated && styles.rotated, ...props.classes])}>
+      <a className={parseCSSModules(styles, [styles.HexMenuItemContainer, props.rotated && styles.rotated, ...props.classes])} aria-label={props.label}>
         <svg
           viewBox="0 0 800 800"
           className={concatenate(styles.HexItem, props.rotated && styles.rotated, !props.label && styles.empty, props.active && styles.active)}

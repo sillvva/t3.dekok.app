@@ -7,6 +7,7 @@
   src: local("Roboto Flex"), url("/fonts/RobotoFlex-VariableFont_GRAD,XTRA,YOPQ,YTAS,YTDE,YTFI,YTLC,YTUC,opsz,slnt,wdth,wght.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
+  font-display: swap
 }
 
 @font-face {
@@ -14,6 +15,7 @@
   src: local("Montserrat"), url("/fonts/Montserrat-VariableFont_wght.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
+  font-display: swap
 }
 
 @mixin light-theme {
