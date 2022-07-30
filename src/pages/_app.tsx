@@ -28,9 +28,7 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
   return (
     <UserProvider supabaseClient={supabaseClient}>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider themes={["dark", "light", "blue"]}>
-          {getLayout(<Component {...pageProps} />, pageProps)}
-        </ThemeProvider>
+        <ThemeProvider themes={["dark", "light", "blue"]}>{getLayout(<Component {...pageProps} />, pageProps)}</ThemeProvider>
       </QueryClientProvider>
     </UserProvider>
   );

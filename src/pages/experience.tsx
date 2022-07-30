@@ -8,7 +8,7 @@ const Experience: NextPageWithLayout<{
   experience: (experience_categories & {
     experience: experience[];
   })[];
-}> = (props) => {
+}> = props => {
   return (
     <Page.Body>
       <Page.Article className="w-full md:w-9/12 lg:w-9/12 xl:w-8/12 2xl:w-7/12">

@@ -3,7 +3,7 @@ import { KeyboardEventHandler, useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { mdiOpenInNew, mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
 import { toast } from "react-toastify";
-import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { trpc } from "$src/utils/trpc";
 import { itemsPerPage } from "$src/utils/constants";
 import { toBase64 } from "$src/utils/misc";

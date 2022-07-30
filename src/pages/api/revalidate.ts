@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const revalidated = [];
       if (req.query.path) {
         let paths = Array.isArray(req.query.path) ? req.query.path : [req.query.path];
-        for(let i in paths) {
+        for (let i in paths) {
           await res.revalidate(paths[i]);
           revalidated.push(paths[i]);
         }
