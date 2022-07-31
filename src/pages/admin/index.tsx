@@ -143,7 +143,7 @@ const Admin: NextPageWithLayout = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2" ref={parent}>
         {loaders == 0
           ? paginatedPosts.map(post => (
-              <div key={post.slug} className="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden h-64">
+              <div key={post.slug} className="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden h-56">
                 <div className="relative hidden sm:block">
                   <a href={`/blog/${post.slug}`} target="_blank" rel="noreferrer noopner" className="relative block overflow-hidden h-40">
                     <Image src={post.image} alt={post.title} className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
@@ -153,11 +153,10 @@ const Admin: NextPageWithLayout = () => {
                   </a>
                 </div>
                 <div className="flex flex-row items-center gap-2 px-3 py-2">
-                  <div className="flex-1 flex flex-col">
-                    <h4 className="font-semibold pb-1 font-robo-flex">
+                  <div className="flex-1 flex flex-col max-w-full">
+                    <h4 className="font-semibold pb-1 font-robo-flex overflow-hidden whitespace-nowrap text-ellipsis">
                       <a href={`/blog/${post.slug}`} target="_blank" rel="noreferrer noopner" className="text-theme-link">
                         {post.title}
-                        <Icon path={mdiOpenInNew} size={0.8} className="ml-1 inline" />
                       </a>
                     </h4>
                     <div className="text-sm">Posted: {new Date(post.date).toLocaleDateString()}</div>

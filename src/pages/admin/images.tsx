@@ -171,14 +171,13 @@ const Images: NextPageWithLayout = () => {
                   </a>
                 </div>
                 <div className="flex flex-row items-center gap-2 px-3 py-2">
-                  <div className="flex-1 flex flex-col">
-                    <h4 className="font-semibold pb-1 font-robo-flex">
+                  <div className="flex-1 flex flex-col max-w-full">
+                    <h4 className="font-semibold pb-1 font-robo-flex overflow-hidden whitespace-nowrap text-ellipsis">
                       <a href={image.url} target="_blank" rel="noreferrer noopner" className="text-theme-link">
                         {image.name}
-                        <Icon path={mdiOpenInNew} size={0.8} className="ml-1 inline" />
                       </a>
                     </h4>
-                    <div className="text-sm">Posted: {new Date(image.created_at).toLocaleDateString()}</div>
+                    <div className="text-sm">Uploaded: {new Date(image.created_at).toLocaleDateString()}</div>
                   </div>
                   <a
                     type="button"
