@@ -59,7 +59,6 @@ const MainLayout = (props: React.PropsWithChildren<MainLayoutProps>) => {
     setOldTheme(newTheme);
   };
 
-  if (!mounted) return null;
   if (props.layout == "admin" && !user) return null;
 
   return (
