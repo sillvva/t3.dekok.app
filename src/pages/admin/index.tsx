@@ -143,7 +143,12 @@ const Admin: NextPageWithLayout = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2" ref={parent}>
         {loaders == 0
           ? paginatedPosts.map(post => (
-              <a key={post.slug} href={`/blog/${post.slug}`} className="block relative overflow-hidden rounded-lg h-16 sm:h-56">
+              <a
+                key={post.slug}
+                href={`/blog/${post.slug}`}
+                className="block relative overflow-hidden rounded-lg h-16 sm:h-56"
+                target="_blank"
+                rel="noreferrer noopener">
                 <a
                   type="button"
                   className="fab absolute hidden sm:flex top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text"

@@ -26,14 +26,14 @@ const PageMeta = (props: PropsWithChildren<MetaProps>) => {
   const ogProperties: any = {
     title: dtitle,
     description: description,
-    image: `https://matt.dekok.app${props.image || "/images/preview-me3.jpeg"}`,
+    image: props.image && props.image.startsWith("http") ? props.image : `https://matt.dekok.app${props.image || "/images/preview-me3.jpeg"}`,
     url: "https://matt.dekok.app"
   };
   const ogOnlyProperties: any = {
     ...ogProperties,
     type: "website",
     site_name: dtitle
-  }
+  };
   const twProperties: any = {
     creator: "@sillvvasensei",
     card: "summary_large_image",
