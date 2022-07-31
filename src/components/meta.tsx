@@ -29,8 +29,13 @@ const PageMeta = (props: PropsWithChildren<MetaProps>) => {
     image: `https://r3.dekok.app${props.image || "/images/preview-me2.jpg"}`,
     url: "https://t3.dekok.app"
   };
+  const ogOnlyProperties: any = {
+    ...ogProperties,
+    type: "website",
+    site_name: dtitle
+  }
   const twProperties: any = {
-    site: "@sillvvasensei",
+    creator: "@sillvvasensei",
     card: "summary_large_image",
     ...ogProperties
   };
@@ -54,11 +59,11 @@ const PageMeta = (props: PropsWithChildren<MetaProps>) => {
       {Object.keys(articleProps).map(t => {
         return <meta key={`article:${t}`} property={`article:${t}`} content={articleProps[t]} />;
       })}
-      {Object.keys(ogProperties).map(t => {
-        return <meta key={`og:${t}`} name={t} property={`og:${t}`} content={ogProperties[t]} />;
+      {Object.keys(ogOnlyProperties).map(t => {
+        return <meta key={`og:${t}`} name={t} property={`og:${t}`} content={ogOnlyProperties[t]} />;
       })}
       {Object.keys(twProperties).map(t => {
-        return <meta key={`tw:${t}`} name={`tw:${t}`} content={twProperties[t]} />;
+        return <meta key={`twitter:${t}`} name={`twitter:${t}`} content={twProperties[t]} />;
       })}
     </Head>
   );
