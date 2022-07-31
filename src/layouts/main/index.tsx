@@ -33,7 +33,6 @@ const MainLayout = (props: React.PropsWithChildren<MainLayoutProps>) => {
   const { theme, setTheme } = useTheme();
   const { user, isLoading } = useAuthentication({ login: props.layout === "admin" });
   const [oldTheme, setOldTheme] = useState(theme || "");
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const mm = matchMedia("(prefers-color-scheme: dark)");
@@ -50,7 +49,6 @@ const MainLayout = (props: React.PropsWithChildren<MainLayoutProps>) => {
       document.documentElement.dataset.scroll = window.scrollY.toString();
     });
 
-    setMounted(true);
     window.addEventListener("scroll", scrollHandler, { passive: true });
     return () => window.removeEventListener("scroll", scrollHandler);
   }, []);
@@ -66,7 +64,7 @@ const MainLayout = (props: React.PropsWithChildren<MainLayoutProps>) => {
       <NextNProgress color="var(--color-bg-link)" height={1} options={{ showSpinner: false }} />
       <PageMeta title={props.title} description={props.meta?.description} image={props.meta?.image} articleMeta={props.meta?.articleMeta} />
       {theme && theme !== oldTheme && <Page.Bg theme={oldTheme || ""} />}
-      <Page.Bg key={theme} theme={theme} init={mounted} />
+      <Page.Bg key={theme} theme={theme} />
       <PageHeader head={props} layoutMotion={fadeMotion} onThemeChange={themeChangeHandler} />
       {props.layout == "admin" ? (
         <div className="flex flex-col md:flex-row relative">
@@ -342,7 +340,7 @@ const AdminMenu = (layoutProps: MainLayoutProps) => {
           {paths.map(({ name, path, value, label }, i) =>
             router.pathname === path ? (
               <a
-                key={`admin${i}`}
+                key={path}
                 className={concatenate(
                   "md:flex justify-between active:bg-theme-hover/10",
                   router.pathname === path && "bg-theme-hover/10 md:bg-theme-link md:text-theme-button"
@@ -381,7 +379,7 @@ const AdminMenu = (layoutProps: MainLayoutProps) => {
         </li>
         <li className={concatenate("hidden md:block", menuState && "!block")}>
           {resources.map(({ name, path }, i) => (
-            <Link key={`admin${i}`} href={path}>
+            <Link key={path} href={path}>
               <a target="_blank" rel="noreferrer noopener" className="active:bg-theme-hover/10">
                 {name}
               </a>

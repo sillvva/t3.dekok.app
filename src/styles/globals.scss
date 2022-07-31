@@ -198,14 +198,14 @@
       @apply left-[calc(50%-max(60vw,50vh))] top-[calc(50%-max(60vw,50vh))];
       @apply animate-spin-medium bg-theme-body bg-no-repeat;
       background-image: conic-gradient(
-        var(--color-bg-article) 0deg,
+        rgb(var(--color-bg-article)) 0deg,
         var(--color-bg-link) 90deg,
-        var(--color-bg-article) 90deg,
-        var(--color-bg-article) 180deg,
-        var(--color-bg-article) 180deg,
+        rgb(var(--color-bg-article)) 90deg,
+        rgb(var(--color-bg-article)) 180deg,
+        rgb(var(--color-bg-article)) 180deg,
         var(--color-bg-link) 270deg,
-        var(--color-bg-article) 270deg,
-        var(--color-bg-article) 360deg
+        rgb(var(--color-bg-article)) 270deg,
+        rgb(var(--color-bg-article)) 360deg
       );
     }
     &::after {
