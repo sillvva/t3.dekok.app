@@ -162,24 +162,31 @@ const Images: NextPageWithLayout = () => {
         {loaders == 0
           ? paginatedImages.map(image => (
               <a key={image.name} href={image.url} className="block relative overflow-hidden rounded-lg h-16 sm:h-56" target="_blank" rel="noreferrer noopener">
-                <a
-                  type="button"
+                <button
                   className="fab absolute hidden sm:flex top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text"
-                  onClick={() => remove(image.name)}>
+                  onClick={ev => {
+                    ev.stopPropagation();
+                    remove(image.name);
+                  }}>
                   <Icon path={mdiTrashCan} size={0.8} />
-                </a>
+                </button>
                 <div className="flex sm:block gap-2 absolute bottom-0 w-full h-full sm:h-auto p-4 bg-theme-body/90">
                   <div className="flex-1">
                     <h5 className="text-sm text-theme-link">{image.name}</h5>
                     <p className="text-xs text-slate-500">Uploaded: {new Date(image.created_at).toLocaleDateString()}</p>
                   </div>
                   <div className="flex sm:hidden items-center">
-                    <a type="button" className="fab !w-9 !h-9 bg-red-700 drop-shadow-theme-text" onClick={() => remove(image.name)}>
+                    <button
+                      className="fab !w-9 !h-9 bg-red-700 drop-shadow-theme-text"
+                      onClick={ev => {
+                        ev.stopPropagation();
+                        remove(image.name);
+                      }}>
                       <Icon path={mdiTrashCan} size={0.8} />
-                    </a>
+                    </button>
                   </div>
                 </div>
-                <Image src={image.url} alt={image.name} className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
+                <Image src={image.url} alt={image.name} priority className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
               </a>
             ))
           : Array(loaders)

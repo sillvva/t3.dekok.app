@@ -250,7 +250,7 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
                 <span className="hidden xs:inline">{user.user_metadata.preferred_username}</span>
                 <div className="avatar">
                   <div className="w-10 rounded-full ring ring-theme-link ring-offset-theme-base ring-offset-2">
-                    <Image src={user.user_metadata.avatar_url} alt={user.user_metadata.preferred_username} width={40} height={40} className="rounded-full" />
+                    <Image src={user.user_metadata.avatar_url} alt={user.user_metadata.preferred_username} priority width={40} height={40} className="rounded-full" />
                   </div>
                 </div>
               </a>

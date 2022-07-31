@@ -146,12 +146,14 @@ const Admin: NextPageWithLayout = () => {
           ? paginatedPosts.map(post => (
               <Link key={post.slug} href={`/blog/${post.slug}`}>
                 <a className="block relative overflow-hidden rounded-lg h-16 sm:h-56" target="_blank" rel="noreferrer noopener">
-                  <a
-                    type="button"
+                  <button
                     className="fab absolute hidden sm:flex top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text"
-                    onClick={() => remove(post.slug)}>
+                    onClick={ev => {
+                      ev.stopPropagation();
+                      remove(post.slug);
+                    }}>
                     <Icon path={mdiTrashCan} size={0.8} />
-                  </a>
+                  </button>
                   <div className="flex sm:block gap-2 absolute bottom-0 w-full h-full sm:h-auto p-4 bg-theme-body/90">
                     <div className="flex-1">
                       <h5 className="text-sm text-theme-link">{post.title}</h5>
@@ -159,12 +161,17 @@ const Admin: NextPageWithLayout = () => {
                       <p className="text-xs text-theme-base hidden sm:block">{post.description}</p>
                     </div>
                     <div className="flex sm:hidden items-center">
-                      <a type="button" className="fab !w-9 !h-9 bg-red-700 drop-shadow-theme-text" onClick={() => remove(post.slug)}>
+                      <button
+                        className="fab !w-9 !h-9 bg-red-700 drop-shadow-theme-text"
+                        onClick={ev => {
+                          ev.stopPropagation();
+                          remove(post.slug);
+                        }}>
                         <Icon path={mdiTrashCan} size={0.8} />
-                      </a>
+                      </button>
                     </div>
                   </div>
-                  <Image src={post.image} alt={post.title} className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
+                  <Image src={post.image} alt={post.title} priority className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
                 </a>
               </Link>
             ))
