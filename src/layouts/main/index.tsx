@@ -88,7 +88,7 @@ const LayoutBody = (props: React.PropsWithChildren<MainLayoutProps>) => {
   return (
     <AnimatePresence initial={false} exitBeforeEnter>
       <motion.main
-        key={`main${props.path}`}
+        key={`main${router.pathname}`}
         className={concatenate(
           "relative flex-1 flex-col justify-center items-center z-[2] px-2 md:px-4",
           router.pathname == "/" ? "h-screen" : props.layout === "admin" ? "md:pt-20 pb-4" : props.title ? "pt-24 lg:pt-36 pb-4" : "pt-20 pb-4"
