@@ -251,7 +251,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
       }
     };
 
-    const mdContent = content.replace(/(```[^\n ]+) /g, "$1\n// ")
+    const mdContent = content.replace(/(```[^\n ]+) /g, "$1\n// ");
 
     return (
       <Page.Body>
@@ -263,8 +263,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
           )}
           <Page.Section>
             <p className="mb-4 text-gray-400mb-2 text-sm underline text-theme-link decoration-dotted underline-offset-2" aria-label="Date published">
-              <span>{data.date}</span>{" "}
-              <span>{data.updated && `(Updated: ${data.updated})`}</span>
+              <span>{data.date}</span> <span>{data.updated && `(Updated: ${data.updated})`}</span>
             </p>
             <div className="mb-4">
               <ReactMarkdown components={renderers} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>
@@ -374,8 +373,18 @@ export async function getStaticProps(context: any) {
     ...meta,
     date: meta.date.toLocaleDateString("en-us", { weekday: "long", year: "numeric", month: "short", day: "numeric" }),
     updated: meta.updated?.toLocaleDateString("en-us", { weekday: "long", year: "numeric", month: "short", day: "numeric" }) || null,
-    created_at: meta.created_at.toLocaleDateString("en-us", { weekday: "long", year: "numeric", month: "short", day: "numeric" }),
-    updated_at: meta.updated_at.toLocaleDateString("en-us", { weekday: "long", year: "numeric", month: "short", day: "numeric" })
+    created_at: meta.created_at.toLocaleDateString("en-us", {
+      weekday: "long",
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    }),
+    updated_at: meta.updated_at.toLocaleDateString("en-us", {
+      weekday: "long",
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    })
   };
 
   return {

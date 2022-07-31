@@ -28,9 +28,7 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
   return (
     <UserProvider supabaseClient={supabaseClient}>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider themes={["dark", "light", "blue"]}>
-          {getLayout(<Component {...pageProps} />, pageProps)}
-        </ThemeProvider>
+        <ThemeProvider themes={["dark", "light", "blue"]}>{getLayout(<Component {...pageProps} />, pageProps)}</ThemeProvider>
       </QueryClientProvider>
     </UserProvider>
   );
@@ -78,5 +76,5 @@ export default withTRPC<AppRouter>({
   /**
    * @link https://trpc.io/docs/ssr
    */
-  ssr: true
+  ssr: false
 })(MyApp);

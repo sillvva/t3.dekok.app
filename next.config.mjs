@@ -1,4 +1,5 @@
 import { env } from "./src/server/env.mjs";
+import withPWA from "next-pwa";
 
 /**
  * Don't be scared of the generics here.
@@ -12,7 +13,7 @@ function defineNextConfig(config) {
   return config;
 }
 
-export default defineNextConfig({
+export default withPWA(defineNextConfig({
   reactStrictMode: true,
   experimental: {
     images: {
@@ -21,5 +22,8 @@ export default defineNextConfig({
   },
   images: {
     domains: ["slxazldgfeytirfrculz.supabase.co", "avatars.githubusercontent.com"]
+  },
+  pwa: {
+    dest: "public",
   }
-});
+}));

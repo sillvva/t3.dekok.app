@@ -20,8 +20,10 @@ const Home: NextPageWithLayout = () => {
       </span>
       <div className="col-start-6 col-span-6 row-start-2 row-span-3 2xl:col-start-5">
         <div className="mt-0 fixed bottom-12 left-0 right-0 z-10 text-center font-montserrat lg:relative lg:text-right lg:bottom-0">
-          <h2 className="text-3xl sm:text-5xl lg:text-5xl font-montserrat font-semibold tracking-widest drop-shadow-theme-text-thick">Matt DeKok</h2>
-          <h4 className="text-xl sm:text-3xl xl:text-4xl font-montserrat font-medium tracking-normal drop-shadow-theme-text-thick">Full&nbsp;Stack Web&nbsp;Developer</h4>
+          <h1 className="text-3xl sm:text-5xl lg:text-5xl font-montserrat font-semibold tracking-widest drop-shadow-theme-text-thick">Matt DeKok</h1>
+          <h2 className="text-xl sm:text-3xl xl:text-4xl font-montserrat font-medium tracking-normal drop-shadow-theme-text-thick">
+            Full&nbsp;Stack Web&nbsp;Developer
+          </h2>
         </div>
         <div className="menu-container hidden flex-row justify-end md:flex mt-8">
           <HexMenu items={items} maxLength={3} classes={["lg:[--scale:1.2]"]} itemClasses={["Bounce"]} rotated={true} />
@@ -32,11 +34,7 @@ const Home: NextPageWithLayout = () => {
 };
 
 Home.getLayout = function (page) {
-  return (
-    <MainLayout>
-      {page}
-    </MainLayout>
-  );
+  return <MainLayout>{page}</MainLayout>;
 };
 
 export default Home;
