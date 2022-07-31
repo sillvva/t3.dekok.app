@@ -26,8 +26,8 @@ const PageMeta = (props: PropsWithChildren<MetaProps>) => {
   const ogProperties: any = {
     title: dtitle,
     description: description,
-    image: `https://r3.dekok.app${props.image || "/images/preview-me2.jpg"}`,
-    url: "https://t3.dekok.app"
+    image: `https://matt.dekok.app${props.image || "/images/preview-me2.jpg"}`,
+    url: "https://matt.dekok.app"
   };
   const ogOnlyProperties: any = {
     ...ogProperties,
