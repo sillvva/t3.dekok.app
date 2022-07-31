@@ -25,12 +25,12 @@
       "type": "image/png"
     },
     {
-      "src": "/icons/icon_x384.png",
+      "src": "/icon_x384.png",
       "sizes": "384x384",
       "type": "image/png"
     },
     {
-      "src": "/icons/icon_x512.png",
+      "src": "/icon_x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
