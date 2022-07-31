@@ -25,7 +25,16 @@ const Blog: NextPageWithLayout = () => {
     duration: 500
   });
 
-  if (!posts) return <div className="grid gap-3 pt-3 mt-3 mx-auto md:grid-cols-2 xl:grid-cols-3 max-w-8xl">{Array(itemsPerPage).fill(<PostLoader />)}</div>;
+  if (!posts)
+    return (
+      <div className="grid gap-3 pt-3 mt-3 mx-auto md:grid-cols-2 xl:grid-cols-3 max-w-8xl">
+        {Array(itemsPerPage)
+          .fill(null)
+          .map((p, i) => (
+            <PostLoader key={`loader${i}`} />
+          ))}
+      </div>
+    );
   if (!posts.length) return <PageMessage>No posts found</PageMessage>;
 
   const paginatedPosts = posts.slice((page - 1) * limit, page * limit);

@@ -1,17 +1,20 @@
 import Image from "next/future/image";
-import type { FunctionComponent, PropsWithChildren } from "react";
+import { FunctionComponent, PropsWithChildren, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { fadeMotion } from "$src/layouts/main";
 import { concatenate as concatenate } from "$src/utils/misc";
 
-type PageBgProps = {
-  theme?: string;
-  init?: boolean;
-};
+const PageBg: FunctionComponent<{ theme?: string }> = ({ theme }) => {
+  const [mounted, setMounted] = useState(false);
 
-const PageBg: FunctionComponent<PageBgProps> = ({ theme, init }) => {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
   return (
-    <AnimatePresence initial={!!init}>
+    <AnimatePresence initial={true}>
       <motion.div
         key={theme}
         variants={fadeMotion.variants}
