@@ -24,7 +24,10 @@ module.exports = {
             if (opacityValue === undefined) opacityValue = 1;
             return `rgba(var(--color-bg-body), ${opacityValue})`;
           },
-          article: "var(--color-bg-article)",
+          article: ({ opacityValue }) => {
+            if (opacityValue === undefined) opacityValue = 1;
+            return `rgba(var(--color-bg-article), ${opacityValue})`;
+          },
           hover: ({ opacityValue }) => {
             if (opacityValue === undefined) opacityValue = 1;
             return `rgba(var(--color-bg-hover), ${opacityValue})`;

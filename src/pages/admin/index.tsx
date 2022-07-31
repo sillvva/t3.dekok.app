@@ -143,41 +143,38 @@ const Admin: NextPageWithLayout = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2" ref={parent}>
         {loaders == 0
           ? paginatedPosts.map(post => (
-              <div key={post.slug} className="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden h-56">
-                <div className="relative hidden sm:block">
-                  <a href={`/blog/${post.slug}`} target="_blank" rel="noreferrer noopner" className="relative block overflow-hidden h-40">
-                    <Image src={post.image} alt={post.title} className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
-                  </a>
-                  <a type="button" className="fab absolute top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text" onClick={() => remove(post.slug)}>
-                    <Icon path={mdiTrashCan} size={0.8} />
-                  </a>
-                </div>
-                <div className="flex flex-row items-center gap-2 px-3 py-2">
-                  <div className="flex-1 flex flex-col max-w-full">
-                    <h4 className="font-semibold pb-1 font-robo-flex overflow-hidden whitespace-nowrap text-ellipsis">
-                      <a href={`/blog/${post.slug}`} target="_blank" rel="noreferrer noopner" className="text-theme-link">
-                        {post.title}
-                      </a>
-                    </h4>
-                    <div className="text-sm">Posted: {new Date(post.date).toLocaleDateString()}</div>
+              <a key={post.slug} href={`/blog/${post.slug}`} className="block relative overflow-hidden rounded-lg h-16 sm:h-56">
+                <a
+                  type="button"
+                  className="fab absolute hidden sm:flex top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text"
+                  onClick={() => remove(post.slug)}>
+                  <Icon path={mdiTrashCan} size={0.8} />
+                </a>
+                <div className="flex sm:block gap-2 absolute bottom-0 w-full h-full sm:h-auto p-4 bg-theme-body/90">
+                  <div className="flex-1">
+                    <h5 className="text-sm text-theme-link">{post.title}</h5>
+                    <p className="text-xs text-slate-500">Uploaded: {new Date(post.date).toLocaleDateString()}</p>
+                    <p className="text-xs text-theme-base hidden sm:block">{post.description}</p>
                   </div>
-                  <a
-                    type="button"
-                    className="fab !w-9 !h-9 bg-red-700 drop-shadow-theme-text sm:hidden inline-flex justify-center items-center"
-                    onClick={() => remove(post.slug)}>
-                    <Icon path={mdiTrashCan} size={0.8} />
-                  </a>
+                  <div className="flex sm:hidden items-center">
+                    <a type="button" className="fab !w-9 !h-9 bg-red-700 drop-shadow-theme-text" onClick={() => remove(post.slug)}>
+                      <Icon path={mdiTrashCan} size={0.8} />
+                    </a>
+                  </div>
                 </div>
-              </div>
+                <Image src={post.image} alt={post.title} className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
+              </a>
             ))
           : Array(loaders)
               .fill(1)
               .map((l, i) => (
-                <div className="flex flex-col bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden" key={i}>
-                  <div className="aspect-video motion-safe:animate-pulse bg-theme-hover bg-opacity-15 hidden sm:block" />
-                  <div className="flex-1 flex flex-col p-3 gap-2">
-                    <div className="loader-line w-2/3 h-6 max-w-xs" />
-                    <div className="loader-line w-full h-4" />
+                <div className="bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden h-16 sm:h-56" key={i}>
+                  <div className="absolute inset-0 motion-safe:animate-pulse bg-theme-hover bg-opacity-15 hidden sm:block" />
+                  <div className="absolute bottom-0 w-full flex-1 flex flex-col p-3 gap-2">
+                    <div className="loader-line w-2/3 h-4 max-w-xs" />
+                    <div className="loader-line w-1/2 h-3" />
+                    <div className="loader-line w-full h-3" />
+                    <div className="loader-line w-full h-3" />
                   </div>
                 </div>
               ))}
