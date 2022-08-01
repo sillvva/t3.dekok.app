@@ -231,10 +231,10 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
                 exit="exit"
                 transition={layoutMotion?.transition}
                 className={concatenate(
-                  "text-3xl text-center text-theme-heading font-medium font-montserrat",
+                  "text-theme-heading font-medium font-montserrat",
                   "drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
-                  "block lg:hidden flex-1 p-2 absolute inset-0",
-                  smallTitle && "text-sm sm:text-lg md:text-2xl flex lg:hidden justify-center items-center"
+                  "flex lg:hidden justify-center items-center flex-1 p-2 absolute inset-0",
+                  smallTitle ? "text-sm sm:text-lg md:text-2xl" : "text-3xl"
                 )}>
                 {head?.title}
               </motion.h1>
@@ -257,7 +257,7 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
             </div>
           )}
         </div>
-        <div className="hidden xs:block w-12">
+        <div className={concatenate("w-12", head?.layout == "admin" && "hidden xs:block")}>
           <button
             type="button"
             aria-label="Toggle Theme"
