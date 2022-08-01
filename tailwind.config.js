@@ -90,13 +90,31 @@ module.exports = {
           "100%": {
             transform: "scale(1)",
           }
+        },
+        "drawer-open": {
+          "0%": {
+            transform: "scale(0.8)",
+          },
+          "100%": {
+            transform: "scale(1)",
+          }
+        },
+        "drawer-close": {
+          "0%": {
+            transform: "scale(1)",
+          },
+          "100%": {
+            transform: "scale(0)",
+          }
         }
       },
       animation: {
         ripple: "ripple .5s linear",
         "spin-slow": "spin 4s linear infinite",
         "spin-medium": "spin 2s linear infinite",
-        "zoom-bounce": "zoom-bounce 300ms linear forwards"
+        "zoom-bounce": "zoom-bounce 300ms linear forwards",
+        "drawer-open": "drawer-open 200ms linear forwards",
+        "drawer-close": "drawer-close 200ms linear forwards"
       },
       maxWidth: {
         "8xl": "100rem",
@@ -113,5 +131,5 @@ module.exports = {
       "2xl": "1536px"
     }
   },
-  plugins: [require("daisyui")],
+  plugins: [require("daisyui")]
 };

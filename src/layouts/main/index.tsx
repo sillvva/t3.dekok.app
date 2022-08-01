@@ -19,7 +19,7 @@ import { trpc } from "$src/utils/trpc";
 import PageMessage from "$src/components/page-message";
 
 const PageMenu = dynamic(() => import("./components/menu"));
-const Drawer = dynamic(() => import("$src/components/drawer"));
+const Drawer = dynamic(() => import("./components/drawer"));
 const menuItems = [
   { link: "/", label: "Intro" },
   { link: "/about", label: "About Me" },
