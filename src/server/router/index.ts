@@ -2,9 +2,9 @@
 import { createRouter } from "./context";
 import superjson from "superjson";
 
-import { siteRouter } from "./site";
-import { postsRouter } from "./posts";
-import { imagesRouter } from "./images";
+import { siteRouter } from "./routers/site";
+import { postsRouter } from "./routers/posts";
+import { imagesRouter } from "./routers/images";
 
 export const appRouter = createRouter()
   .transformer(superjson)

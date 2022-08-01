@@ -3,8 +3,8 @@ import { TRPCError } from "@trpc/server";
 import { parse } from "cookie";
 import path from "path";
 import { z } from "zod";
-import { createRouter } from "./context";
-import { fetchPosts } from "./helpers";
+import { createRouter } from "../context";
+import { fetchPosts } from "../helpers";
 
 export const postsRouter = createRouter()
   .query("get", {

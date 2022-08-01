@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { parse } from "cookie";
 import path from "path";
 import { z } from "zod";
-import { createRouter } from "./context";
+import { createRouter } from "../context";
 
 const allowedTypes = [".png", ".jpg", ".jpeg", ".svg", ".webp"];
 const imagePath = "https://slxazldgfeytirfrculz.supabase.co/storage/v1/object/public/images/";
