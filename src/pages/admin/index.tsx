@@ -1,7 +1,7 @@
 import { NextPageWithLayout } from "../_app";
 import { KeyboardEventHandler, useCallback, useState } from "react";
 import { useRouter } from "next/router";
-import { mdiOpenInNew, mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
+import { mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
 import { toast } from "react-toastify";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { trpc } from "$src/utils/trpc";
@@ -16,6 +16,8 @@ import Link from "next/link";
 
 const Admin: NextPageWithLayout = () => {
   const router = useRouter();
+  const { posts, isFetching, isMutating, upload, remove, refresh } = usePosts();
+  const [parent] = useAutoAnimate<HTMLDivElement>();
 
   const page = parseInt(router.query.page ? (Array.isArray(router.query.page) ? router.query.page[0] : router.query.page) : "1");
   const qSearch = Array.isArray(router.query.search) ? router.query.search[0] : router.query.search;
@@ -37,76 +39,8 @@ const Admin: NextPageWithLayout = () => {
     },
     [page]
   );
-
-  const utils = trpc.useContext();
-  const [mutating, setMutating] = useState(true);
-
-  const { data: posts, isFetching } = trpc.useQuery(["posts.get"], {
-    refetchOnWindowFocus: false,
-    onSuccess() {
-      setMutating(false);
-    }
-  });
-
-  const revalidator = trpc.useMutation(["site.revalidate"]);
-
-  const refresh = useCallback(() => {
-    utils.invalidateQueries(["posts.get"]);
-    utils.invalidateQueries(["site.admin"]);
-  }, [utils]);
-
-  const uploadMutation = trpc.useMutation(["posts.post"], {
-    onSuccess({ success }, { slug }) {
-      if (success) {
-        toast("Post uploaded successfully", { type: "success", className: "!alert !alert-success !rounded-lg" });
-        revalidator.mutate({ paths: [`/blog/${slug}`] });
-      } else toast("Post upload failed", { type: "error", className: "!bg-red-400 !text-white !rounded-lg" });
-      refresh();
-    },
-    onMutate() {
-      setMutating(true);
-    }
-  });
-
-  const deleteMutation = trpc.useMutation(["posts.delete"], {
-    onSuccess({ success }, { slug }) {
-      if (success) {
-        toast("Post deleted successfully", { type: "success", className: "!alert !alert-success !rounded-lg" });
-        revalidator.mutate({ paths: [`/blog/${slug}`] });
-      } else toast("Post delete failed", { type: "error", className: "!bg-red-400 !text-white !rounded-lg" });
-      refresh();
-    },
-    onMutate() {
-      setMutating(true);
-    }
-  });
-
-  const upload = useCallback(async () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "*/*";
-    input.onchange = async () => {
-      if (!input.files) return;
-      const file = input.files[0];
-      if (!file.name.endsWith(".md")) return alert("Only markdown files are supported");
-      const blob = new Blob([file], { type: file.type });
-      const base64 = await toBase64(blob);
-      uploadMutation.mutate({ file: base64, filename: file.name, slug: file.name.slice(0, -3) });
-    };
-    input.click();
-  }, [uploadMutation]);
-
-  const remove = useCallback(
-    async (slug: string) => {
-      if (!confirm("Are you sure you want to delete this post?")) return;
-      deleteMutation.mutate({ slug });
-    },
-    [deleteMutation]
-  );
-
-  const [parent] = useAutoAnimate<HTMLDivElement>();
-
-  const loading = !(posts && !isFetching) || mutating;
+  
+  const loading = !(posts && !isFetching) || isMutating;
   if (!loading && !posts.length) return <PageMessage>No posts found</PageMessage>;
 
   const numloaders = Math.min(itemsPerPage, posts?.length ?? itemsPerPage);
@@ -199,3 +133,80 @@ Admin.getLayout = function (page) {
 };
 
 export default Admin;
+
+const usePosts = () => {
+  const utils = trpc.useContext();
+  const [isMutating, setMutating] = useState(true);
+
+  const { data: posts, isFetching } = trpc.useQuery(["posts.get"], {
+    refetchOnWindowFocus: false,
+    onSuccess() {
+      setMutating(false);
+    }
+  });
+
+  const revalidator = trpc.useMutation(["site.revalidate"]);
+
+  const refresh = useCallback(() => {
+    utils.invalidateQueries(["posts.get"]);
+    utils.invalidateQueries(["site.admin"]);
+  }, [utils]);
+
+  const uploadMutation = trpc.useMutation(["posts.post"], {
+    onSuccess({ success }, { slug }) {
+      if (success) {
+        toast("Post uploaded successfully", { type: "success", className: "!alert !alert-success !rounded-lg" });
+        revalidator.mutate({ paths: [`/blog/${slug}`] });
+      } else toast("Post upload failed", { type: "error", className: "!bg-red-400 !text-white !rounded-lg" });
+      refresh();
+    },
+    onMutate() {
+      setMutating(true);
+    }
+  });
+
+  const deleteMutation = trpc.useMutation(["posts.delete"], {
+    onSuccess({ success }, { slug }) {
+      if (success) {
+        toast("Post deleted successfully", { type: "success", className: "!alert !alert-success !rounded-lg" });
+        revalidator.mutate({ paths: [`/blog/${slug}`] });
+      } else toast("Post delete failed", { type: "error", className: "!bg-red-400 !text-white !rounded-lg" });
+      refresh();
+    },
+    onMutate() {
+      setMutating(true);
+    }
+  });
+
+  const upload = useCallback(async () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "*/*";
+    input.onchange = async () => {
+      if (!input.files) return;
+      const file = input.files[0];
+      if (!file.name.endsWith(".md")) return alert("Only markdown files are supported");
+      const blob = new Blob([file], { type: file.type });
+      const base64 = await toBase64(blob);
+      uploadMutation.mutate({ file: base64, filename: file.name, slug: file.name.slice(0, -3) });
+    };
+    input.click();
+  }, [uploadMutation]);
+
+  const remove = useCallback(
+    async (slug: string) => {
+      if (!confirm("Are you sure you want to delete this post?")) return;
+      deleteMutation.mutate({ slug });
+    },
+    [deleteMutation]
+  );
+
+  return {
+    posts,
+    isFetching,
+    isMutating,
+    upload,
+    remove,
+    refresh
+  }
+}

@@ -1,7 +1,7 @@
 import { NextPageWithLayout } from "../_app";
 import { KeyboardEventHandler, useCallback, useState } from "react";
 import { useRouter } from "next/router";
-import { mdiOpenInNew, mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
+import { mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
 import { toast } from "react-toastify";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { trpc } from "$src/utils/trpc";
@@ -15,6 +15,8 @@ import Pagination from "$src/components/pagination";
 
 const Images: NextPageWithLayout = () => {
   const router = useRouter();
+  const { images, isFetching, isMutating, upload, remove, refresh } = useImages();
+  const [parent] = useAutoAnimate<HTMLDivElement>();
 
   const page = parseInt(router.query.page ? (Array.isArray(router.query.page) ? router.query.page[0] : router.query.page) : "1");
   const qSearch = Array.isArray(router.query.search) ? router.query.search[0] : router.query.search;
@@ -37,8 +39,94 @@ const Images: NextPageWithLayout = () => {
     [page]
   );
 
+  const loading = !(images && !isFetching) || isMutating;
+  if (!loading && !images.length) return <PageMessage>No images found</PageMessage>;
+
+  const numloaders = Math.min(itemsPerPage, images?.length ?? itemsPerPage);
+  const loaders = loading ? numloaders : 0;
+  const filteredImages =
+    query.length > 2
+      ? (images || [])
+          .filter(image => {
+            return image.name.toLowerCase().includes(query.toLowerCase());
+          })
+          .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
+      : (images || []).sort((a, b) => (a.created_at > b.created_at ? -1 : 1));
+  const pages = Math.ceil(filteredImages.length / itemsPerPage);
+  const paginatedImages = filteredImages.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex gap-2">
+        <div className="flex-1">
+          <input type="text" value={qSearch} onKeyUp={queryHandler} placeholder="Search" className="input bg-theme-article w-full shadow-md" />
+        </div>
+        <div className="md:flex-1 flex justify-end gap-4">
+          <button onClick={() => refresh()}>
+            <Icon path={mdiRefresh} className="w-6 h-6" />
+          </button>
+          <button onClick={upload}>
+            <Icon path={mdiUpload} className="w-6 h-6" />
+          </button>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2" ref={parent}>
+        {loaders == 0
+          ? paginatedImages.map(image => (
+              <a key={image.name} href={image.url} className="block relative overflow-hidden rounded-lg h-16 sm:h-56" target="_blank" rel="noreferrer noopener">
+                <button
+                  className="fab absolute hidden sm:flex top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text"
+                  onClick={ev => {
+                    ev.stopPropagation();
+                    remove(image.name);
+                  }}>
+                  <Icon path={mdiTrashCan} size={0.8} />
+                </button>
+                <div className="flex sm:block gap-2 absolute bottom-0 w-full h-full sm:h-auto p-4 bg-theme-body/90">
+                  <div className="flex-1">
+                    <h5 className="text-sm text-theme-link">{image.name}</h5>
+                    <p className="text-xs text-slate-500">Uploaded: {new Date(image.created_at).toLocaleDateString()}</p>
+                  </div>
+                  <div className="flex sm:hidden items-center">
+                    <button
+                      className="fab !w-9 !h-9 bg-red-700 drop-shadow-theme-text"
+                      onClick={ev => {
+                        ev.stopPropagation();
+                        remove(image.name);
+                      }}>
+                      <Icon path={mdiTrashCan} size={0.8} />
+                    </button>
+                  </div>
+                </div>
+                <Image src={image.url} alt={image.name} priority className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
+              </a>
+            ))
+          : Array(loaders)
+              .fill(1)
+              .map((l, i) => (
+                <div className="bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden h-16 sm:h-56" key={i}>
+                  <div className="absolute inset-0 motion-safe:animate-pulse bg-theme-hover bg-opacity-15 hidden sm:block" />
+                  <div className="absolute bottom-0 w-full flex-1 flex flex-col p-3 gap-2">
+                    <div className="loader-line w-2/3 h-4 max-w-xs" />
+                    <div className="loader-line w-1/2 h-3" />
+                  </div>
+                </div>
+              ))}
+      </div>
+      {pages > 0 && loaders == 0 && <Pagination page={page} pages={pages} />}
+    </div>
+  );
+};
+
+Images.getLayout = function (page) {
+  return <MainLayout layout="admin">{page}</MainLayout>;
+};
+
+export default Images;
+
+const useImages = () => {
   const utils = trpc.useContext();
-  const [mutating, setMutating] = useState(true);
+  const [isMutating, setMutating] = useState(true);
 
   const { data: images, isFetching } = trpc.useQuery(["images.get"], {
     refetchOnWindowFocus: false,
@@ -125,89 +213,12 @@ const Images: NextPageWithLayout = () => {
     [deleteMutation]
   );
 
-  const [parent] = useAutoAnimate<HTMLDivElement>();
-
-  const loading = !(images && !isFetching) || mutating;
-  if (!loading && !images.length) return <PageMessage>No images found</PageMessage>;
-
-  const numloaders = Math.min(itemsPerPage, images?.length ?? itemsPerPage);
-  const loaders = loading ? numloaders : 0;
-  const filteredImages =
-    query.length > 2
-      ? (images || [])
-          .filter(image => {
-            return image.name.toLowerCase().includes(query.toLowerCase());
-          })
-          .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
-      : (images || []).sort((a, b) => (a.created_at > b.created_at ? -1 : 1));
-  const pages = Math.ceil(filteredImages.length / itemsPerPage);
-  const paginatedImages = filteredImages.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="flex gap-2">
-        <div className="flex-1">
-          <input type="text" value={qSearch} onKeyUp={queryHandler} placeholder="Search" className="input bg-theme-article w-full shadow-md" />
-        </div>
-        <div className="md:flex-1 flex justify-end gap-4">
-          <button onClick={() => refresh()}>
-            <Icon path={mdiRefresh} className="w-6 h-6" />
-          </button>
-          <button onClick={upload}>
-            <Icon path={mdiUpload} className="w-6 h-6" />
-          </button>
-        </div>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2" ref={parent}>
-        {loaders == 0
-          ? paginatedImages.map(image => (
-              <a key={image.name} href={image.url} className="block relative overflow-hidden rounded-lg h-16 sm:h-56" target="_blank" rel="noreferrer noopener">
-                <button
-                  className="fab absolute hidden sm:flex top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text"
-                  onClick={ev => {
-                    ev.stopPropagation();
-                    remove(image.name);
-                  }}>
-                  <Icon path={mdiTrashCan} size={0.8} />
-                </button>
-                <div className="flex sm:block gap-2 absolute bottom-0 w-full h-full sm:h-auto p-4 bg-theme-body/90">
-                  <div className="flex-1">
-                    <h5 className="text-sm text-theme-link">{image.name}</h5>
-                    <p className="text-xs text-slate-500">Uploaded: {new Date(image.created_at).toLocaleDateString()}</p>
-                  </div>
-                  <div className="flex sm:hidden items-center">
-                    <button
-                      className="fab !w-9 !h-9 bg-red-700 drop-shadow-theme-text"
-                      onClick={ev => {
-                        ev.stopPropagation();
-                        remove(image.name);
-                      }}>
-                      <Icon path={mdiTrashCan} size={0.8} />
-                    </button>
-                  </div>
-                </div>
-                <Image src={image.url} alt={image.name} priority className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
-              </a>
-            ))
-          : Array(loaders)
-              .fill(1)
-              .map((l, i) => (
-                <div className="bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden h-16 sm:h-56" key={i}>
-                  <div className="absolute inset-0 motion-safe:animate-pulse bg-theme-hover bg-opacity-15 hidden sm:block" />
-                  <div className="absolute bottom-0 w-full flex-1 flex flex-col p-3 gap-2">
-                    <div className="loader-line w-2/3 h-4 max-w-xs" />
-                    <div className="loader-line w-1/2 h-3" />
-                  </div>
-                </div>
-              ))}
-      </div>
-      {pages > 0 && loaders == 0 && <Pagination page={page} pages={pages} />}
-    </div>
-  );
-};
-
-Images.getLayout = function (page) {
-  return <MainLayout layout="admin">{page}</MainLayout>;
-};
-
-export default Images;
+  return {
+    images,
+    isFetching,
+    isMutating,
+    upload,
+    remove,
+    refresh
+  }
+}
