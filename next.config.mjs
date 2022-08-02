@@ -12,19 +12,19 @@ function defineNextConfig(config) {
   return config;
 }
 
-export default withPWA(
-  defineNextConfig({
-    reactStrictMode: true,
-    experimental: {
-      images: {
-        allowFutureImage: true
-      }
-    },
+const config = defineNextConfig({
+  reactStrictMode: true,
+  experimental: {
     images: {
-      domains: ["slxazldgfeytirfrculz.supabase.co", "avatars.githubusercontent.com"]
-    },
-    pwa: {
-      dest: "public"
+      allowFutureImage: true
     }
-  })
-);
+  },
+  images: {
+    domains: ["slxazldgfeytirfrculz.supabase.co", "avatars.githubusercontent.com"]
+  },
+  pwa: {
+    dest: "public"
+  }
+});
+
+export default process.env.NODE_ENV === "development" ? config : withPWA(config);
