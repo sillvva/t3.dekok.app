@@ -1,8 +1,8 @@
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { z } from "zod";
-import { env } from "../env.mjs";
-import { createRouter } from "./context";
-import { prisma } from "../db/client";
+import { env } from "$src/server/env.mjs";
+import { createRouter } from "../context";
+import { prisma } from "$src/server/db/client";
 
 export const siteRouter = createRouter()
   .mutation("revalidate", {

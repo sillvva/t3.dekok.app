@@ -3,6 +3,7 @@ import { writeFileSync } from "fs";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { prisma } from "../db/client";
 import { getContentDir } from "$src/utils/server.func";
+import type { ZodFormattedError } from "zod";
 
 interface FetchOptions {
   getPosts?: boolean;
@@ -130,3 +131,11 @@ export async function fetchPosts(options: FetchOptions = {}) {
     num: (num || 0) + added - removed.length
   };
 }
+
+export const formatErrors = (errors: ZodFormattedError<Map<string, string>, string>) =>
+  Object.entries(errors)
+    .map(([name, value]) => {
+      if (value && "_errors" in value) return `${name}: ${value._errors.join(", ")}\n`;
+      return "";
+    })
+    .filter(s => !!s);

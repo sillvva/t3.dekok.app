@@ -1,20 +1,13 @@
 import Image from "next/future/image";
-import { FunctionComponent, PropsWithChildren, useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { FunctionComponent, PropsWithChildren } from "react";
+import { motion } from "framer-motion";
 import { fadeMotion } from "$src/layouts/main";
 import { concatenate as concatenate } from "$src/utils/misc";
 
-const PageBg: FunctionComponent<{ theme?: string }> = ({ theme }) => {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
+const PageBg: FunctionComponent<{ theme?: string, mounted?: boolean }> = ({ theme, mounted }) => {
   if (!mounted) return null;
 
   return (
-    <AnimatePresence initial={true}>
       <motion.div
         key={theme}
         variants={fadeMotion.variants}
@@ -28,8 +21,6 @@ const PageBg: FunctionComponent<{ theme?: string }> = ({ theme }) => {
           "bg-fixed bg-cover bg-no-repeat bg-theme-body bg-[image:var(--bg-img)]"
         )}
       />
-      {theme}
-    </AnimatePresence>
   );
 };
 

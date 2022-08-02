@@ -90,14 +90,14 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
           );
         }
 
-        return <p className="mb-3">{paragraph.children}</p>;
+        return <p className="mb-4 leading-7 text-theme-base/80">{paragraph.children}</p>;
       },
 
       h1(h: any) {
         const { children } = h;
         const text = flattenChildren(children);
         return (
-          <h1 className="text-theme-heading text-4xl font-semibold mb-2 mt-4 relative">
+          <h1 className="text-theme-heading text-4xl font-semibold mb-2 mt-4 leading-7 relative">
             <span className="absolute -top-40" id={text.replace(/[^a-z0-9]{1,}/gi, "-").toLowerCase()}></span>
             {children}
           </h1>
@@ -108,7 +108,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
         const { children } = h;
         const text = flattenChildren(children);
         return (
-          <h2 className="text-theme-heading text-2xl font-semibold mb-2 mt-4 relative">
+          <h2 className="text-theme-heading text-2xl font-semibold mb-2 mt-4 leading-7 relative">
             <span className="absolute -top-40" id={text.replace(/[^a-z0-9]{1,}/gi, "-").toLowerCase()}></span>
             {children}
           </h2>
@@ -119,7 +119,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
         const { children } = h;
         const text = flattenChildren(children);
         return (
-          <h3 className="text-theme-heading text-lg font-semibold mb-2 mt-4 relative">
+          <h3 className="text-theme-heading text-lg font-semibold mb-2 mt-4 leading-7 relative">
             <span className="absolute -top-40" id={text.replace(/[^a-z0-9]{1,}/gi, "-").toLowerCase()}></span>
             {children}
           </h3>
@@ -138,6 +138,14 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
         );
       },
 
+      ul(ul: any) {
+        return <ul className="list-outside ml-4 mb-7 text-theme-base/80">{ul.children}</ul>;
+      },
+
+      li(li: any) {
+        return <li className="blog-list-item leading-7 mb-3">{li.children}</li>;
+      },
+
       pre(pre: any) {
         return <pre className="text-sm mb-4 md:p-4 bg-theme-pre text-theme-base rounded-lg overflow-x-auto">{pre.children}</pre>;
       },
@@ -145,7 +153,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
       code(code: any) {
         const { className, children, inline } = code;
 
-        if (inline) return <code className="px-1 outline outline-1 rounded-sm bg-white/10">{children}</code>;
+        if (inline) return <code className="px-1 outline outline-1 rounded-sm bg-white/10 text-theme-base">{children}</code>;
 
         let language = (className || "").split("-")[1];
         if (!language)
@@ -262,7 +270,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
             </div>
           )}
           <Page.Section>
-            <p className="mb-4 text-gray-400mb-2 text-sm underline text-theme-link decoration-dotted underline-offset-2" aria-label="Date published">
+            <p className="text-theme-faded mb-2 text-sm underline decoration-dotted underline-offset-2" aria-label="Date published">
               <span>{data.date}</span> <span>{data.updated && `(Updated: ${data.updated})`}</span>
             </p>
             <div className="mb-4">

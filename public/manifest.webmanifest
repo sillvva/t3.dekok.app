@@ -1,6 +1,7 @@
 {
   "name": "Matt DeKok",
   "short_name": "Matt DeKok",
+  "description": "Experienced full stack web developer with a demonstrated history of working in the wireless industry.",
   "icons": [
     {
       "src": "/icon_x48.png",
@@ -24,12 +25,12 @@
       "type": "image/png"
     },
     {
-      "src": "/icons/icon_x384.png",
+      "src": "/icon_x384.png",
       "sizes": "384x384",
       "type": "image/png"
     },
     {
-      "src": "/icons/icon_x512.png",
+      "src": "/icon_x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

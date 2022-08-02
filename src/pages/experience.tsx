@@ -27,7 +27,7 @@ const Experience: NextPageWithLayout<{
                       </a>
                     )}
                   </h3>
-                  <h4>
+                  <h4 className="text-theme-faded">
                     {!exp.h4Link ? (
                       exp.h4
                     ) : (
@@ -36,7 +36,7 @@ const Experience: NextPageWithLayout<{
                       </a>
                     )}
                   </h4>
-                  <h5>
+                  <h5 className="text-theme-faded">
                     {!exp.h5Link ? (
                       exp.h5
                     ) : (

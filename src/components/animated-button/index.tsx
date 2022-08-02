@@ -12,6 +12,7 @@ type AnimatedButtonProps = {
   hoverColor?: string;
   activeColor?: string;
   textColor?: string;
+  activeClick?: boolean;
   clickRipple?: boolean;
   itemClasses: string[];
 };
@@ -24,6 +25,7 @@ export default function AnimatedButton(props: AnimatedButtonProps) {
     hoverColor = "rgba(var(--color-bg-body), 0.6)",
     activeColor = "rgb(var(--color-bg-body))",
     textColor = "var(--color-text-link)",
+    activeClick = false,
     link = "",
     label,
     clickRipple
@@ -40,11 +42,11 @@ export default function AnimatedButton(props: AnimatedButtonProps) {
     ...(hoverColor && { "--hover-color": hoverColor }),
     ...(activeColor && { "--active-color": activeColor }),
     ...(textColor && { "--text-color": textColor }),
-    ...(active && { cursor: "default" })
+    ...(active && !activeClick && { cursor: "default" })
   } as React.CSSProperties;
 
   const btn = (
-    <a className={concatenate(...classes)} style={style} onPointerDown={mouseHandler} onClick={e => active && e.preventDefault()}>
+    <a className={concatenate(...classes)} style={style} onPointerDown={mouseHandler} onClick={e => active && !activeClick && e.preventDefault()}>
       {ripples}
       {label}
     </a>

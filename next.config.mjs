@@ -1,4 +1,3 @@
-import { env } from "./src/server/env.mjs";
 import withPWA from "next-pwa";
 
 /**
@@ -13,7 +12,7 @@ function defineNextConfig(config) {
   return config;
 }
 
-export default withPWA(defineNextConfig({
+const config = defineNextConfig({
   reactStrictMode: true,
   experimental: {
     images: {
@@ -24,6 +23,8 @@ export default withPWA(defineNextConfig({
     domains: ["slxazldgfeytirfrculz.supabase.co", "avatars.githubusercontent.com"]
   },
   pwa: {
-    dest: "public",
+    dest: "public"
   }
-}));
+});
+
+export default process.env.NODE_ENV === "development" ? config : withPWA(config);

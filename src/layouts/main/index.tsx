@@ -19,7 +19,7 @@ import { trpc } from "$src/utils/trpc";
 import PageMessage from "$src/components/page-message";
 
 const PageMenu = dynamic(() => import("./components/menu"));
-const Drawer = dynamic(() => import("$src/components/drawer"));
+const Drawer = dynamic(() => import("./components/drawer"));
 const menuItems = [
   { link: "/", label: "Intro" },
   { link: "/about", label: "About Me" },
@@ -33,6 +33,7 @@ const MainLayout = (props: React.PropsWithChildren<MainLayoutProps>) => {
   const { theme, setTheme } = useTheme();
   const { user, isLoading } = useAuthentication({ login: props.layout === "admin" });
   const [oldTheme, setOldTheme] = useState(theme || "");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const mm = matchMedia("(prefers-color-scheme: dark)");
@@ -49,6 +50,7 @@ const MainLayout = (props: React.PropsWithChildren<MainLayoutProps>) => {
       document.documentElement.dataset.scroll = window.scrollY.toString();
     });
 
+    setMounted(true);
     window.addEventListener("scroll", scrollHandler, { passive: true });
     return () => window.removeEventListener("scroll", scrollHandler);
   }, []);
@@ -63,8 +65,10 @@ const MainLayout = (props: React.PropsWithChildren<MainLayoutProps>) => {
     <div id="app" className="min-h-screen min-w-screen">
       <NextNProgress color="var(--color-bg-link)" height={1} options={{ showSpinner: false }} />
       <PageMeta title={props.title} description={props.meta?.description} image={props.meta?.image} articleMeta={props.meta?.articleMeta} />
-      {theme && theme !== oldTheme && <Page.Bg theme={oldTheme || ""} />}
-      <Page.Bg key={theme} theme={theme} />
+      <AnimatePresence initial={mounted}>
+        {theme && theme !== oldTheme && <Page.Bg theme={oldTheme || ""} mounted={mounted} />}
+        <Page.Bg key={theme} theme={theme} mounted={mounted} />
+      </AnimatePresence>
       <PageHeader head={props} layoutMotion={fadeMotion} onThemeChange={themeChangeHandler} />
       {props.layout == "admin" ? (
         <div className="flex flex-col md:flex-row relative">
@@ -231,10 +235,10 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
                 exit="exit"
                 transition={layoutMotion?.transition}
                 className={concatenate(
-                  "text-3xl text-center text-theme-heading font-medium font-montserrat",
+                  "text-theme-heading font-medium font-montserrat",
                   "drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
-                  "block lg:hidden flex-1 p-2 absolute inset-0",
-                  smallTitle && "text-sm sm:text-lg md:text-2xl flex lg:hidden justify-center items-center"
+                  "flex lg:hidden justify-center items-center flex-1 p-2 absolute inset-0",
+                  smallTitle ? "text-sm sm:text-lg md:text-2xl" : "text-3xl"
                 )}>
                 {head?.title}
               </motion.h1>
@@ -250,14 +254,21 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
                 <span className="hidden xs:inline">{user.user_metadata.preferred_username}</span>
                 <div className="avatar">
                   <div className="w-10 rounded-full ring ring-theme-link ring-offset-theme-base ring-offset-2">
-                    <Image src={user.user_metadata.avatar_url} alt={user.user_metadata.preferred_username} width={40} height={40} className="rounded-full" />
+                    <Image
+                      src={user.user_metadata.avatar_url}
+                      alt={user.user_metadata.preferred_username}
+                      priority
+                      width={40}
+                      height={40}
+                      className="rounded-full"
+                    />
                   </div>
                 </div>
               </a>
             </div>
           )}
         </div>
-        <div className="hidden xs:block w-12">
+        <div className={concatenate("w-12", head?.layout == "admin" && "hidden xs:block")}>
           <button
             type="button"
             aria-label="Toggle Theme"

@@ -102,10 +102,10 @@ const RatingSection = (props: PropsWithChildren<RatingSectionProps>) => {
       <div className="flex flex-wrap -m-3 mt-4 mb-2">
         {colClasses.map((col, c) => (
           <Fragment key={`col${c}`}>
-            <div className={concatenate("p-3 pt-0.5 basis-0 grow even:text-right even:max-w-max", c > 0 && `hidden ${col}`)}>
+            <div className={concatenate("p-3 pt-0.5 basis-0 grow text-theme-faded even:text-right even:max-w-max", c > 0 && `hidden ${col}`)}>
               <strong>Skills</strong>
             </div>
-            <div className={concatenate("p-3 pt-0.5 basis-0 grow even:text-right even:max-w-max", c > 0 && `hidden ${col}`)}>
+            <div className={concatenate("p-3 pt-0.5 basis-0 grow text-theme-faded even:text-right even:max-w-max", c > 0 && `hidden ${col}`)}>
               <strong>Rating</strong>
             </div>
           </Fragment>

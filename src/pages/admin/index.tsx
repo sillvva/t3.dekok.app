@@ -1,7 +1,7 @@
 import { NextPageWithLayout } from "../_app";
 import { KeyboardEventHandler, useCallback, useState } from "react";
 import { useRouter } from "next/router";
-import { mdiOpenInNew, mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
+import { mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
 import { toast } from "react-toastify";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { trpc } from "$src/utils/trpc";
@@ -12,9 +12,12 @@ import PageMessage from "$src/components/page-message";
 import Image from "next/future/image";
 import Icon from "@mdi/react";
 import Pagination from "$src/components/pagination";
+import Link from "next/link";
 
 const Admin: NextPageWithLayout = () => {
   const router = useRouter();
+  const { posts, isFetching, isMutating, upload, remove, refresh } = usePosts();
+  const [parent] = useAutoAnimate<HTMLDivElement>();
 
   const page = parseInt(router.query.page ? (Array.isArray(router.query.page) ? router.query.page[0] : router.query.page) : "1");
   const qSearch = Array.isArray(router.query.search) ? router.query.search[0] : router.query.search;
@@ -37,8 +40,103 @@ const Admin: NextPageWithLayout = () => {
     [page]
   );
 
+  const loading = !(posts && !isFetching) || isMutating;
+  if (!loading && !posts.length) return <PageMessage>No posts found</PageMessage>;
+
+  const numloaders = Math.min(itemsPerPage, posts?.length ?? itemsPerPage);
+  const loaders = loading ? numloaders : 0;
+  const filteredPosts =
+    query.length > 2
+      ? (posts || [])
+          .filter(post => {
+            return (
+              post.title.toLowerCase().includes(query.toLowerCase()) ||
+              (post.description || "").toLowerCase().includes(query.toLowerCase()) ||
+              (post.tags as string[]).find(tag => tag.toLowerCase() == query.toLowerCase())
+            );
+          })
+          .sort((a, b) => (a.date > b.date ? -1 : 1))
+      : (posts || []).sort((a, b) => (a.date > b.date ? -1 : 1));
+  const pages = Math.ceil(filteredPosts.length / itemsPerPage);
+  const paginatedPosts = filteredPosts.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex gap-2">
+        <div className="flex-1">
+          <input type="text" value={qSearch} onKeyUp={queryHandler} placeholder="Search" className="input bg-theme-article w-full shadow-md" />
+        </div>
+        <div className="md:flex-1 flex justify-end gap-4">
+          <button onClick={() => refresh()}>
+            <Icon path={mdiRefresh} className="w-6 h-6" />
+          </button>
+          <button onClick={upload}>
+            <Icon path={mdiUpload} className="w-6 h-6" />
+          </button>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2" ref={parent}>
+        {loaders == 0
+          ? paginatedPosts.map(post => (
+              <Link key={post.slug} href={`/blog/${post.slug}`}>
+                <a className="block relative overflow-hidden rounded-lg h-16 sm:h-56" target="_blank" rel="noreferrer noopener">
+                  <button
+                    className="fab fab-small absolute hidden sm:flex top-2 right-2 bg-red-700 drop-shadow-theme-text"
+                    onClick={ev => {
+                      ev.preventDefault();
+                      remove(post.slug);
+                    }}>
+                    <Icon path={mdiTrashCan} />
+                  </button>
+                  <div className="flex sm:block gap-2 absolute bottom-0 w-full h-full sm:h-auto p-4 bg-theme-body/90">
+                    <div className="flex-1">
+                      <h5 className="text-sm text-theme-link">{post.title}</h5>
+                      <p className="text-xs text-theme-faded">Posted: {new Date(post.date).toLocaleDateString()}</p>
+                      <p className="text-xs text-theme-base hidden sm:block">{post.description}</p>
+                    </div>
+                    <div className="flex sm:hidden items-center">
+                      <button
+                        className="fab fab-small bg-red-700 drop-shadow-theme-text"
+                        onClick={ev => {
+                          ev.preventDefault();
+                          remove(post.slug);
+                        }}>
+                        <Icon path={mdiTrashCan} />
+                      </button>
+                    </div>
+                  </div>
+                  <Image src={post.image} alt={post.title} priority className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
+                </a>
+              </Link>
+            ))
+          : Array(loaders)
+              .fill(1)
+              .map((l, i) => (
+                <div className="bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden h-16 sm:h-56" key={i}>
+                  <div className="absolute inset-0 motion-safe:animate-pulse bg-theme-hover bg-opacity-15 hidden sm:block" />
+                  <div className="absolute bottom-0 w-full flex-1 flex flex-col p-3 gap-2">
+                    <div className="loader-line w-2/3 h-4 max-w-xs" />
+                    <div className="loader-line w-1/2 h-3" />
+                    <div className="loader-line w-full h-3" />
+                    <div className="loader-line w-full h-3" />
+                  </div>
+                </div>
+              ))}
+      </div>
+      {pages > 0 && loaders == 0 && <Pagination page={page} pages={pages} />}
+    </div>
+  );
+};
+
+Admin.getLayout = function (page) {
+  return <MainLayout layout="admin">{page}</MainLayout>;
+};
+
+export default Admin;
+
+const usePosts = () => {
   const utils = trpc.useContext();
-  const [mutating, setMutating] = useState(true);
+  const [isMutating, setMutating] = useState(true);
 
   const { data: posts, isFetching } = trpc.useQuery(["posts.get"], {
     refetchOnWindowFocus: false,
@@ -103,94 +201,12 @@ const Admin: NextPageWithLayout = () => {
     [deleteMutation]
   );
 
-  const [parent] = useAutoAnimate<HTMLDivElement>();
-
-  const loading = !(posts && !isFetching) || mutating;
-  if (!loading && !posts.length) return <PageMessage>No posts found</PageMessage>;
-
-  const numloaders = Math.min(itemsPerPage, posts?.length ?? itemsPerPage);
-  const loaders = loading ? numloaders : 0;
-  const filteredPosts =
-    query.length > 2
-      ? (posts || [])
-          .filter(post => {
-            return (
-              post.title.toLowerCase().includes(query.toLowerCase()) ||
-              (post.description || "").toLowerCase().includes(query.toLowerCase()) ||
-              (post.tags as string[]).find(tag => tag.toLowerCase() == query.toLowerCase())
-            );
-          })
-          .sort((a, b) => (a.date > b.date ? -1 : 1))
-      : (posts || []).sort((a, b) => (a.date > b.date ? -1 : 1));
-  const pages = Math.ceil(filteredPosts.length / itemsPerPage);
-  const paginatedPosts = filteredPosts.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="flex gap-2">
-        <div className="flex-1">
-          <input type="text" value={qSearch} onKeyUp={queryHandler} placeholder="Search" className="input bg-theme-article w-full shadow-md" />
-        </div>
-        <div className="md:flex-1 flex justify-end gap-4">
-          <button onClick={() => refresh()}>
-            <Icon path={mdiRefresh} className="w-6 h-6" />
-          </button>
-          <button onClick={upload}>
-            <Icon path={mdiUpload} className="w-6 h-6" />
-          </button>
-        </div>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2" ref={parent}>
-        {loaders == 0
-          ? paginatedPosts.map(post => (
-              <a
-                key={post.slug}
-                href={`/blog/${post.slug}`}
-                className="block relative overflow-hidden rounded-lg h-16 sm:h-56"
-                target="_blank"
-                rel="noreferrer noopener">
-                <a
-                  type="button"
-                  className="fab absolute hidden sm:flex top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text"
-                  onClick={() => remove(post.slug)}>
-                  <Icon path={mdiTrashCan} size={0.8} />
-                </a>
-                <div className="flex sm:block gap-2 absolute bottom-0 w-full h-full sm:h-auto p-4 bg-theme-body/90">
-                  <div className="flex-1">
-                    <h5 className="text-sm text-theme-link">{post.title}</h5>
-                    <p className="text-xs text-slate-500">Uploaded: {new Date(post.date).toLocaleDateString()}</p>
-                    <p className="text-xs text-theme-base hidden sm:block">{post.description}</p>
-                  </div>
-                  <div className="flex sm:hidden items-center">
-                    <a type="button" className="fab !w-9 !h-9 bg-red-700 drop-shadow-theme-text" onClick={() => remove(post.slug)}>
-                      <Icon path={mdiTrashCan} size={0.8} />
-                    </a>
-                  </div>
-                </div>
-                <Image src={post.image} alt={post.title} className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
-              </a>
-            ))
-          : Array(loaders)
-              .fill(1)
-              .map((l, i) => (
-                <div className="bg-theme-article p-0 rounded-md shadow-md relative overflow-hidden h-16 sm:h-56" key={i}>
-                  <div className="absolute inset-0 motion-safe:animate-pulse bg-theme-hover bg-opacity-15 hidden sm:block" />
-                  <div className="absolute bottom-0 w-full flex-1 flex flex-col p-3 gap-2">
-                    <div className="loader-line w-2/3 h-4 max-w-xs" />
-                    <div className="loader-line w-1/2 h-3" />
-                    <div className="loader-line w-full h-3" />
-                    <div className="loader-line w-full h-3" />
-                  </div>
-                </div>
-              ))}
-      </div>
-      {pages > 0 && loaders == 0 && <Pagination page={page} pages={pages} />}
-    </div>
-  );
+  return {
+    posts,
+    isFetching,
+    isMutating,
+    upload,
+    remove,
+    refresh
+  };
 };
-
-Admin.getLayout = function (page) {
-  return <MainLayout layout="admin">{page}</MainLayout>;
-};
-
-export default Admin;

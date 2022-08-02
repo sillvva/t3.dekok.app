@@ -73,9 +73,9 @@ function GalleryItem(props: GalleryItemProps) {
         />
       )}
       <div className="absolute inset-0 m-2 p-2 flex flex-col justify-end bg-gradient-to-b from-transparent to-black text-white">
-        <h3 className="text-lg font-medium my-0 drop-shadow-sm">{props.title}</h3>
-        {props.subtitle && <h4 className="text-base font-light m-0 drop-shadow-sm">{props.subtitle}</h4>}
-        {props.description && <div className="text-sm font-light mt-1 drop-shadow-sm">{props.description}</div>}
+        <h3 className="text-xl font-semibold my-0 drop-shadow-sm">{props.title}</h3>
+        {props.subtitle && <h4 className="text-sm font-light m-0 drop-shadow-sm">{props.subtitle}</h4>}
+        {props.description && <div className="text-xs text-white/75 font-light mt-1 drop-shadow-sm">{props.description}</div>}
       </div>
     </GalleryItemWrapper>
   );
