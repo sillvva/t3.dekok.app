@@ -1,10 +1,12 @@
+import { isoDateRegex } from "$src/utils/constants";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { TRPCError } from "@trpc/server";
 import { parse } from "cookie";
+import matter from "gray-matter";
 import path from "path";
 import { z } from "zod";
 import { createRouter } from "../context";
-import { fetchPosts } from "../helpers";
+import { fetchPosts, formatErrors } from "../helpers";
 
 export const postsRouter = createRouter()
   .query("get", {
@@ -48,6 +50,26 @@ export const postsRouter = createRouter()
       if (extname !== ".md") throw new TRPCError({ message: "Invalid file extension", code: "INTERNAL_SERVER_ERROR" });
 
       const buffer = Buffer.from(file, "base64");
+      const markdown = buffer.toString("utf8");
+
+      const envSchema = z.object({
+        title: z.string(),
+        description: z.string(),
+        date: z.string().regex(new RegExp(isoDateRegex), "Must be a valid ISO date"),
+        updated: z.string().regex(new RegExp(isoDateRegex), "Must be a valid ISO date").optional(),
+        image: z.string().url("Invalid URL").optional(),
+        tags: z.array(z.string()).optional(),
+        full: z.boolean().optional()
+      });
+
+      const { data } = matter(markdown);
+      const _env = envSchema.safeParse(data);
+
+      if (!_env.success) {
+        const message = ["❌ Invalid markdown data:\n", ...formatErrors(_env.error.format())].join();
+        throw new TRPCError({ message: message, code: "INTERNAL_SERVER_ERROR" });
+      }
+
       const { error } = await supabaseClient.storage.from("blog").upload(filename, buffer, {
         contentType: "text/markdown",
         upsert: true
@@ -78,4 +100,4 @@ export const postsRouter = createRouter()
         success: true
       };
     }
-  })
+  });
