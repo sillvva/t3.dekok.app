@@ -10,7 +10,10 @@ module.exports = {
       },
       textColor: {
         theme: {
-          base: "var(--color-text-base)",
+          base: ({ opacityValue }) => {
+            if (opacityValue === undefined) opacityValue = 1;
+            return `rgba(var(--color-text-base), ${opacityValue})`;
+          },
           inverted: "var(--color-text-inverted)",
           link: "var(--color-text-link)",
           "link-hover": "var(--color-text-link-hover)",
