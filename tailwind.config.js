@@ -43,6 +43,20 @@ module.exports = {
           code: "var(--color-bg-code)"
         }
       },
+      backgroundImage: {
+        "conic-gradient": `conic-gradient(
+          rgb(var(--color-bg-article)) 0deg,
+          var(--color-bg-link) 90deg,
+          rgb(var(--color-bg-article)) 90deg,
+          rgb(var(--color-bg-article)) 180deg,
+          rgb(var(--color-bg-article)) 180deg,
+          var(--color-bg-link) 270deg,
+          rgb(var(--color-bg-article)) 270deg,
+          rgb(var(--color-bg-article)) 360deg
+        )`,
+        "cover-gradient": "linear-gradient(transparent, rgb(var(--color-bg-body)) var(--gto))",
+        "list-item": `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='gray' d='M10.41,7.41L15,12L10.41,16.6L9,15.18L12.18,12L9,8.82M5,3C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3H5Z' /%3E%3C/svg%3E")`
+      },
       ringColor: {
         theme: {
           link: "var(--color-text-link)"
@@ -63,7 +77,7 @@ module.exports = {
           body: ({ opacityValue }) => {
             if (opacityValue === undefined) opacityValue = 1;
             return `rgba(var(--color-bg-body), ${opacityValue})`;
-          },
+          }
         }
       },
       fontFamily: {
@@ -86,29 +100,29 @@ module.exports = {
         },
         "zoom-bounce": {
           "0%": {
-            transform: "scale(0)",
+            transform: "scale(0)"
           },
           "60%": {
-            transform: "scale(1.4)",
+            transform: "scale(1.4)"
           },
           "100%": {
-            transform: "scale(1)",
+            transform: "scale(1)"
           }
         },
         "drawer-open": {
           "0%": {
-            transform: "scale(0.8)",
+            transform: "scale(0.8)"
           },
           "100%": {
-            transform: "scale(1)",
+            transform: "scale(1)"
           }
         },
         "drawer-close": {
           "0%": {
-            transform: "scale(1)",
+            transform: "scale(1)"
           },
           "100%": {
-            transform: "scale(0)",
+            transform: "scale(0)"
           }
         }
       },
@@ -121,7 +135,7 @@ module.exports = {
         "drawer-close": "drawer-close 200ms linear forwards"
       },
       maxWidth: {
-        "8xl": "100rem",
+        "8xl": "100rem"
       }
     },
     screens: {

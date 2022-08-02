@@ -143,7 +143,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
       },
 
       li(li: any) {
-        return <li className="blog-list-item leading-7 mb-3">{li.children}</li>;
+        return <li className="list-item-icon leading-7 mb-3">{li.children}</li>;
       },
 
       pre(pre: any) {

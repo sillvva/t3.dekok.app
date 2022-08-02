@@ -18,33 +18,33 @@ const Experience: NextPageWithLayout<{
             <Page.SectionItems>
               {section.experience.map((exp, i) => (
                 <Page.SectionItem key={`${exp.name}${i}`} image={exp.image}>
-                  <h3>
+                  <h3 className="text-base font-medium m-0 font-robo-flex">
                     {!exp.nameLink ? (
                       exp.name
                     ) : (
-                      <a href={exp.nameLink} target="_blank" rel="noreferrer noopener">
+                      <a href={exp.nameLink} target="_blank" rel="noreferrer noopener" className="font-normal text-theme-link">
                         {exp.name}
                       </a>
                     )}
                   </h3>
-                  <h4 className="text-theme-faded">
+                  <p className="text-sm font-light mb-0 text-theme-faded">
                     {!exp.h4Link ? (
                       exp.h4
                     ) : (
-                      <a href={exp.h4Link} target="_blank" rel="noreferrer noopener">
+                      <a href={exp.h4Link} target="_blank" rel="noreferrer noopener" className="font-normal text-theme-link">
                         {exp.h4}
                       </a>
                     )}
-                  </h4>
-                  <h5 className="text-theme-faded">
+                  </p>
+                  <p className="text-sm font-light mb-0 text-theme-faded">
                     {!exp.h5Link ? (
                       exp.h5
                     ) : (
-                      <a href={exp.h5Link} target="_blank" rel="noreferrer noopener">
+                      <a href={exp.h5Link} target="_blank" rel="noreferrer noopener" className="font-normal text-theme-link">
                         {exp.h5}
                       </a>
                     )}
-                  </h5>
+                  </p>
                 </Page.SectionItem>
               ))}
             </Page.SectionItems>

@@ -79,7 +79,7 @@ const PageSectionItem = (props: PropsWithChildren<PageSectionItemProps>) => {
       <div className={"float-left w-14 h-14 grid justify-center items-center bg-white rounded-md p-1 relative"}>
         <Image src={props.image} alt="" width={56} height={56} className="rounded-sm" />
       </div>
-      <div className="ml-20 section-content">{props.children}</div>
+      <div className="ml-20">{props.children}</div>
     </div>
   );
 };
