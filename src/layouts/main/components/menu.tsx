@@ -49,15 +49,16 @@ const PageMenu = (props: PageMenuProps) => {
             {row.map((item, i) => {
               return (
                 <AnimatedButton
-                  key={`${item.link}-${item.link === pathname}`}
+                  key={`${item.link}-${item.link == "/" ? pathname === item.link : pathname.startsWith(item.link)}`}
                   link={item.link}
                   label={item.label}
                   color={item.color || color}
                   itemClasses={itemClasses}
-                  active={item.link === pathname}
+                  active={item.link == "/" ? pathname === item.link : pathname.startsWith(item.link)}
                   activeColor={item.activeColor || activeColor}
                   hoverColor={item.hoverColor || hoverColor}
                   textColor={item.textColor || textColor}
+                  activeClick={pathname !== item.link}
                   clickRipple
                 />
               );
