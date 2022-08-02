@@ -63,7 +63,7 @@
   --color-bg-shadow: rgb(0, 0, 0, 0.5);
 
   --color-text-base: 245, 245, 245;
-  --color-text-faded: rgb(190, 190, 190);
+  --color-text-faded: rgb(160, 160, 160);
   --color-text-inverted: rgb(42, 42, 42);
   --color-text-link: rgb(0, 171, 154);
   --color-text-link-hover: rgb(0, 84, 84);
@@ -92,7 +92,7 @@
   --color-bg-shadow: rgb(0, 0, 0, 0.5);
 
   --color-text-base: 245, 245, 245;
-  --color-text-faded: rgb(190, 190, 190);
+  --color-text-faded: rgb(160, 160, 160);
   --color-text-inverted: rgb(42, 42, 42);
   --color-text-link: rgb(52, 190, 255);
   --color-text-link-hover: rgb(35, 66, 135);
@@ -237,7 +237,7 @@
   }
   .section-content {
     h3 {
-      @apply text-base font-medium m-0 font-montserrat;
+      @apply text-base font-medium m-0 font-robo-flex;
     }
     h4 {
       @apply text-sm font-light mb-1;
