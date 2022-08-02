@@ -269,6 +269,12 @@
     svg {
       @apply w-8 h-8;
     }
+    &.fab-small {
+      @apply w-9 h-9;
+      svg {
+        @apply w-6 h-6;
+      }
+    }
   }
   .language-raw-container {
     color: rgb(197, 200, 198);

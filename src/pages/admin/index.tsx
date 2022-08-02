@@ -39,7 +39,7 @@ const Admin: NextPageWithLayout = () => {
     },
     [page]
   );
-  
+
   const loading = !(posts && !isFetching) || isMutating;
   if (!loading && !posts.length) return <PageMessage>No posts found</PageMessage>;
 
@@ -81,12 +81,12 @@ const Admin: NextPageWithLayout = () => {
               <Link key={post.slug} href={`/blog/${post.slug}`}>
                 <a className="block relative overflow-hidden rounded-lg h-16 sm:h-56" target="_blank" rel="noreferrer noopener">
                   <button
-                    className="fab absolute hidden sm:flex top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text"
+                    className="fab fab-small absolute hidden sm:flex top-2 right-2 bg-red-700 drop-shadow-theme-text"
                     onClick={ev => {
-                      ev.stopPropagation();
+                      ev.preventDefault();
                       remove(post.slug);
                     }}>
-                    <Icon path={mdiTrashCan} size={0.8} />
+                    <Icon path={mdiTrashCan} />
                   </button>
                   <div className="flex sm:block gap-2 absolute bottom-0 w-full h-full sm:h-auto p-4 bg-theme-body/90">
                     <div className="flex-1">
@@ -96,12 +96,12 @@ const Admin: NextPageWithLayout = () => {
                     </div>
                     <div className="flex sm:hidden items-center">
                       <button
-                        className="fab !w-9 !h-9 bg-red-700 drop-shadow-theme-text"
+                        className="fab fab-small bg-red-700 drop-shadow-theme-text"
                         onClick={ev => {
-                          ev.stopPropagation();
+                          ev.preventDefault();
                           remove(post.slug);
                         }}>
-                        <Icon path={mdiTrashCan} size={0.8} />
+                        <Icon path={mdiTrashCan} />
                       </button>
                     </div>
                   </div>
@@ -208,5 +208,5 @@ const usePosts = () => {
     upload,
     remove,
     refresh
-  }
-}
+  };
+};
