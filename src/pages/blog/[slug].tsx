@@ -90,7 +90,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
           );
         }
 
-        return <p className="mb-4 leading-7 text-theme-base/70">{paragraph.children}</p>;
+        return <p className="mb-4 leading-7 text-theme-base/80">{paragraph.children}</p>;
       },
 
       h1(h: any) {
@@ -139,11 +139,11 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
       },
 
       ul(ul: any) {
-        return <ul className="list-disc list-outside ml-4 mb-4">{ul.children}</ul>;
+        return <ul className="list-outside ml-4 mb-7 text-theme-base/80">{ul.children}</ul>;
       },
 
       li(li: any) {
-        return <li className="leading-7 mb-1">{li.children}</li>;
+        return <li className="blog-list-item leading-7 mb-3">{li.children}</li>;
       },
 
       pre(pre: any) {
@@ -153,7 +153,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
       code(code: any) {
         const { className, children, inline } = code;
 
-        if (inline) return <code className="px-1 outline outline-1 rounded-sm bg-white/10 text-theme-base/90">{children}</code>;
+        if (inline) return <code className="px-1 outline outline-1 rounded-sm bg-white/10 text-theme-base">{children}</code>;
 
         let language = (className || "").split("-")[1];
         if (!language)
