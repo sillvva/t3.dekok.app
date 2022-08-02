@@ -83,7 +83,7 @@ export const PostCard = (post: inferQueryOutput<"posts.get">[number]) => {
         </div>
         <div className="flex flex-col flex-1 p-4">
           <h2 className="text-lg text-theme-heading">{post.title}</h2>
-          <span className="mb-2 text-sm underline text-theme-link decoration-dotted underline-offset-2">
+          <span className="mb-2 text-sm underline text-theme-faded decoration-dotted underline-offset-2">
             {post.date.toLocaleDateString("en-US", {
               month: "long",
               day: "numeric",
