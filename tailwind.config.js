@@ -14,6 +14,7 @@ module.exports = {
             if (opacityValue === undefined) opacityValue = 1;
             return `rgba(var(--color-text-base), ${opacityValue})`;
           },
+          faded: "var(--color-text-faded)",
           inverted: "var(--color-text-inverted)",
           link: "var(--color-text-link)",
           "link-hover": "var(--color-text-link-hover)",

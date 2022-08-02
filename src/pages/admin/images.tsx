@@ -85,7 +85,7 @@ const Images: NextPageWithLayout = () => {
                 <div className="flex sm:block gap-2 absolute bottom-0 w-full h-full sm:h-auto p-4 bg-theme-body/90">
                   <div className="flex-1">
                     <h5 className="text-sm text-theme-link">{image.name}</h5>
-                    <p className="text-xs text-slate-500">Uploaded: {new Date(image.created_at).toLocaleDateString()}</p>
+                    <p className="text-xs text-theme-faded">Uploaded: {new Date(image.created_at).toLocaleDateString()}</p>
                   </div>
                   <div className="flex sm:hidden items-center">
                     <button

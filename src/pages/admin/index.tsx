@@ -91,7 +91,7 @@ const Admin: NextPageWithLayout = () => {
                   <div className="flex sm:block gap-2 absolute bottom-0 w-full h-full sm:h-auto p-4 bg-theme-body/90">
                     <div className="flex-1">
                       <h5 className="text-sm text-theme-link">{post.title}</h5>
-                      <p className="text-xs text-slate-500">Uploaded: {new Date(post.date).toLocaleDateString()}</p>
+                      <p className="text-xs text-theme-faded">Posted: {new Date(post.date).toLocaleDateString()}</p>
                       <p className="text-xs text-theme-base hidden sm:block">{post.description}</p>
                     </div>
                     <div className="flex sm:hidden items-center">

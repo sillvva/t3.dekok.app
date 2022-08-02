@@ -270,7 +270,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
             </div>
           )}
           <Page.Section>
-            <p className="mb-4 text-gray-400mb-2 text-sm underline text-theme-link decoration-dotted underline-offset-2" aria-label="Date published">
+            <p className="text-theme-faded mb-2 text-sm underline decoration-dotted underline-offset-2" aria-label="Date published">
               <span>{data.date}</span> <span>{data.updated && `(Updated: ${data.updated})`}</span>
             </p>
             <div className="mb-4">
