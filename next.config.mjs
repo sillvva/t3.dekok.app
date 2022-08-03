@@ -9,22 +9,22 @@ import withPWA from "next-pwa";
  * @constraint {{import('next').NextConfig}}
  */
 function defineNextConfig(config) {
-  return config;
+	return config;
 }
 
 const config = defineNextConfig({
-  reactStrictMode: true,
-  experimental: {
-    images: {
-      allowFutureImage: true
-    }
-  },
-  images: {
-    domains: ["slxazldgfeytirfrculz.supabase.co", "avatars.githubusercontent.com"]
-  },
-  pwa: {
-    dest: "public"
-  }
+	reactStrictMode: true,
+	experimental: {
+		images: {
+			allowFutureImage: true
+		}
+	},
+	images: {
+		domains: ["slxazldgfeytirfrculz.supabase.co", "avatars.githubusercontent.com"]
+	},
+	pwa: {
+		dest: "public"
+	}
 });
 
 export default process.env.NODE_ENV === "development" ? config : withPWA(config);
