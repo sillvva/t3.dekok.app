@@ -3,7 +3,7 @@ import ReactDom from "react-dom";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-import { mdiChevronLeft, mdiMenu, mdiBrightness6 } from "@mdi/js";
+import { mdiChevronLeft, mdiMenu, mdiPalette } from "@mdi/js";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Transition, Variants } from "framer-motion";
 import { Slide, ToastContainer } from "react-toastify";
@@ -277,7 +277,7 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
               setTheme(nextTheme);
             }}
             className={`fab my-3`}>
-            <Icon path={mdiBrightness6} />
+            <Icon path={mdiPalette} />
           </button>
         </div>
       </div>
