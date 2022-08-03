@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { readFileSync, rmSync, existsSync, statSync, writeFileSync } from "node:fs";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { Components } from "react-markdown";
 import matter from "gray-matter";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
@@ -32,6 +32,7 @@ import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { prisma } from "$src/server/db/client";
 import { concatenate } from "$src/utils/misc";
 import { useTheme } from "next-themes";
+import { JSXElementConstructor, ReactElement } from "react";
 
 const ReactCodepen = dynamic(() => import("../../components/codepen"));
 
@@ -69,32 +70,32 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 	try {
 		if (!data) throw new Error("Could not load post");
 
-		const renderers = {
-			p(paragraph: any) {
-				const { node } = paragraph;
+		const components: Components = {
+			p({ children }) {
+        const child = children[0] as string | ReactElement;
+				if (typeof child === "object") {
+					if (child.type === "img") {
+						const image = child as ReactElement<HTMLImageElement, string | JSXElementConstructor<HTMLImageElement>>;
 
-				if (node.children[0].tagName === "img") {
-					const image = node.children[0];
-
-					return (
-						<figure className="flex flex-col mb-6 mt-6">
-							<a
-								href={image.properties.src}
-								target="_blank"
-								rel="noreferrer noopener"
-								className="relative flex justify-center w-full max-w-[800px] mb-2 mx-auto aspect-video">
-								<Image src={image.properties.src} alt={image.alt} layout="fill" objectFit="contain" className="!object-cover !md:object-contain" />
-							</a>
-							<figcaption className="block text-white/70 text-sm text-center">Click to open full screen</figcaption>
-						</figure>
-					);
+						return (
+							<figure className="flex flex-col mb-6 mt-6">
+								<a
+									href={image.props.src}
+									target="_blank"
+									rel="noreferrer noopener"
+									className="relative flex justify-center w-full max-w-[800px] mb-2 mx-auto aspect-video">
+									<Image src={image.props.src} alt={image.props.alt} layout="fill" objectFit="contain" className="!object-cover !md:object-contain" />
+								</a>
+								<figcaption className="block text-white/70 text-sm text-center">Click to open full screen</figcaption>
+							</figure>
+						);
+					}
 				}
 
-				return <p className="mb-4 leading-7 text-theme-base/80">{paragraph.children}</p>;
+				return <p className="mb-4 leading-7 text-theme-base/80">{children}</p>;
 			},
 
-			h1(h: any) {
-				const { children } = h;
+			h1({ children }) {
 				const text = flattenChildren(children);
 				return (
 					<h1 className="text-theme-heading text-4xl font-semibold mb-2 mt-4 leading-7 relative">
@@ -104,8 +105,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 				);
 			},
 
-			h2(h: any) {
-				const { children } = h;
+			h2({ children }) {
 				const text = flattenChildren(children);
 				return (
 					<h2 className="text-theme-heading text-2xl font-semibold mb-2 mt-4 leading-7 relative">
@@ -115,8 +115,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 				);
 			},
 
-			h3(h: any) {
-				const { children } = h;
+			h3({ children }) {
 				const text = flattenChildren(children);
 				return (
 					<h3 className="text-theme-heading text-lg font-semibold mb-2 mt-4 leading-7 relative">
@@ -126,11 +125,11 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 				);
 			},
 
-			a(anchor: any) {
-				const { href, children } = anchor;
-				const isExternal = href.startsWith("http");
+			a({ href, children }) {
+				const url = href ?? "";
+				const isExternal = url.startsWith("http");
 				return (
-					<Link href={href} scroll={false}>
+					<Link href={url} scroll={false}>
 						<a target={isExternal ? "_blank" : ""} rel={isExternal ? "noreferrer noopener" : ""} className="text-theme-link">
 							{children}
 						</a>
@@ -138,24 +137,23 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 				);
 			},
 
-			ul(ul: any) {
-				return <ul className="list-outside ml-4 mb-7 text-theme-base/80">{ul.children}</ul>;
+			ul({ children }) {
+				return <ul className="list-outside ml-4 mb-7 text-theme-base/80">{children}</ul>;
 			},
 
-			li(li: any) {
-				return <li className="list-item-icon leading-7 mb-3">{li.children}</li>;
+			li({ children }) {
+				return <li className="list-item-icon leading-7 mb-3">{children}</li>;
 			},
 
-			pre(pre: any) {
-				return <pre className="text-sm mb-4 md:p-4 bg-theme-pre text-theme-base rounded-lg overflow-x-auto">{pre.children}</pre>;
+			pre({ children }) {
+				return <pre className="text-sm mb-4 md:p-4 bg-theme-pre text-theme-base rounded-lg overflow-x-auto">{children}</pre>;
 			},
 
-			code(code: any) {
-				const { className, children, inline } = code;
+			code({ className, children, inline }) {
+				if (inline || typeof children[0] !== "string") return <code className="px-1 outline outline-1 rounded-sm bg-white/10 text-theme-base">{children}</code>;
+				const content = children as string[];
+				let language = (className ?? "").split("-")[1];
 
-				if (inline) return <code className="px-1 outline outline-1 rounded-sm bg-white/10 text-theme-base">{children}</code>;
-
-				let language = (className || "").split("-")[1];
 				if (!language)
 					return (
 						<pre className="language-raw-container">
@@ -165,7 +163,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 
 				if (language == "codepen") {
 					try {
-						const cpProps = JSON.parse(children[0]);
+						const cpProps = JSON.parse(content[0]);
 						return <ReactCodepen {...cpProps} />;
 					} catch (err: any) {
 						return <code>{children}</code>;
@@ -239,7 +237,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 										style={theme === "light" ? lightStyles : darkStyles}
 										language={language}
 										className={concatenate("tab-body !bg-theme-code rounded-md", bash, bash !== bashes[0] && "hidden")}>
-										{children.map((c: string) => c.replaceAll(bashInstructions[0], bashInstructions[b]))}
+										{content.map((c: string) => c.replaceAll(bashInstructions[0], bashInstructions[b]))}
 									</SyntaxHighlighter>
 								))}
 							</>
@@ -253,7 +251,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 						language={language}
 						showLineNumbers={!["bash"].includes(language)}
 						className="!bg-theme-code rounded-md">
-						{(children as string[]).map(c => c.trim())}
+						{content.map(c => c.trim())}
 					</SyntaxHighlighter>
 				);
 			}
@@ -274,7 +272,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 							<span>{data.date}</span> <span>{data.updated && `(Updated: ${data.updated})`}</span>
 						</p>
 						<div className="mb-4">
-							<ReactMarkdown components={renderers} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>
+							<ReactMarkdown components={components} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>
 								{mdContent}
 							</ReactMarkdown>
 						</div>
