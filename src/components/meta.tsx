@@ -23,23 +23,23 @@ const PageMeta = (props: PropsWithChildren<MetaProps>) => {
 
 	const dtitle = props.title ? `${props.title} - Matt DeKok` : "Matt DeKok";
 	const description = props.description || "Experienced full stack web developer with a demonstrated history of working in the wireless industry.";
-	const ogProperties: any = {
+	const ogProperties: Record<string, string> = {
 		title: dtitle,
 		description: description,
 		image: props.image && props.image.startsWith("http") ? props.image : `https://matt.dekok.app${props.image || "/images/preview-me3.jpeg"}`,
 		url: "https://matt.dekok.app"
 	};
-	const ogOnlyProperties: any = {
+	const ogOnlyProperties: Record<string, string> = {
 		...ogProperties,
 		type: "website",
 		site_name: dtitle
 	};
-	const twProperties: any = {
+	const twProperties: Record<string, string> = {
 		creator: "@sillvvasensei",
 		card: "summary_large_image",
 		...ogProperties
 	};
-	const articleProps: any = {
+	const articleProperties: Record<string, string> = {
 		...props.articleMeta
 	};
 
@@ -56,8 +56,8 @@ const PageMeta = (props: PropsWithChildren<MetaProps>) => {
 			<meta name="msapplication-TileColor" content={color} />
 			<meta name="msapplication-tap-highlight" content="no" />
 			<meta name="theme-color" content={color} />
-			{Object.keys(articleProps).map(t => {
-				return <meta key={`article:${t}`} property={`article:${t}`} content={articleProps[t]} />;
+			{Object.keys(articleProperties).map(t => {
+				return <meta key={`article:${t}`} property={`article:${t}`} content={articleProperties[t]} />;
 			})}
 			{Object.keys(ogOnlyProperties).map(t => {
 				return <meta key={`og:${t}`} name={t} property={`og:${t}`} content={ogOnlyProperties[t]} />;

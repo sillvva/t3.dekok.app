@@ -32,7 +32,8 @@ import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { prisma } from "$src/server/db/client";
 import { concatenate } from "$src/utils/misc";
 import { useTheme } from "next-themes";
-import { JSXElementConstructor, ReactElement } from "react";
+import { JSXElementConstructor, ReactElement, ReactNode } from "react";
+import { GetStaticPropsContext } from "next";
 
 const ReactCodepen = dynamic(() => import("../../components/codepen"));
 
@@ -72,7 +73,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 
 		const components: Components = {
 			p({ children }) {
-        const child = children[0] as string | ReactElement;
+				const child = children[0] as string | ReactElement;
 				if (typeof child === "object") {
 					if (child.type === "img") {
 						const image = child as ReactElement<HTMLImageElement, string | JSXElementConstructor<HTMLImageElement>>;
@@ -96,30 +97,39 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 			},
 
 			h1({ children }) {
-				const text = flattenChildren(children);
 				return (
 					<h1 className="text-theme-heading text-4xl font-semibold mb-2 mt-4 leading-7 relative">
-						<span className="absolute -top-40" id={text.replace(/[^a-z0-9]{1,}/gi, "-").toLowerCase()}></span>
+						<span
+							className="absolute -top-40"
+							id={flattenChildren(children)
+								.replace(/[^a-z0-9]{1,}/gi, "-")
+								.toLowerCase()}></span>
 						{children}
 					</h1>
 				);
 			},
 
 			h2({ children }) {
-				const text = flattenChildren(children);
 				return (
 					<h2 className="text-theme-heading text-2xl font-semibold mb-2 mt-4 leading-7 relative">
-						<span className="absolute -top-40" id={text.replace(/[^a-z0-9]{1,}/gi, "-").toLowerCase()}></span>
+						<span
+							className="absolute -top-40"
+							id={flattenChildren(children)
+								.replace(/[^a-z0-9]{1,}/gi, "-")
+								.toLowerCase()}></span>
 						{children}
 					</h2>
 				);
 			},
 
 			h3({ children }) {
-				const text = flattenChildren(children);
 				return (
 					<h3 className="text-theme-heading text-lg font-semibold mb-2 mt-4 leading-7 relative">
-						<span className="absolute -top-40" id={text.replace(/[^a-z0-9]{1,}/gi, "-").toLowerCase()}></span>
+						<span
+							className="absolute -top-40"
+							id={flattenChildren(children)
+								.replace(/[^a-z0-9]{1,}/gi, "-")
+								.toLowerCase()}></span>
 						{children}
 					</h3>
 				);
@@ -329,10 +339,9 @@ Blog.getLayout = function (page, { data }) {
 	);
 };
 
-export async function getStaticProps(context: any) {
-	const {
-		params: { slug }
-	} = context;
+export async function getStaticProps(context: GetStaticPropsContext) {
+	const slug = context.params?.slug;
+	if (typeof slug !== "string") throw new Error("Missing slug");
 
 	const dirPath = getContentDir();
 	const postsPath = `${dirPath}/posts.json`;
@@ -423,11 +432,16 @@ export async function getStaticPaths() {
 	};
 }
 
-const flattenChildren: any = (children: any[]) => {
+const flattenChildren = (children: ReactNode[]): string => {
 	return (children || [])
 		.map(c => {
-			if (typeof c == "object") return flattenChildren(c.props.children);
-			return c;
+			if (!c) return null;
+			if (typeof c == "string") return c;
+			if (typeof c == "number" || typeof c === "boolean") return c.toString();
+			if ("children" in c) return flattenChildren([c.children]);
+			if ("props" in c) return flattenChildren(c.props.children);
+			return "";
 		})
+		.filter(c => c)
 		.join(" ");
 };
