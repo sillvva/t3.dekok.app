@@ -3,6 +3,7 @@ import { z } from "zod";
 import { env } from "$src/server/env.mjs";
 import { createRouter } from "../context";
 import { prisma } from "$src/server/db/client";
+import { parseError } from "$src/utils/misc";
 
 export const siteRouter = createRouter()
 	.mutation("revalidate", {
@@ -20,8 +21,8 @@ export const siteRouter = createRouter()
 					try {
 						await res.revalidate(path);
 						revalidated.push(path);
-					} catch (err: any) {
-						errors.push(err.message);
+					} catch (err) {
+						errors.push(parseError(err));
 					}
 				}
 			} else {
@@ -36,8 +37,8 @@ export const siteRouter = createRouter()
 					if (!result) throw new Error(`No result at ${url}`);
 
 					revalidated.push(...result[0].result.data.json.revalidated);
-				} catch (err: any) {
-					errors.push(err.message);
+				} catch (err) {
+					errors.push(parseError(err));
 				}
 			}
 

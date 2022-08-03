@@ -165,7 +165,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 					try {
 						const cpProps = JSON.parse(content[0]);
 						return <ReactCodepen {...cpProps} />;
-					} catch (err: any) {
+					} catch (err) {
 						return <code>{children}</code>;
 					}
 				}

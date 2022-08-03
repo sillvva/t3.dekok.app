@@ -4,6 +4,7 @@ import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { prisma } from "../db/client";
 import { getContentDir } from "$src/utils/server.func";
 import type { ZodFormattedError } from "zod";
+import { parseError } from "$src/utils/misc";
 
 interface FetchOptions {
 	getPosts?: boolean;
@@ -20,7 +21,7 @@ export async function fetchPosts(options: FetchOptions = {}) {
 	let added = 0;
 	const upserted: string[] = [];
 	const removed: number[] = [];
-	const errors: { slug: string; error: any }[] = [];
+	const errors: { slug: string; error: string }[] = [];
 
 	const { data: stgData } = await supabaseClient.storage.from("blog").list();
 	const contentList = (stgData || []).filter(post => post.name.endsWith(".md"));
@@ -109,15 +110,15 @@ export async function fetchPosts(options: FetchOptions = {}) {
 					update: post,
 					create: post
 				});
-			} catch (err: any) {
-				errors.push({ slug: post.slug, error: err.message });
+			} catch (err) {
+				errors.push({ slug: post.slug, error: parseError(err) });
 			}
 		}
 		for (const id of removed) {
 			try {
 				await prisma.blog.delete({ where: { id } });
-			} catch (err: any) {
-				errors.push({ slug: posts.find(p => p.id === id)?.slug || "", error: err.message });
+			} catch (err) {
+				errors.push({ slug: posts.find(p => p.id === id)?.slug || "", error: parseError(err) });
 			}
 		}
 	} else console.log("No changes found");

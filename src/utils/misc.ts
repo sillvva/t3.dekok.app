@@ -53,3 +53,10 @@ export const toBase64 = async (data: string | Uint8Array | Blob) => {
 
 	return base64url.split(",", 2)[1];
 };
+
+export const parseError = (e: unknown) => {
+	if (e instanceof Error) return e.message;
+	if (typeof e === "string") return e;
+	if (typeof e === "object") return JSON.stringify(e);
+	return "Unknown error";
+};
