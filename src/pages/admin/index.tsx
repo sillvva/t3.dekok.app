@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
 import { toast } from "react-toastify";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { trpc } from "$src/utils/trpc";
+import { inferQueryOutput, trpc } from "$src/utils/trpc";
 import { itemsPerPage } from "$src/utils/constants";
 import { toBase64 } from "$src/utils/misc";
 import MainLayout from "$src/layouts/main";
@@ -13,6 +13,7 @@ import Image from "next/future/image";
 import Icon from "@mdi/react";
 import Pagination from "$src/components/pagination";
 import Link from "next/link";
+import { useRipple } from "$src/components/ripple";
 
 const Admin: NextPageWithLayout = () => {
 	const router = useRouter();
@@ -77,38 +78,7 @@ const Admin: NextPageWithLayout = () => {
 			</div>
 			<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2" ref={parent}>
 				{loaders == 0
-					? paginatedPosts.map(post => (
-							<Link key={post.slug} href={`/blog/${post.slug}`}>
-								<a className="block relative overflow-hidden rounded-lg h-16 sm:h-56" target="_blank" rel="noreferrer noopener">
-									<button
-										className="fab fab-small absolute hidden sm:flex top-2 right-2 bg-red-700 drop-shadow-theme-text"
-										onClick={ev => {
-											ev.preventDefault();
-											remove(post.slug);
-										}}>
-										<Icon path={mdiTrashCan} />
-									</button>
-									<div className="flex sm:block gap-2 absolute bottom-0 w-full h-full sm:h-auto p-4 bg-theme-body/90">
-										<div className="flex-1">
-											<h5 className="text-sm text-theme-link">{post.title}</h5>
-											<p className="text-xs text-theme-faded">Posted: {new Date(post.date).toLocaleDateString()}</p>
-											<p className="text-xs text-theme-base hidden sm:block">{post.description}</p>
-										</div>
-										<div className="flex sm:hidden items-center">
-											<button
-												className="fab fab-small bg-red-700 drop-shadow-theme-text"
-												onClick={ev => {
-													ev.preventDefault();
-													remove(post.slug);
-												}}>
-												<Icon path={mdiTrashCan} />
-											</button>
-										</div>
-									</div>
-									<Image src={post.image} alt={post.title} priority className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
-								</a>
-							</Link>
-					  ))
+					? paginatedPosts.map(post => <Card key={post.id} post={post} remove={remove} />)
 					: Array(loaders)
 							.fill(1)
 							.map((l, i) => (
@@ -133,6 +103,48 @@ Admin.getLayout = function (page) {
 };
 
 export default Admin;
+
+const Card = ({ post, remove }: { post: inferQueryOutput<"posts.get">[number]; remove: (slug: string) => Promise<void> }) => {
+	const { ripples, rippleClass, mouseHandler } = useRipple();
+
+	return (
+		<Link href={`/blog/${post.slug}`}>
+			<a
+				className={`block relative overflow-hidden rounded-lg h-16 sm:h-56 ${rippleClass}`}
+				onMouseDown={mouseHandler}
+				target="_blank"
+				rel="noreferrer noopener">
+				<button
+					className="fab fab-small absolute z-20 hidden sm:flex top-2 right-2 bg-red-700 drop-shadow-theme-text"
+					onClick={ev => {
+						ev.preventDefault();
+						remove(post.slug);
+					}}>
+					<Icon path={mdiTrashCan} />
+				</button>
+				<div className="flex sm:block gap-2 absolute bottom-0 w-full h-full sm:h-auto p-4 bg-theme-body/90">
+					<div className="flex-1">
+						<h5 className="text-sm text-theme-link">{post.title}</h5>
+						<p className="text-xs text-theme-faded">Posted: {new Date(post.date).toLocaleDateString()}</p>
+						<p className="text-xs text-theme-base hidden sm:block">{post.description}</p>
+					</div>
+					<div className="flex sm:hidden items-center">
+						<button
+							className="fab fab-small bg-red-700 drop-shadow-theme-text relative z-20"
+							onClick={ev => {
+								ev.preventDefault();
+								remove(post.slug);
+							}}>
+							<Icon path={mdiTrashCan} />
+						</button>
+					</div>
+				</div>
+				<Image src={post.image} alt={post.title} priority className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
+				{ripples}
+			</a>
+		</Link>
+	);
+};
 
 const usePosts = () => {
 	const utils = trpc.useContext();

@@ -91,7 +91,7 @@ module.exports = {
 						opacity: 0
 					},
 					"80%": {
-						width: "100%",
+						width: "200%",
 						opacity: 0.25
 					},
 					"100%": {

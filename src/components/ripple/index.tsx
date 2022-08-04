@@ -19,11 +19,11 @@ function Ripple({ onUnload, index, x, y }: RippleProps) {
 	} as React.CSSProperties;
 
 	return (
-		<div className="absolute inset-0 overflow-hidden" style={style}>
+		<div className="absolute inset-0 overflow-hidden z-10" style={style}>
 			<span
 				className={concatenate(
 					"absolute block top-[var(--y)] left-[var(--x)] -translate-x-1/2 -translate-y-1/2 opacity-0 -z-[1]",
-					"w-[120%] aspect-square rounded-full bg-theme-link motion-safe:animate-ripple"
+					"w-[200%] aspect-square rounded-full bg-theme-link motion-safe:animate-ripple"
 				)}></span>
 		</div>
 	);
@@ -51,8 +51,14 @@ export const useRipple = (props?: UseRippleProps) => {
 
 	const mouseHandler: MouseEventHandler<any> = (e: any) => {
 		if (!enabled || active) return;
+		e.stopPropagation();
 		const key = Math.max(-1, ...[...ripples.keys()].map(r => parseInt(r.toString() || ""))) + 1;
-		const ripple = <Ripple key={key} index={key} onUnload={rippleUnload} x={e.nativeEvent.layerX} y={e.nativeEvent.layerY}></Ripple>;
+		
+		const rect = e.currentTarget.getBoundingClientRect();
+		const y = e.clientY - rect.y;
+		const x = e.clientX - rect.x;
+
+		const ripple = <Ripple key={key} index={key} onUnload={rippleUnload} x={x} y={y}></Ripple>;
 		setRipples(new Map(ripples).set(key, ripple));
 	};
 
