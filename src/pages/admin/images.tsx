@@ -1,7 +1,7 @@
 import { NextPageWithLayout } from "../_app";
 import { KeyboardEventHandler, useCallback, useState } from "react";
 import { useRouter } from "next/router";
-import { mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
+import { mdiContentCopy, mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
 import { toast } from "react-toastify";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { inferQueryOutput, trpc } from "$src/utils/trpc";
@@ -105,16 +105,24 @@ const Card = ({ image, remove }: { image: inferQueryOutput<"images.get">[number]
 			key={image.name}
 			href={image.url}
 			className={`block relative overflow-hidden rounded-lg h-16 sm:h-56 ${rippleClass}`}
-			onMouseDown={mouseHandler}
 			target="_blank"
 			rel="noreferrer noopener">
 			<button
-				className="fab fab-small absolute hidden sm:flex top-2 right-2 !w-9 !h-9 bg-red-700 drop-shadow-theme-text"
+				className="fab fab-small absolute hidden sm:flex top-2 right-2 bg-red-700 drop-shadow-theme-text"
 				onClick={ev => {
 					ev.preventDefault();
 					remove(image.name);
 				}}>
-				<Icon path={mdiTrashCan} />
+				<Icon path={mdiTrashCan} size={0.8} />
+			</button>
+			<button
+				className="fab fab-small absolute hidden sm:flex top-12 right-2 bg-theme-link drop-shadow-theme-text"
+				onClick={ev => {
+					ev.preventDefault();
+					navigator.clipboard.writeText(image.url);
+          toast("Copied to clipboard", { className: "!alert !alert-success !rounded-lg" });
+				}}>
+				<Icon path={mdiContentCopy} size={0.8} />
 			</button>
 			<div className="flex sm:block gap-2 absolute bottom-0 w-full h-full sm:h-auto p-4 bg-theme-body/90">
 				<div className="flex-1">
@@ -128,11 +136,19 @@ const Card = ({ image, remove }: { image: inferQueryOutput<"images.get">[number]
 							ev.preventDefault();
 							remove(image.name);
 						}}>
-						<Icon path={mdiTrashCan} />
+						<Icon path={mdiTrashCan} size={0.8} />
 					</button>
 				</div>
 			</div>
-			<Image src={image.url} alt={image.name} priority className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
+			<Image
+				src={image.url}
+				alt={image.name}
+				priority
+				className="bg-black w-full h-full object-cover object-center"
+        onMouseDown={mouseHandler}
+				width={400}
+				height={300}
+			/>
 			{ripples}
 		</a>
 	);
@@ -156,8 +172,8 @@ const useImages = () => {
 
 	const uploadMutation = trpc.useMutation(["images.post"], {
 		onSuccess({ success }) {
-			if (success) toast("Image uploaded successfully", { type: "success", className: "!alert !alert-success !rounded-lg" });
-			else toast("Image upload failed", { type: "error", className: "!bg-red-400 !text-white !rounded-lg" });
+			if (success) toast("Image uploaded successfully", { className: "!alert !alert-success !rounded-lg" });
+			else toast("Image upload failed", { className: "!bg-red-400 !text-white !rounded-lg" });
 			refresh();
 		},
 		onMutate() {
@@ -167,8 +183,8 @@ const useImages = () => {
 
 	const deleteMutation = trpc.useMutation(["images.delete"], {
 		onSuccess({ success }) {
-			if (success) toast("Image deleted successfully", { type: "success", className: "!alert !alert-success !rounded-lg" });
-			else toast("Image delete failed", { type: "error", className: "!bg-red-400 !text-white !rounded-lg" });
+			if (success) toast("Image deleted successfully", { className: "!alert !alert-success !rounded-lg" });
+			else toast("Image delete failed", { className: "!bg-red-400 !text-white !rounded-lg" });
 			refresh();
 		},
 		onMutate() {

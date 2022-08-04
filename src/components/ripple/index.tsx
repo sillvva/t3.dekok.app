@@ -51,7 +51,6 @@ export const useRipple = (props?: UseRippleProps) => {
 
 	const mouseHandler: MouseEventHandler<any> = (e: any) => {
 		if (!enabled || active) return;
-		e.stopPropagation();
 		const key = Math.max(-1, ...[...ripples.keys()].map(r => parseInt(r.toString() || ""))) + 1;
 		
 		const rect = e.currentTarget.getBoundingClientRect();

@@ -111,7 +111,6 @@ const Card = ({ post, remove }: { post: inferQueryOutput<"posts.get">[number]; r
 		<Link href={`/blog/${post.slug}`}>
 			<a
 				className={`block relative overflow-hidden rounded-lg h-16 sm:h-56 ${rippleClass}`}
-				onMouseDown={mouseHandler}
 				target="_blank"
 				rel="noreferrer noopener">
 				<button
@@ -120,7 +119,7 @@ const Card = ({ post, remove }: { post: inferQueryOutput<"posts.get">[number]; r
 						ev.preventDefault();
 						remove(post.slug);
 					}}>
-					<Icon path={mdiTrashCan} />
+					<Icon path={mdiTrashCan} size={0.8} />
 				</button>
 				<div className="flex sm:block gap-2 absolute bottom-0 w-full h-full sm:h-auto p-4 bg-theme-body/90">
 					<div className="flex-1">
@@ -135,11 +134,19 @@ const Card = ({ post, remove }: { post: inferQueryOutput<"posts.get">[number]; r
 								ev.preventDefault();
 								remove(post.slug);
 							}}>
-							<Icon path={mdiTrashCan} />
+							<Icon path={mdiTrashCan} size={0.8} />
 						</button>
 					</div>
 				</div>
-				<Image src={post.image} alt={post.title} priority className="bg-black w-full h-full object-cover object-center" width={400} height={300} />
+				<Image
+					src={post.image}
+					alt={post.title}
+					priority
+					className="bg-black w-full h-full object-cover object-center"
+					onMouseDown={mouseHandler}
+					width={400}
+					height={300}
+				/>
 				{ripples}
 			</a>
 		</Link>
@@ -167,9 +174,9 @@ const usePosts = () => {
 	const uploadMutation = trpc.useMutation(["posts.post"], {
 		onSuccess({ success }, { slug }) {
 			if (success) {
-				toast("Post uploaded successfully", { type: "success", className: "!alert !alert-success !rounded-lg" });
+				toast("Post uploaded successfully", { className: "!alert !alert-success !rounded-lg" });
 				revalidator.mutate({ paths: [`/blog/${slug}`] });
-			} else toast("Post upload failed", { type: "error", className: "!bg-red-400 !text-white !rounded-lg" });
+			} else toast("Post upload failed", { className: "!bg-red-400 !text-white !rounded-lg" });
 			refresh();
 		},
 		onMutate() {
@@ -180,9 +187,9 @@ const usePosts = () => {
 	const deleteMutation = trpc.useMutation(["posts.delete"], {
 		onSuccess({ success }, { slug }) {
 			if (success) {
-				toast("Post deleted successfully", { type: "success", className: "!alert !alert-success !rounded-lg" });
+				toast("Post deleted successfully", { className: "!alert !alert-success !rounded-lg" });
 				revalidator.mutate({ paths: [`/blog/${slug}`] });
-			} else toast("Post delete failed", { type: "error", className: "!bg-red-400 !text-white !rounded-lg" });
+			} else toast("Post delete failed", { className: "!bg-red-400 !text-white !rounded-lg" });
 			refresh();
 		},
 		onMutate() {
