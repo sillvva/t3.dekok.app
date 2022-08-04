@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import Image from "next/future/image";
 import dynamic from "next/dynamic";
 import { readFileSync, rmSync, existsSync, statSync, writeFileSync } from "node:fs";
 import ReactMarkdown, { Components } from "react-markdown";
@@ -77,6 +77,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 				if (typeof child === "object") {
 					if (child.type === "img") {
 						const image = child as ReactElement<HTMLImageElement, string | JSXElementConstructor<HTMLImageElement>>;
+						const alt = (image.props.alt || "").split(":");
 
 						return (
 							<figure className="flex flex-col mb-6 mt-6">
@@ -84,8 +85,14 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 									href={image.props.src}
 									target="_blank"
 									rel="noreferrer noopener"
-									className="relative flex justify-center w-full max-w-[800px] mb-2 mx-auto aspect-video">
-									<Image src={image.props.src} alt={image.props.alt} layout="fill" objectFit="contain" className="!object-cover !md:object-contain" />
+									className={concatenate("relative flex justify-center w-full max-w-[800px] mb-2 mx-auto", !alt.includes("no-aspect") && "aspect-video")}>
+									<Image
+										src={image.props.src}
+										alt={alt[0]}
+										width={800}
+										height={400}
+										className={concatenate(!alt.includes("no-aspect") && "object-cover md:object-contain")}
+									/>
 								</a>
 								<figcaption className="block text-white/70 text-sm text-center">Click to open full screen</figcaption>
 							</figure>
@@ -180,6 +187,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 					}
 				}
 
+				if (language === "env") language = "bash";
 				if (language === "svelte") language = "html";
 
 				if (language.startsWith("svelte")) {
@@ -267,14 +275,18 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 			}
 		};
 
-		const mdContent = content.replace(/(```[^\n ]+) /g, "$1\n// ");
+		const mdContent = content
+			.replace(/(```(svelte|html)) \[([^\]]+)\]/g, "$1\n<!-- $3 -->")
+			.replace(/(```(bash|text|env)) \[([^\]]+)\]/g, "$1\n# $3")
+			.replace(/(```[^\n ]+) \[([^\]]+)\]/g, "$1\n// $2");
 
 		return (
 			<Page.Body>
 				<Page.Article className="w-full xl:w-9/12 2xl:w-8/12">
 					{!data.full && (
 						<div className="aspect-video relative">
-							<Image src={data.image} alt={"Cover"} layout="fill" objectFit="cover" priority />
+							{/* <Image src={data.image} alt={"Cover"} fill sizes="100vw" className="object-cover" priority />  */}
+							<Image src={data.image} alt={"Cover"} width={1200} height={(1200 * 2) / 3} className="object-cover" priority />
 						</div>
 					)}
 					<Page.Section>
