@@ -25,7 +25,7 @@ const PageBg: FunctionComponent<{ theme?: string, mounted?: boolean }> = ({ them
 };
 
 const PageBody = (props: PropsWithChildren<unknown>) => {
-  return <div className="flex flex-col justify-center items-center relative md:px-2 md:px-4 lg:pt-0 pb-4">{props.children}</div>;
+  return <div className="flex flex-col justify-center items-center relative md:px-4 lg:pt-0 pb-4">{props.children}</div>;
 };
 
 interface PageArticleProps {
