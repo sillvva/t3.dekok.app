@@ -91,6 +91,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 										alt={alt[0]}
 										width={800}
 										height={400}
+                    loading="lazy"
 										className={concatenate(!alt.includes("no-aspect") && "object-cover md:object-contain")}
 									/>
 								</a>
