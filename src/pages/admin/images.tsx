@@ -1,18 +1,17 @@
 import { NextPageWithLayout } from "../_app";
 import { KeyboardEventHandler, useCallback, useState } from "react";
 import { useRouter } from "next/router";
-import { mdiContentCopy, mdiRefresh, mdiTrashCan, mdiUpload } from "@mdi/js";
+import { mdiRefresh, mdiUpload } from "@mdi/js";
 import { toast } from "react-toastify";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { inferQueryOutput, trpc } from "$src/utils/trpc";
 import { itemsPerPage } from "$src/utils/constants";
 import { toBase64 } from "$src/utils/misc";
+import { trpc } from "$src/utils/trpc";
 import MainLayout from "$src/layouts/main";
 import PageMessage from "$src/components/page-message";
-import Image from "next/future/image";
 import Icon from "@mdi/react";
 import Pagination from "$src/components/pagination";
-import { useRipple } from "$src/components/ripple";
+import AdminCard from "$src/components/admin-card";
 
 const Images: NextPageWithLayout = () => {
 	const router = useRouter();
@@ -73,7 +72,9 @@ const Images: NextPageWithLayout = () => {
 			</div>
 			<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2" ref={parent}>
 				{loaders == 0
-					? paginatedImages.map(image => <Card key={image.name} image={image} remove={remove} />)
+					? paginatedImages.map(image => (
+							<AdminCard key={image.name} id={image.name} url={image.url} title={image.name} image={image.url} date={image.created_at} copy remove={remove} />
+					  ))
 					: Array(loaders)
 							.fill(1)
 							.map((l, i) => (
@@ -96,63 +97,6 @@ Images.getLayout = function (page) {
 };
 
 export default Images;
-
-const Card = ({ image, remove }: { image: inferQueryOutput<"images.get">[number]; remove: (name: string) => void }) => {
-	const { ripples, rippleClass, mouseHandler } = useRipple();
-
-	return (
-		<a
-			key={image.name}
-			href={image.url}
-			className={`block relative overflow-hidden rounded-lg h-16 sm:h-56 ${rippleClass}`}
-			target="_blank"
-			rel="noreferrer noopener">
-			<button
-				className="fab fab-small absolute hidden sm:flex top-2 right-2 bg-red-700 drop-shadow-theme-text"
-				onClick={ev => {
-					ev.preventDefault();
-					remove(image.name);
-				}}>
-				<Icon path={mdiTrashCan} size={0.8} />
-			</button>
-			<button
-				className="fab fab-small absolute hidden sm:flex top-12 right-2 bg-theme-link drop-shadow-theme-text"
-				onClick={ev => {
-					ev.preventDefault();
-					navigator.clipboard.writeText(image.url);
-          toast("Copied to clipboard", { className: "!alert !alert-success !rounded-lg" });
-				}}>
-				<Icon path={mdiContentCopy} size={0.8} />
-			</button>
-			<div className="flex sm:block gap-2 absolute bottom-0 w-full h-full sm:h-auto p-4 bg-theme-body/90">
-				<div className="flex-1">
-					<h5 className="text-sm text-theme-link">{image.name}</h5>
-					<p className="text-xs text-theme-faded">Uploaded: {new Date(image.created_at).toLocaleDateString()}</p>
-				</div>
-				<div className="flex sm:hidden items-center">
-					<button
-						className="fab fab-small bg-red-700 drop-shadow-theme-text"
-						onClick={ev => {
-							ev.preventDefault();
-							remove(image.name);
-						}}>
-						<Icon path={mdiTrashCan} size={0.8} />
-					</button>
-				</div>
-			</div>
-			<Image
-				src={image.url}
-				alt={image.name}
-				priority
-				className="bg-black w-full h-full object-cover object-center"
-        onMouseDown={mouseHandler}
-				width={400}
-				height={300}
-			/>
-			{ripples}
-		</a>
-	);
-};
 
 const useImages = () => {
 	const utils = trpc.useContext();
