@@ -91,7 +91,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 										alt={alt[0]}
 										width={800}
 										height={400}
-                    loading="lazy"
+										loading="lazy"
 										className={concatenate(!alt.includes("no-aspect") && "object-cover md:object-contain")}
 									/>
 								</a>
@@ -208,58 +208,42 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 					const bashInstructions = ["npm install", "pnpm add", "yarn add"];
 					return (
 						<>
-							<p className="mb-4 text-theme-base">
-								Using{" "}
-								<a href="https://npmjs.org" target="_blank" rel="noreferrer noopener" className="text-theme-link">
-									npm
-								</a>
-								,{" "}
-								<a href="https://classic.yarnpkg.com" target="_blank" rel="noreferrer noopener" className="text-theme-link">
-									yarn
-								</a>
-								, or{" "}
-								<a href="https://pnpm.js.org" target="_blank" rel="noreferrer noopener" className="text-theme-link">
-									pnpm
-								</a>
-								, you can install the packages with:
-							</p>
-							<>
-								<div className="flex gap-2 mb-4">
-									{bashes.map(bash => (
-										<button
-											key={bash}
-											onClick={e => {
-												const parent = e.currentTarget.parentElement?.parentElement;
-												if (!parent) return;
-												bashes.forEach(b => {
-													if (b === bash) parent.querySelector(`button.${b}`)?.classList.replace("bg-theme-article", "bg-theme-link");
-													else parent.querySelector(`button.${b}`)?.classList.replace("bg-theme-link", "bg-theme-article");
-												});
-												bashes.forEach(b => {
-													console.log(parent.querySelector(`.tab-body.${b}`), parent);
-													if (b === bash) parent.querySelector(`.tab-body.${b}`)?.classList.remove("hidden");
-													else parent.querySelector(`.tab-body.${b}`)?.classList.add("hidden");
-												});
-											}}
-											className={concatenate(
-												bash,
-												bash === bashes[0] ? "bg-theme-link text-theme-button" : "bg-theme-article text-theme-base",
-												"font-semibold p-2 rounded-md"
-											)}>
-											{bash}
-										</button>
-									))}
-								</div>
-								{bashes.map((bash, b) => (
-									<SyntaxHighlighter
+							<div className="flex gap-2 mb-4">
+								{bashes.map(bash => (
+									<button
 										key={bash}
-										style={theme === "light" ? lightStyles : darkStyles}
-										language={language}
-										className={concatenate("tab-body !bg-theme-code rounded-md", bash, bash !== bashes[0] && "hidden")}>
-										{content.map((c: string) => c.replaceAll(bashInstructions[0], bashInstructions[b]))}
-									</SyntaxHighlighter>
+										onClick={e => {
+											const parent = e.currentTarget.parentElement?.parentElement;
+											if (!parent) return;
+											bashes.forEach(b => {
+												if (b === bash) {
+                          parent.querySelector(`button.${b}`)?.classList.replace("bg-theme-article", "bg-theme-link");
+                          parent.querySelector(`.tab-body.${b}`)?.classList.remove("hidden");
+                        }
+												else {
+                          parent.querySelector(`button.${b}`)?.classList.replace("bg-theme-link", "bg-theme-article");
+												  parent.querySelector(`.tab-body.${b}`)?.classList.add("hidden");
+                        }
+											});
+										}}
+										className={concatenate(
+											bash,
+											bash === bashes[0] ? "bg-theme-link text-theme-button" : "bg-theme-article text-theme-base",
+											"font-semibold p-2 rounded-md"
+										)}>
+										{bash}
+									</button>
 								))}
-							</>
+							</div>
+							{bashes.map((bash, b) => (
+								<SyntaxHighlighter
+									key={bash}
+									style={theme === "light" ? lightStyles : darkStyles}
+									language={language}
+									className={concatenate("tab-body !bg-theme-code rounded-md", bash, bash !== bashes[0] && "hidden")}>
+									{content.map((c: string) => c.replaceAll(bashInstructions[0], bashInstructions[b]))}
+								</SyntaxHighlighter>
+							))}
 						</>
 					);
 				}
