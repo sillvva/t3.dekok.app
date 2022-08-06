@@ -45,7 +45,7 @@ function Pagination(props: PaginationProps) {
 					<span
 						key={`pg${i}`}
 						className={concatenate(
-							"inline-flex w-8 h-8 bg-theme-article justify-center items-center rounded-sm font-bold drop-shadow-sm",
+							"inline-flex w-8 h-8 justify-center items-center rounded-sm font-bold drop-shadow-sm",
 							"bg-theme-link text-white drop-shadow-theme-text"
 						)}>
 						{p}
