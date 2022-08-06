@@ -1,5 +1,7 @@
-import { NextPageWithLayout } from "../_app";
-import { ChangeEventHandler, useCallback, useEffect, useState } from "react";
+import type { NextPageWithLayout } from "../_app";
+import type { ParsedUrlQuery } from "querystring";
+import type { ChangeEventHandler } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { mdiRefresh, mdiUpload } from "@mdi/js";
 import qs from "qs";
@@ -17,11 +19,12 @@ import AdminCard from "$src/components/admin-card";
 
 const Images: NextPageWithLayout = () => {
 	const router = useRouter();
+  const [queryString, setQueryString] = useState<ParsedUrlQuery | string>(router.query);
 	const { images, isFetching, isMutating, upload, remove, refresh } = useImages();
 	const [parent] = useAutoAnimate<HTMLDivElement>();
 
 	const { data: search, errors: qsErrors } = qsParse(
-		router.query,
+		queryString,
 		z.object({
 			page: z.number().optional(),
 			q: z.union([z.string(), z.number(), z.boolean()]).optional()
@@ -67,10 +70,9 @@ const Images: NextPageWithLayout = () => {
 		if (page !== newSearch.page) setPage(newSearch.page || 1);
 
 		const params = qs.stringify(newSearch);
-    
-    const url = `${location.pathname}${params ? `?${params}` : ""}`;
-    if (router.asPath !== url) router.push(url);
-	}, [page, query, pages, search, qsErrors, router]);
+    if (queryString !== params) setQueryString(params);
+    history.replaceState({}, "", `${location.pathname}${params ? `?${params}` : ""}`);
+	}, [page, query, pages, search, qsErrors, queryString]);
 
 	if (!loading && !images.length) return <PageMessage>No images found</PageMessage>;
 
