@@ -1,5 +1,5 @@
 import qs from "qs";
-import { ZodSchema } from "zod";
+import { z, ZodSchema } from "zod";
 
 let timeouts = new Map<string | number, number>();
 export const wait = (callback: TimerHandler, id: string | number, ms?: number, ...args: any[]) => {
