@@ -20,7 +20,7 @@ const Images: NextPageWithLayout = () => {
 	const { images, isFetching, isMutating, upload, remove, refresh } = useImages();
 	const [parent] = useAutoAnimate<HTMLDivElement>();
 
-	const search = qsParse(
+	const { data: search, errors: qsErrors } = qsParse(
 		router.query,
 		z.object({
 			page: z.number().optional(),
@@ -55,6 +55,8 @@ const Images: NextPageWithLayout = () => {
 	}, [search.page]);
 
 	useEffect(() => {
+		if (qsErrors) qsErrors.forEach(message => console.error(message));
+    
 		const newSearch: typeof search = {};
 		let currentPage = page;
 
@@ -65,8 +67,10 @@ const Images: NextPageWithLayout = () => {
 		if (page !== newSearch.page) setPage(newSearch.page || 1);
 
 		const params = qs.stringify(newSearch);
-		history.pushState({}, "", `${location.pathname}${params ? `?${params}` : ""}`);
-	}, [page, pages, query]);
+    
+    const url = `${location.pathname}${params ? `?${params}` : ""}`;
+    if (router.asPath !== url) router.push(url);
+	}, [page, query, pages, search, qsErrors, router]);
 
 	if (!loading && !images.length) return <PageMessage>No images found</PageMessage>;
 

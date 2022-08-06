@@ -1,5 +1,5 @@
 import qs from "qs";
-import { z, ZodSchema } from "zod";
+import type { ZodSchema } from "zod";
 
 let timeouts = new Map<string | number, number>();
 export const wait = (callback: TimerHandler, id: string | number, ms?: number, ...args: any[]) => {
@@ -64,26 +64,35 @@ export const parseError = (e: unknown) => {
 	return "Unknown error";
 };
 
-export const qsParse = <T extends Record<string, any>>(queryString: string | Record<string, any>, schema: ZodSchema<T>) => {
-	const parsed: Record<string, any> =
+const parseObjectPrimitives = (obj: Record<string, any>): any => {
+	return Object.fromEntries(
+		Object.entries(obj).map(([k, v]) => {
+			if (typeof v === "object") return [k, parseObjectPrimitives(v)];
+			if (!isNaN(parseFloat(v))) return [k, parseFloat(v)];
+			if (v === "true") return [k, true];
+			if (v === "false") return [k, false];
+			if (typeof v === "string") return [k, v];
+			return [k, null];
+		})
+	);
+};
+
+export const qsParse = <T>(queryString: string | Record<string, any>, schema: ZodSchema<T>) => {
+	const parsed =
 		typeof queryString === "string"
 			? qs.parse(queryString, {
 					ignoreQueryPrefix: true
 			  })
 			: queryString;
 
-	const parseSchemaObject = (obj: Record<string, any>): any => {
-		return Object.fromEntries(
-			Object.entries(obj).map(([k, v]) => {
-				if (typeof v === "object") return [k, parseSchemaObject(v)];
-				if (!isNaN(parseFloat(v))) return [k, parseFloat(v)];
-				if (v === "true") return [k, true];
-				if (v === "false") return [k, false];
-				if (typeof v === "string") return [k, v];
-				return [k, null];
-			})
-		);
-	};
+	const zResult = schema.safeParse(parseObjectPrimitives(parsed));
 
-	return schema.parse(parseSchemaObject(parsed));
+	return {
+		data: zResult.success ? zResult.data : {} as T,
+		errors: !zResult.success
+			? zResult.error.issues
+					.map(i => `${i.path.join(".")}: ${i.message}`)
+					.reduce((acc, v) => (acc.includes(v) ? acc : [...acc, v]), [] as string[])
+			: []
+	};
 };

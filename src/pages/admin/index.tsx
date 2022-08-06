@@ -21,7 +21,7 @@ const Admin: NextPageWithLayout = () => {
 	const { posts, isFetching, isMutating, upload, remove, refresh } = usePosts();
 	const [parent] = useAutoAnimate<HTMLDivElement>();
 
-	const search = qsParse(
+	const { data: search, errors: qsErrors } = qsParse(
 		router.query,
 		z.object({
 			page: z.number().optional(),
@@ -60,18 +60,23 @@ const Admin: NextPageWithLayout = () => {
 	}, [search.page]);
 
 	useEffect(() => {
-		const newSearch: typeof search = {};
-		let currentPage = page;
+		if (qsErrors) qsErrors.forEach(message => console.error(message));
+    
+    const newSearch: typeof search = {};
+    let currentPage = page;
 
-		if (currentPage > pages) currentPage = pages;
-		if (currentPage > 1) newSearch.page = currentPage;
-		if (query !== "") newSearch.q = query;
+    if (isNaN(currentPage)) currentPage = 1;
+    if (currentPage > pages) currentPage = pages;
+    if (currentPage > 1) newSearch.page = currentPage;
+    if (query !== "") newSearch.q = query;
 
-		if (page !== newSearch.page) setPage(newSearch.page || 1);
+    if (page !== newSearch.page) setPage(newSearch.page || 1);
 
-		const params = qs.stringify(newSearch);
-		history.pushState({}, "", `${location.pathname}${params ? `?${params}` : ""}`);
-	}, [page, query, pages]);
+    const params = qs.stringify(newSearch);
+    
+    const url = `${location.pathname}${params ? `?${params}` : ""}`;
+    if (router.asPath !== url) router.push(url);
+	}, [page, query, pages, search, qsErrors, router]);
 
 	if (!loading && !posts.length) return <PageMessage>No posts found</PageMessage>;
 
