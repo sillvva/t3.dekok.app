@@ -31,6 +31,7 @@
     "next-pwa": "^5.5.5",
     "next-themes": "^0.2.0",
     "nprogress": "^0.2.0",
+    "qs": "^6.11.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-markdown": "^8.0.3",
@@ -47,6 +48,7 @@
   "devDependencies": {
     "@types/node": "18.0.0",
     "@types/nprogress": "^0.2.0",
+    "@types/qs": "^6.9.7",
     "@types/react": "18.0.14",
     "@types/react-dom": "18.0.5",
     "@types/react-syntax-highlighter": "^15.5.3",

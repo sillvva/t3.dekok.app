@@ -1,3 +1,6 @@
+import qs from "qs";
+import { ZodSchema } from "zod";
+
 let timeouts = new Map<string | number, number>();
 export const wait = (callback: TimerHandler, id: string | number, ms?: number, ...args: any[]) => {
 	if (!callback) throw new Error("'callback' not defined");
@@ -59,4 +62,28 @@ export const parseError = (e: unknown) => {
 	if (typeof e === "string") return e;
 	if (typeof e === "object") return JSON.stringify(e);
 	return "Unknown error";
+};
+
+export const qsParse = <T extends Record<string, any>>(queryString: string | Record<string, any>, schema: ZodSchema<T>) => {
+	const parsed: Record<string, any> =
+		typeof queryString === "string"
+			? qs.parse(queryString, {
+					ignoreQueryPrefix: true
+			  })
+			: queryString;
+
+	const parseSchemaObject = (obj: Record<string, any>): any => {
+		return Object.fromEntries(
+			Object.entries(obj).map(([k, v]) => {
+				if (typeof v === "object") return [k, parseSchemaObject(v)];
+				if (!isNaN(parseFloat(v))) return [k, parseFloat(v)];
+				if (v === "true") return [k, true];
+				if (v === "false") return [k, false];
+				if (typeof v === "string") return [k, v];
+				return [k, null];
+			})
+		);
+	};
+
+	return schema.parse(parseSchemaObject(parsed));
 };

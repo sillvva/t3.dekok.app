@@ -1,11 +1,13 @@
 import { NextPageWithLayout } from "../_app";
-import { KeyboardEventHandler, useCallback, useState } from "react";
+import { ChangeEventHandler, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { mdiRefresh, mdiUpload } from "@mdi/js";
+import qs from "qs";
+import { z } from "zod";
 import { toast } from "react-toastify";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { itemsPerPage } from "$src/utils/constants";
-import { toBase64 } from "$src/utils/misc";
+import { qsParse, toBase64 } from "$src/utils/misc";
 import { trpc } from "$src/utils/trpc";
 import MainLayout from "$src/layouts/main";
 import PageMessage from "$src/components/page-message";
@@ -18,30 +20,23 @@ const Images: NextPageWithLayout = () => {
 	const { images, isFetching, isMutating, upload, remove, refresh } = useImages();
 	const [parent] = useAutoAnimate<HTMLDivElement>();
 
-	const page = parseInt(router.query.page ? (Array.isArray(router.query.page) ? router.query.page[0] : router.query.page) : "1");
-	const qSearch = Array.isArray(router.query.search) ? router.query.search[0] : router.query.search;
-	const [query, setQuery] = useState(qSearch || "");
-
-	const queryHandler: KeyboardEventHandler<HTMLInputElement> = useCallback(
-		e => {
-			const search = new URLSearchParams(location.search);
-			const target = e.target as HTMLInputElement;
-
-			if (page <= 1) search.delete("page");
-			else search.set("page", page.toString());
-			if (target.value === "") search.delete("q");
-			else search.set("q", target.value);
-
-			const params = search.toString();
-			history.pushState({}, "", `${location.pathname}${params ? `?${params}` : ""}`);
-			setQuery(target.value);
-		},
-		[page]
+	const search = qsParse(
+		router.query,
+		z.object({
+			page: z.number().optional(),
+			q: z.string().optional()
+		})
 	);
 
-	const loading = !(images && !isFetching) || isMutating;
-	if (!loading && !images.length) return <PageMessage>No images found</PageMessage>;
+	const [page, setPage] = useState(search.page ?? 1);
+	const [query, setQuery] = useState(search.q ?? "");
 
+	const queryHandler: ChangeEventHandler<HTMLInputElement> = useCallback(e => {
+		const target = e.target as HTMLInputElement;
+		setQuery(target.value);
+	}, []);
+
+	const loading = !(images && !isFetching) || isMutating;
 	const numloaders = Math.min(itemsPerPage, images?.length ?? itemsPerPage);
 	const loaders = loading ? numloaders : 0;
 	const filteredImages =
@@ -55,11 +50,31 @@ const Images: NextPageWithLayout = () => {
 	const pages = Math.ceil(filteredImages.length / itemsPerPage);
 	const paginatedImages = filteredImages.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
+	useEffect(() => {
+		setPage(search.page ?? 1);
+	}, [search.page]);
+
+	useEffect(() => {
+		const newSearch: typeof search = {};
+		let currentPage = page;
+
+		if (currentPage > pages) currentPage = pages;
+		if (currentPage > 1) newSearch.page = currentPage;
+		if (query !== "") newSearch.q = query;
+
+		if (page !== newSearch.page) setPage(newSearch.page || 1);
+
+		const params = qs.stringify(newSearch);
+		history.pushState({}, "", `${location.pathname}${params ? `?${params}` : ""}`);
+	}, [page, pages, query]);
+
+	if (!loading && !images.length) return <PageMessage>No images found</PageMessage>;
+
 	return (
 		<div className="flex flex-col gap-4">
 			<div className="flex gap-2">
 				<div className="flex-1">
-					<input type="text" value={qSearch} onKeyUp={queryHandler} placeholder="Search" className="input bg-theme-article w-full shadow-md" />
+					<input type="text" value={query} onChange={queryHandler} placeholder="Search" className="input bg-theme-article w-full shadow-md" />
 				</div>
 				<div className="md:flex-1 flex justify-end gap-4">
 					<button onClick={() => refresh()}>
