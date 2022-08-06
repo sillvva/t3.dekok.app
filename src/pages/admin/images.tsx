@@ -24,12 +24,12 @@ const Images: NextPageWithLayout = () => {
 		router.query,
 		z.object({
 			page: z.number().optional(),
-			q: z.string().optional()
+			q: z.union([z.string(), z.number(), z.boolean()]).optional()
 		})
 	);
 
 	const [page, setPage] = useState(search.page ?? 1);
-	const [query, setQuery] = useState(search.q ?? "");
+	const [query, setQuery] = useState((search.q ?? "").toString());
 
 	const queryHandler: ChangeEventHandler<HTMLInputElement> = useCallback(e => {
 		const target = e.target as HTMLInputElement;
