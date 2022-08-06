@@ -112,7 +112,7 @@ const Images: NextPageWithLayout = () => {
 };
 
 Images.getLayout = function (page) {
-	return <MainLayout layout="admin">{page}</MainLayout>;
+	return <MainLayout layout="admin" metaTitle="Images - Admin">{page}</MainLayout>;
 };
 
 export default Images;

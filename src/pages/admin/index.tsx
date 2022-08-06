@@ -73,9 +73,9 @@ const Admin: NextPageWithLayout = () => {
     if (page !== newSearch.page) setPage(newSearch.page || 1);
 
     const params = qs.stringify(newSearch);
-    
+
     const url = `${location.pathname}${params ? `?${params}` : ""}`;
-    if (router.asPath !== url) router.push(url);
+    if (router.asPath !== url) router.replace(url);
 	}, [page, query, pages, search, qsErrors, router]);
 
 	if (!loading && !posts.length) return <PageMessage>No posts found</PageMessage>;
@@ -129,7 +129,7 @@ const Admin: NextPageWithLayout = () => {
 };
 
 Admin.getLayout = function (page) {
-	return <MainLayout layout="admin">{page}</MainLayout>;
+	return <MainLayout layout="admin" metaTitle="Posts - Admin">{page}</MainLayout>;
 };
 
 export default Admin;

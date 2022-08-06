@@ -34,6 +34,7 @@ const MainLayout = (props: React.PropsWithChildren<MainLayoutProps>) => {
 	const { user, isLoading } = useAuthentication({ login: props.layout === "admin" });
 	const [oldTheme, setOldTheme] = useState(theme || "");
 	const [mounted, setMounted] = useState(false);
+	const metaTitle = props.metaTitle || props.title || "";
 
 	useEffect(() => {
 		const mm = matchMedia("(prefers-color-scheme: dark)");
@@ -64,7 +65,7 @@ const MainLayout = (props: React.PropsWithChildren<MainLayoutProps>) => {
 	return (
 		<div id="app" className="min-h-screen min-w-screen">
 			<NextNProgress color="var(--color-bg-link)" height={1} options={{ showSpinner: false }} />
-			<PageMeta title={props.title} description={props.meta?.description} image={props.meta?.image} articleMeta={props.meta?.articleMeta} />
+			<PageMeta title={metaTitle} description={props.meta?.description} image={props.meta?.image} articleMeta={props.meta?.articleMeta} />
 			<AnimatePresence initial={mounted}>
 				{theme && theme !== oldTheme && <Page.Bg theme={oldTheme || ""} mounted={mounted} />}
 				<Page.Bg key={theme} theme={theme} mounted={mounted} />
@@ -123,6 +124,7 @@ export const fadeMotion: Motion = {
 
 export type MainLayoutProps = {
 	title?: string;
+	metaTitle?: string;
 	menu?: boolean;
 	layout?: "admin";
 	drawer?: boolean;
