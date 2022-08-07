@@ -74,7 +74,7 @@ export const PostCard = (post: inferQueryOutput<"posts.get">[number]) => {
 					"flex justify-start duration-500 bg-theme-article rounded-lg overflow-hidden",
 					"shadow-md shadow-black/15 motion-safe:hover:scale-105 hover:shadow-lg hover:shadow-black/25",
 					rippleClass,
-					focused && !post.link && "motion-safe:post-focused"
+					focused && !post.link && "motion-safe:border-spin"
 				)}
 				onClick={() => setFocused(true)}
 				onPointerDown={mouseHandler}>

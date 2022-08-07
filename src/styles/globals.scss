@@ -193,7 +193,7 @@
 		filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia)
 			var(--tw-drop-shadow);
 	}
-	.post-focused {
+	.border-spin {
 		@apply relative z-0;
 		// https://ishadeed.com/article/container-query-units/
 		// Container query sizes: before:w-[2qmax] before:h-[2qmax]
