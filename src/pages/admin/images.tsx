@@ -34,11 +34,6 @@ const Images: NextPageWithLayout = () => {
 	const [page, setPage] = useState(search.page ?? 1);
 	const [query, setQuery] = useState((search.q ?? "").toString());
 
-	const queryHandler: ChangeEventHandler<HTMLInputElement> = useCallback(e => {
-		const target = e.target as HTMLInputElement;
-		setQuery(target.value);
-	}, []);
-
 	const loading = !(images && !isFetching) || isMutating;
 	const numloaders = Math.min(itemsPerPage, images?.length ?? itemsPerPage);
 	const loaders = loading ? numloaders : 0;
@@ -52,6 +47,11 @@ const Images: NextPageWithLayout = () => {
 			: (images || []).sort((a, b) => (a.created_at > b.created_at ? -1 : 1));
 	const pages = Math.ceil(filteredImages.length / itemsPerPage);
 	const paginatedImages = filteredImages.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
+	const queryHandler: ChangeEventHandler<HTMLInputElement> = useCallback(e => {
+		const target = e.target as HTMLInputElement;
+		setQuery(target.value);
+	}, []);
 
 	useEffect(() => {
 		setPage(search.page ?? 1);

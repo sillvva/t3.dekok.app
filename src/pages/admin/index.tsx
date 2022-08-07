@@ -34,11 +34,6 @@ const Admin: NextPageWithLayout = () => {
 	const [page, setPage] = useState(search.page ?? 1);
 	const [query, setQuery] = useState((search.q ?? "").toString());
 
-	const queryHandler: ChangeEventHandler<HTMLInputElement> = useCallback(e => {
-		const target = e.target as HTMLInputElement;
-		setQuery(target.value);
-	}, []);
-
 	const loading = !(posts && !isFetching) || isMutating;
 	const numloaders = Math.min(itemsPerPage, posts?.length ?? itemsPerPage);
 	const loaders = loading ? numloaders : 0;
@@ -56,6 +51,11 @@ const Admin: NextPageWithLayout = () => {
 			: (posts || []).sort((a, b) => (a.date > b.date ? -1 : 1));
 	const pages = Math.ceil(filteredPosts.length / itemsPerPage);
 	const paginatedPosts = filteredPosts.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
+	const queryHandler: ChangeEventHandler<HTMLInputElement> = useCallback(e => {
+		const target = e.target as HTMLInputElement;
+		setQuery(target.value);
+	}, []);
 
 	useEffect(() => {
 		setPage(search.page ?? 1);
