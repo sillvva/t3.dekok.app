@@ -1,111 +1,111 @@
 .HexWrapper {
-  display: inline-block;
-  .HexRow {
-    height: calc(108px * var(--scale));
-    position: relative;
-    &.shift {
-      margin-left: calc(125px / 2 * var(--scale));
-    }
-  }
-  &.rotated {
-    .HexRow {
-      height: calc(125px * var(--scale));
-    }
-  }
+	display: inline-block;
+	.HexRow {
+		height: calc(108px * var(--scale));
+		position: relative;
+		&.shift {
+			margin-left: calc(125px / 2 * var(--scale));
+		}
+	}
+	&.rotated {
+		.HexRow {
+			height: calc(125px * var(--scale));
+		}
+	}
 }
 
 .HexMenuItemContainer {
-  --baseMargin: -38px;
-  display: inline-block;
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-  width: calc(200px * var(--scale));
-  height: calc(200px * var(--scale));
-  margin-left: calc(var(--baseMargin) * var(--scale));
-  margin-right: calc(var(--baseMargin) * var(--scale));
-  z-index: 1;
-  pointer-events: none;
-  &:hover {
-    z-index: 2;
-    .hex-menu-item:not(.empty) {
-      .hex {
-        fill: var(--hover-color);
-      }
-    }
-  }
-  &.rotated {
-    --baseMargin: -46px;
-    &:nth-child(2n) {
-      top: calc(50% + 125px / 2 * var(--scale));
-    }
-  }
-  .HexItem {
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    &.active,
-    &.empty {
-      cursor: default;
-    }
-    &.empty {
-      .hex {
-        fill: transparent;
-        pointer-events: none;
-      }
-    }
-    &.active {
-      .hex {
-        fill: var(--active-color);
-      }
-    }
-    .label {
-      font-family: sans-serif;
-      white-space: nowrap;
-      font-size: 4.5em;
-      font-weight: 600;
-      text-shadow: 1px 1px 2px var(--text-shadow-color);
-      color: var(--text-color);
-      letter-spacing: 1px;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-    .hex {
-      fill: var(--color);
-      z-index: -1;
-      backface-visibility: hidden;
-      transition: fill 500ms ease, -webkit-transform 1s ease-in-out;
-      pointer-events: auto;
-      &:hover {
-        fill: var(--hover-color);
-      }
-    }
-  }
+	--baseMargin: -38px;
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+	width: calc(200px * var(--scale));
+	height: calc(200px * var(--scale));
+	margin-left: calc(var(--baseMargin) * var(--scale));
+	margin-right: calc(var(--baseMargin) * var(--scale));
+	z-index: 1;
+	pointer-events: none;
+	&:hover {
+		z-index: 2;
+		.hex-menu-item:not(.empty) {
+			.hex {
+				fill: var(--hover-color);
+			}
+		}
+	}
+	&.rotated {
+		--baseMargin: -46px;
+		&:nth-child(2n) {
+			top: calc(50% + 125px / 2 * var(--scale));
+		}
+	}
+	.HexItem {
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+		&.active,
+		&.empty {
+			cursor: default;
+		}
+		&.empty {
+			.hex {
+				fill: transparent;
+				pointer-events: none;
+			}
+		}
+		&.active {
+			.hex {
+				fill: var(--active-color);
+			}
+		}
+		.label {
+			font-family: sans-serif;
+			white-space: nowrap;
+			font-size: 4.5em;
+			font-weight: 600;
+			text-shadow: 1px 1px 2px var(--text-shadow-color);
+			color: var(--text-color);
+			letter-spacing: 1px;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+		.hex {
+			fill: var(--color);
+			z-index: -1;
+			backface-visibility: hidden;
+			transition: fill 500ms ease, -webkit-transform 1s ease-in-out;
+			pointer-events: auto;
+			&:hover {
+				fill: var(--hover-color);
+			}
+		}
+	}
 }
 
 .bounce:hover:not(.active):not(.empty) {
-  animation: bounce 500ms ease-in-out forwards;
-  stroke: rgb(var(--color-bg-body));
-  stroke-width: 0;
-  .backface {
-    box-shadow: none;
-  }
+	animation: bounce 500ms ease-in-out forwards;
+	stroke: rgb(var(--color-bg-body));
+	stroke-width: 0;
+	.backface {
+		box-shadow: none;
+	}
 }
 @keyframes bounce {
-  40% {
-    transform: scale(1.1);
-    stroke-width: 2;
-  }
-  60% {
-    transform: scale(1);
-  }
-  80% {
-    transform: scale(1.05);
-    stroke-width: 2;
-  }
-  100% {
-    transform: scale(1);
-  }
+	40% {
+		transform: scale(1.1);
+		stroke-width: 2;
+	}
+	60% {
+		transform: scale(1);
+	}
+	80% {
+		transform: scale(1.05);
+		stroke-width: 2;
+	}
+	100% {
+		transform: scale(1);
+	}
 }

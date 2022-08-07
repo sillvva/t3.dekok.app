@@ -25,7 +25,7 @@ const PageBg: FunctionComponent<{ theme?: string, mounted?: boolean }> = ({ them
 };
 
 const PageBody = (props: PropsWithChildren<unknown>) => {
-  return <div className="flex flex-col justify-center items-center relative md:px-2 md:px-4 lg:pt-0 pb-4">{props.children}</div>;
+  return <div className="flex flex-col justify-center items-center relative md:px-4 lg:pt-0 pb-4">{props.children}</div>;
 };
 
 interface PageArticleProps {
@@ -79,7 +79,7 @@ const PageSectionItem = (props: PropsWithChildren<PageSectionItemProps>) => {
       <div className={"float-left w-14 h-14 grid justify-center items-center bg-white rounded-md p-1 relative"}>
         <Image src={props.image} alt="" width={56} height={56} className="rounded-sm" />
       </div>
-      <div className="ml-20 section-content">{props.children}</div>
+      <div className="ml-20">{props.children}</div>
     </div>
   );
 };
