@@ -196,9 +196,9 @@
 	.border-spin {
 		@apply relative z-0;
 		// https://ishadeed.com/article/container-query-units/
-		// Container query sizes: before:w-[2qmax] before:h-[2qmax]
+		// Container query sizes: before:w-[144cqmax] before:h-[144cqmax]
 		@apply before:absolute before:-z-20 before:w-[max(120vw,100vh)] before:h-[max(120vw,100vh)];
-		// Container query position: before:left-[calc(50%-1qmax)] before:top-[calc(50%-1qmax)]
+		// Container query position: before:left-[calc(50%-72cqmax)] before:top-[calc(50%-72cqmax)]
 		@apply before:left-[calc(50%-max(60vw,50vh))] before:top-[calc(50%-max(60vw,50vh))];
 		@apply before:animate-spin-medium before:bg-theme-body before:bg-no-repeat before:bg-conic-gradient;
 		@apply after:absolute after:-z-10 after:inset-1 after:rounded-[5px] after:bg-theme-article;
