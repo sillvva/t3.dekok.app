@@ -1,22 +1,22 @@
-import { useEffect, useState, useCallback } from "react";
-import ReactDom from "react-dom";
-import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
-import { mdiChevronLeft, mdiMenu, mdiPalette } from "@mdi/js";
-import { AnimatePresence, motion } from "framer-motion";
-import type { Transition, Variants } from "framer-motion";
-import { Slide, ToastContainer } from "react-toastify";
-import { concatenate, debounce } from "$src/utils/misc";
-import { useAuthentication } from "$src/utils/hooks";
-import Link from "next/link";
-import Image from "next/future/image";
-import Page from "./components/page";
-import Icon from "@mdi/react";
-import NextNProgress from "$src/components/progress";
 import PageMeta from "$src/components/meta";
-import { trpc } from "$src/utils/trpc";
 import PageMessage from "$src/components/page-message";
+import NextNProgress from "$src/components/progress";
+import { useAuthentication } from "$src/utils/hooks";
+import { concatenate, debounce } from "$src/utils/misc";
+import { trpc } from "$src/utils/trpc";
+import { mdiChevronLeft, mdiMenu, mdiPalette } from "@mdi/js";
+import Icon from "@mdi/react";
+import type { Transition, Variants } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useTheme } from "next-themes";
+import dynamic from "next/dynamic";
+import Image from "next/future/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
+import ReactDom from "react-dom";
+import { Slide, ToastContainer } from "react-toastify";
+import Page from "./components/page";
 
 const PageMenu = dynamic(() => import("./components/menu"));
 const Drawer = dynamic(() => import("./components/drawer"));
@@ -91,7 +91,7 @@ const LayoutBody = (props: React.PropsWithChildren<MainLayoutProps>) => {
 	const router = useRouter();
 
 	return (
-		<AnimatePresence initial={false} exitBeforeEnter>
+		<AnimatePresence initial={false} mode="wait">
 			<motion.main
 				key={`main${router.pathname}`}
 				className={concatenate(
@@ -227,7 +227,7 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
 				{drawerRoot && drawer.state && ReactDom.createPortal(<Drawer {...drawer} toggle={drawerToggleHandler} menuItems={menuItems} />, drawerRoot)}
 				<div className="flex-1 block relative h-14">
 					{head?.menu ? <nav className={concatenate("hidden justify-center gap-3 px-3 lg:flex")}>{items.length ? <PageMenu items={items} /> : ""}</nav> : ""}
-					<AnimatePresence initial={false} exitBeforeEnter>
+					<AnimatePresence initial={false} mode="wait">
 						{head?.title && (
 							<motion.h1
 								variants={layoutMotion?.variants}
@@ -283,7 +283,7 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
 					</button>
 				</div>
 			</div>
-			<AnimatePresence initial={false} exitBeforeEnter>
+			<AnimatePresence initial={false} mode="wait">
 				{head?.title && (
 					<motion.h1
 						variants={layoutMotion?.variants}

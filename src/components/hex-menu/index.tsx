@@ -1,8 +1,8 @@
-import React, { useMemo } from "react";
-import Link from "next/link";
-import styles from "./HexMenu.module.scss";
-import { useRouter } from "next/router";
 import { concatenate, parseCSSModules } from "$src/utils/misc";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useMemo } from "react";
+import styles from "./HexMenu.module.scss";
 
 export type Item = {
 	link: string;
@@ -106,18 +106,25 @@ type HexMenuItemProps = {
 const HexMenuItem = (props: HexMenuItemProps) => {
 	return props.link ? (
 		<Link href={props.link}>
-			<a className={parseCSSModules(styles, [styles.HexMenuItemContainer, props.rotated && styles.rotated, ...props.classes])} aria-label={props.label}>
+			<a
+				className={parseCSSModules(styles, [styles.HexMenuItemContainer, props.rotated && styles.rotated, ...props.classes])}
+				aria-label={props.label}
+				style={
+					{
+						...(props.color && { "--color": props.color }),
+						...(props.hoverColor && { "--hover-color": props.hoverColor }),
+						...(props.activeColor && { "--active-color": props.activeColor }),
+						...(props.textColor && { "--text-color": props.textColor })
+					} as React.CSSProperties
+				}>
 				<svg
 					viewBox="0 0 800 800"
-					className={concatenate(styles.HexItem, props.rotated && styles.rotated, !props.label && styles.empty, props.active && styles.active)}
-					style={
-						{
-							...(props.color && { "--color": props.color }),
-							...(props.hoverColor && { "--hover-color": props.hoverColor }),
-							...(props.activeColor && { "--active-color": props.activeColor }),
-							...(props.textColor && { "--text-color": props.textColor })
-						} as React.CSSProperties
-					}
+					className={concatenate(
+						styles.HexItem,
+						props.rotated && styles.rotated,
+						!props.label && styles.empty,
+						props.active && styles.active
+					)}
 					aria-hidden={!props.label}>
 					{props.rotated ? (
 						<g transform="matrix(-6.92 0 0 -6.92 400.24 400.24)">
@@ -134,17 +141,23 @@ const HexMenuItem = (props: HexMenuItemProps) => {
 							/>
 						</g>
 					)}
-					<foreignObject className="hex-fo" x="0" y="0" width="100%" height="100%">
+					{/* <foreignObject className="hex-fo" x="0" y="0" width="100%" height="100%">
 						<span className={concatenate(styles.label, ...props.labelClasses)}>{props.label}</span>
-					</foreignObject>
+					</foreignObject> */}
 				</svg>
+				<span className={concatenate(styles.label, ...props.labelClasses)}>{props.label}</span>
 			</a>
 		</Link>
 	) : (
 		<div className={parseCSSModules(styles, [styles.HexMenuItemContainer, props.rotated && styles.rotated, ...props.classes])}>
 			<svg
 				viewBox="0 0 800 800"
-				className={concatenate(styles.HexItem, props.rotated && styles.rotated, !props.label && styles.empty, props.active && styles.active)}
+				className={concatenate(
+					styles.HexItem,
+					props.rotated && styles.rotated,
+					!props.label && styles.empty,
+					props.active && styles.active
+				)}
 				style={
 					{
 						...(props.color && { "--color": props.color }),
@@ -169,10 +182,11 @@ const HexMenuItem = (props: HexMenuItemProps) => {
 						/>
 					</g>
 				)}
-				<foreignObject className="hex-fo" x="0" y="0" width="100%" height="100%">
+				{/* <foreignObject className="hex-fo" x="0" y="0" width="100%" height="100%">
 					<span className={concatenate(styles.label, ...props.labelClasses)}>{props.label}</span>
-				</foreignObject>
+				</foreignObject> */}
 			</svg>
+			<span className={concatenate(styles.label, ...props.labelClasses)}>{props.label}</span>
 		</div>
 	);
 };
