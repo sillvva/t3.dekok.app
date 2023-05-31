@@ -1,20 +1,15 @@
-import Image from "next/future/image";
-import { FunctionComponent, PropsWithChildren } from "react";
-import { motion } from "framer-motion";
-import { fadeMotion } from "$src/layouts/main";
-import { concatenate as concatenate } from "$src/utils/misc";
+import { fadeMotion } from '$src/layouts/main';
+import { concatenate as concatenate } from '$src/utils/misc';
+import { motion } from 'framer-motion';
+import Image from 'next/future/image';
+import { FunctionComponent, PropsWithChildren } from 'react';
 
 const PageBg: FunctionComponent<{ theme?: string, mounted?: boolean }> = ({ theme, mounted }) => {
   if (!mounted) return null;
 
   return (
-      <motion.div
+      <div
         key={theme}
-        variants={fadeMotion.variants}
-        initial="hidden"
-        animate="enter"
-        exit="exit"
-        transition={{ duration: 0.5 }}
         data-theme={theme}
         className={concatenate(
           "page-background fixed inset-0 scale-x-[var(--bg-scale-x)]",
