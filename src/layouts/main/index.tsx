@@ -4,7 +4,6 @@ import NextNProgress from '$src/components/progress';
 import { useAuthentication } from '$src/utils/hooks';
 import { concatenate, debounce } from '$src/utils/misc';
 import { trpc } from '$src/utils/trpc';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import Image from 'next/future/image';
@@ -90,21 +89,14 @@ const LayoutBody = (props: React.PropsWithChildren<MainLayoutProps>) => {
 	const router = useRouter();
 
 	return (
-		<AnimatePresence initial={false} mode="wait">
-			<motion.main
+			<main
 				key={`main${router.pathname}`}
 				className={concatenate(
 					"relative flex-1 flex-col justify-center items-center z-[2] px-2 md:px-4",
 					router.pathname == "/" ? "h-screen" : props.layout === "admin" ? "md:pt-20 pb-4" : props.title ? "pt-24 lg:pt-36 pb-4" : "pt-20 pb-4"
-				)}
-				variants={fadeMotion.variants}
-				initial="hidden"
-				animate="enter"
-				exit="exit"
-				transition={fadeMotion.transition}>
+				)}>
 				{props.children}
-			</motion.main>
-		</AnimatePresence>
+			</main>
 	);
 };
 
@@ -226,25 +218,18 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
 				{drawerRoot && drawer.state && ReactDom.createPortal(<Drawer {...drawer} toggle={drawerToggleHandler} menuItems={menuItems} />, drawerRoot)}
 				<div className="flex-1 block relative h-14">
 					{head?.menu ? <nav className={concatenate("hidden justify-center gap-3 px-3 lg:flex")}>{items.length ? <PageMenu items={items} /> : ""}</nav> : ""}
-					<AnimatePresence initial={false} mode="wait">
-						{head?.title && (
-							<motion.h1
-								variants={layoutMotion?.variants}
-								key={`title: ${head?.title} ${router.pathname}`}
-								initial="hidden"
-								animate="enter"
-								exit="exit"
-								transition={layoutMotion?.transition}
-								className={concatenate(
-									"text-theme-heading font-medium font-montserrat",
-									"drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
-									"flex lg:hidden justify-center items-center flex-1 p-2 absolute inset-0",
-									smallTitle ? "text-sm sm:text-lg md:text-2xl" : "text-3xl"
-								)}>
-								{head?.title}
-							</motion.h1>
-						)}
-					</AnimatePresence>
+					{head?.title && (
+						<h1
+							key={`title: ${head?.title} ${router.pathname}`}
+							className={concatenate(
+								"text-theme-heading font-medium font-montserrat",
+								"drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
+								"flex lg:hidden justify-center items-center flex-1 p-2 absolute inset-0",
+								smallTitle ? "text-sm sm:text-lg md:text-2xl" : "text-3xl"
+							)}>
+							{head?.title}
+						</h1>
+					)}
 					{head?.layout == "admin" && user && (
 						<div className="flex flex-1 justify-end items-center w-full h-14 gap-4">
 							<Link href="/api/auth/logout">
@@ -282,24 +267,17 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
 					</button>
 				</div>
 			</div>
-			<AnimatePresence initial={false} mode="wait">
-				{head?.title && (
-					<motion.h1
-						variants={layoutMotion?.variants}
-						key={`title: ${head?.title} ${router.pathname}`}
-						initial="hidden"
-						animate="enter"
-						exit="exit"
-						transition={layoutMotion?.transition}
-						className={concatenate(
-							"text-3xl text-center text-theme-heading font-medium font-montserrat",
-							"drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
-							"hidden lg:block"
-						)}>
-						{head?.title}
-					</motion.h1>
-				)}
-			</AnimatePresence>
+			{head?.title && (
+				<h1
+					key={`title: ${head?.title} ${router.pathname}`}
+					className={concatenate(
+						"text-3xl text-center text-theme-heading font-medium font-montserrat",
+						"drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
+						"hidden lg:block"
+					)}>
+					{head?.title}
+				</h1>
+			)}
 		</header>
 	);
 };

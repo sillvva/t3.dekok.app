@@ -1,6 +1,4 @@
-import { fadeMotion } from '$src/layouts/main';
 import { concatenate as concatenate } from '$src/utils/misc';
-import { motion } from 'framer-motion';
 import Image from 'next/future/image';
 import { FunctionComponent, PropsWithChildren } from 'react';
 
