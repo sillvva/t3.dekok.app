@@ -65,7 +65,7 @@ const MainLayout = (props: React.PropsWithChildren<MainLayoutProps>) => {
 
 	return (
 		<div id="app" className="min-h-screen min-w-screen">
-			<NextNProgress color="var(--color-bg-link)" height={1} options={{ showSpinner: false }} />
+			{/* <NextNProgress color="var(--color-bg-link)" height={1} options={{ showSpinner: false }} /> */}
 			<PageMeta title={metaTitle} description={props.meta?.description} image={props.meta?.image} articleMeta={props.meta?.articleMeta} />
 			<Page.Bg key={theme} theme={theme} mounted={mounted} />
 			<PageHeader head={props} layoutMotion={fadeMotion} onThemeChange={themeChangeHandler} />
