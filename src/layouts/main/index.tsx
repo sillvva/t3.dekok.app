@@ -1,23 +1,24 @@
-import PageMeta from "$src/components/meta";
-import PageMessage from "$src/components/page-message";
-import NextNProgress from "$src/components/progress";
-import { useAuthentication } from "$src/utils/hooks";
-import { concatenate, debounce } from "$src/utils/misc";
-import { trpc } from "$src/utils/trpc";
-import { mdiChevronLeft, mdiMenu, mdiPalette } from "@mdi/js";
-import Icon from "@mdi/react";
-import type { Transition, Variants } from "framer-motion";
-import { AnimatePresence, motion } from "framer-motion";
-import { useTheme } from "next-themes";
-import dynamic from "next/dynamic";
-import Image from "next/future/image";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
-import ReactDom from "react-dom";
-import { Slide, ToastContainer } from "react-toastify";
-import Page from "./components/page";
+import PageMeta from '$src/components/meta';
+import PageMessage from '$src/components/page-message';
+import NextNProgress from '$src/components/progress';
+import { useAuthentication } from '$src/utils/hooks';
+import { concatenate, debounce } from '$src/utils/misc';
+import { trpc } from '$src/utils/trpc';
+import { useTheme } from 'next-themes';
+import dynamic from 'next/dynamic';
+import Image from 'next/future/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useCallback, useEffect, useState } from 'react';
+import ReactDom from 'react-dom';
+import { Slide, ToastContainer } from 'react-toastify';
 
+import { mdiChevronLeft, mdiMenu, mdiPalette } from '@mdi/js';
+import Icon from '@mdi/react';
+
+import Page from './components/page';
+
+import type { Transition, Variants } from "framer-motion";
 const PageMenu = dynamic(() => import("./components/menu"));
 const Drawer = dynamic(() => import("./components/drawer"));
 const menuItems = [
@@ -64,12 +65,9 @@ const MainLayout = (props: React.PropsWithChildren<MainLayoutProps>) => {
 
 	return (
 		<div id="app" className="min-h-screen min-w-screen">
-			<NextNProgress color="var(--color-bg-link)" height={1} options={{ showSpinner: false }} />
+			{/* <NextNProgress color="var(--color-bg-link)" height={1} options={{ showSpinner: false }} /> */}
 			<PageMeta title={metaTitle} description={props.meta?.description} image={props.meta?.image} articleMeta={props.meta?.articleMeta} />
-			<AnimatePresence initial={mounted}>
-				{theme && theme !== oldTheme && <Page.Bg theme={oldTheme || ""} mounted={mounted} />}
-				<Page.Bg key={theme} theme={theme} mounted={mounted} />
-			</AnimatePresence>
+			<Page.Bg key={theme} theme={theme} mounted={mounted} />
 			<PageHeader head={props} layoutMotion={fadeMotion} onThemeChange={themeChangeHandler} />
 			{props.layout == "admin" ? (
 				<div className="flex flex-col md:flex-row relative">
@@ -91,21 +89,14 @@ const LayoutBody = (props: React.PropsWithChildren<MainLayoutProps>) => {
 	const router = useRouter();
 
 	return (
-		<AnimatePresence initial={false} mode="wait">
-			<motion.main
+			<main
 				key={`main${router.pathname}`}
 				className={concatenate(
 					"relative flex-1 flex-col justify-center items-center z-[2] px-2 md:px-4",
 					router.pathname == "/" ? "h-screen" : props.layout === "admin" ? "md:pt-20 pb-4" : props.title ? "pt-24 lg:pt-36 pb-4" : "pt-20 pb-4"
-				)}
-				variants={fadeMotion.variants}
-				initial="hidden"
-				animate="enter"
-				exit="exit"
-				transition={fadeMotion.transition}>
+				)}>
 				{props.children}
-			</motion.main>
-		</AnimatePresence>
+			</main>
 	);
 };
 
@@ -227,25 +218,18 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
 				{drawerRoot && drawer.state && ReactDom.createPortal(<Drawer {...drawer} toggle={drawerToggleHandler} menuItems={menuItems} />, drawerRoot)}
 				<div className="flex-1 block relative h-14">
 					{head?.menu ? <nav className={concatenate("hidden justify-center gap-3 px-3 lg:flex")}>{items.length ? <PageMenu items={items} /> : ""}</nav> : ""}
-					<AnimatePresence initial={false} mode="wait">
-						{head?.title && (
-							<motion.h1
-								variants={layoutMotion?.variants}
-								key={`title: ${head?.title} ${router.pathname}`}
-								initial="hidden"
-								animate="enter"
-								exit="exit"
-								transition={layoutMotion?.transition}
-								className={concatenate(
-									"text-theme-heading font-medium font-montserrat",
-									"drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
-									"flex lg:hidden justify-center items-center flex-1 p-2 absolute inset-0",
-									smallTitle ? "text-sm sm:text-lg md:text-2xl" : "text-3xl"
-								)}>
-								{head?.title}
-							</motion.h1>
-						)}
-					</AnimatePresence>
+					{head?.title && (
+						<h1
+							key={`title: ${head?.title} ${router.pathname}`}
+							className={concatenate(
+								"text-theme-heading font-medium font-montserrat",
+								"drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
+								"flex lg:hidden justify-center items-center flex-1 p-2 absolute inset-0",
+								smallTitle ? "text-sm sm:text-lg md:text-2xl" : "text-3xl"
+							)}>
+							{head?.title}
+						</h1>
+					)}
 					{head?.layout == "admin" && user && (
 						<div className="flex flex-1 justify-end items-center w-full h-14 gap-4">
 							<Link href="/api/auth/logout">
@@ -283,24 +267,17 @@ const PageHeader = ({ head, layoutMotion, onThemeChange }: PageHeaderProps) => {
 					</button>
 				</div>
 			</div>
-			<AnimatePresence initial={false} mode="wait">
-				{head?.title && (
-					<motion.h1
-						variants={layoutMotion?.variants}
-						key={`title: ${head?.title} ${router.pathname}`}
-						initial="hidden"
-						animate="enter"
-						exit="exit"
-						transition={layoutMotion?.transition}
-						className={concatenate(
-							"text-3xl text-center text-theme-heading font-medium font-montserrat",
-							"drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
-							"hidden lg:block"
-						)}>
-						{head?.title}
-					</motion.h1>
-				)}
-			</AnimatePresence>
+			{head?.title && (
+				<h1
+					key={`title: ${head?.title} ${router.pathname}`}
+					className={concatenate(
+						"text-3xl text-center text-theme-heading font-medium font-montserrat",
+						"drop-shadow-theme-text-outline lg:mt-4 lg:mb-4",
+						"hidden lg:block"
+					)}>
+					{head?.title}
+				</h1>
+			)}
 		</header>
 	);
 };
