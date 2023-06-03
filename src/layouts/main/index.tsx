@@ -64,7 +64,7 @@ const MainLayout = (props: React.PropsWithChildren<MainLayoutProps>) => {
 	if (props.layout == "admin" && !user) return null;
 
 	return (
-		<div id="app" className="min-h-screen min-w-screen">
+		<div id="app" className="min-h-screen min-w-screen" style={{minHeight: "100svh"}}>
 			{/* <NextNProgress color="var(--color-bg-link)" height={1} options={{ showSpinner: false }} /> */}
 			<PageMeta title={metaTitle} description={props.meta?.description} image={props.meta?.image} articleMeta={props.meta?.articleMeta} />
 			<Page.Bg key={theme} theme={theme} mounted={mounted} />
