@@ -1,40 +1,37 @@
-import Link from "next/link";
-import Image from "next/future/image";
-import dynamic from "next/dynamic";
-import { readFileSync, rmSync, existsSync, statSync, writeFileSync } from "node:fs";
-import ReactMarkdown, { Components } from "react-markdown";
-import matter from "gray-matter";
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
-
-import { PrismAsyncLight as SyntaxHighlighter } from "react-syntax-highlighter";
-import darkStyles from "react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus";
-import lightStyles from "react-syntax-highlighter/dist/cjs/styles/prism/vs";
-import yaml from "react-syntax-highlighter/dist/cjs/languages/prism/yaml";
-import json from "react-syntax-highlighter/dist/cjs/languages/prism/json";
-import javascript from "react-syntax-highlighter/dist/cjs/languages/prism/javascript";
-import jsx from "react-syntax-highlighter/dist/cjs/languages/prism/jsx";
-import typescript from "react-syntax-highlighter/dist/cjs/languages/prism/typescript";
-import tsx from "react-syntax-highlighter/dist/cjs/languages/prism/tsx";
-import css from "react-syntax-highlighter/dist/cjs/languages/prism/css";
-import scss from "react-syntax-highlighter/dist/cjs/languages/prism/scss";
-import bash from "react-syntax-highlighter/dist/cjs/languages/prism/bash";
-import docker from "react-syntax-highlighter/dist/cjs/languages/prism/docker";
-
-import type { NextPageWithLayout } from "../_app";
+import PageMessage from "$src/components/page-message";
 import MainLayout from "$src/layouts/main";
 import Page from "$src/layouts/main/components/page";
-import { getContentDir } from "$src/utils/server.func";
-import PageMessage from "$src/components/page-message";
-
-import type { blog } from "@prisma/client";
-import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { prisma } from "$src/server/db/client";
 import { concatenate } from "$src/utils/misc";
-import { useTheme } from "next-themes";
-import { JSXElementConstructor, ReactElement, ReactNode } from "react";
+import { getContentDir } from "$src/utils/server.func";
+import matter from "gray-matter";
 import { GetStaticPropsContext } from "next";
+import { useTheme } from "next-themes";
+import dynamic from "next/dynamic";
+import Image from "next/future/image";
+import Link from "next/link";
+import { existsSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { JSXElementConstructor, ReactElement, ReactNode } from "react";
+import ReactMarkdown, { Components } from "react-markdown";
+import { PrismAsyncLight as SyntaxHighlighter } from "react-syntax-highlighter";
+import bash from "react-syntax-highlighter/dist/cjs/languages/prism/bash";
+import css from "react-syntax-highlighter/dist/cjs/languages/prism/css";
+import docker from "react-syntax-highlighter/dist/cjs/languages/prism/docker";
+import javascript from "react-syntax-highlighter/dist/cjs/languages/prism/javascript";
+import json from "react-syntax-highlighter/dist/cjs/languages/prism/json";
+import jsx from "react-syntax-highlighter/dist/cjs/languages/prism/jsx";
+import scss from "react-syntax-highlighter/dist/cjs/languages/prism/scss";
+import tsx from "react-syntax-highlighter/dist/cjs/languages/prism/tsx";
+import typescript from "react-syntax-highlighter/dist/cjs/languages/prism/typescript";
+import yaml from "react-syntax-highlighter/dist/cjs/languages/prism/yaml";
+import lightStyles from "react-syntax-highlighter/dist/cjs/styles/prism/vs";
+import darkStyles from "react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus";
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
+import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 
+import type { NextPageWithLayout } from "../_app";
+import type { blog } from "@prisma/client";
 const ReactCodepen = dynamic(() => import("../../components/codepen"));
 
 SyntaxHighlighter.registerLanguage("yaml", yaml);
@@ -412,7 +409,7 @@ export async function getStaticPaths() {
 	// When this is true (in preview environments), don't prerender any static pages
 	// (faster builds, but slower initial page load)
 	if (process.env.SKIP_BUILD_STATIC_GENERATION) {
-		return { paths: [], fallback: "blocking" };
+		return { paths: [], fallback: true };
 	}
 
 	// Get the paths we want to prerender based on posts
@@ -425,7 +422,7 @@ export async function getStaticPaths() {
 		paths: posts.map(p => ({
 			params: { slug: p.slug }
 		})),
-		fallback: "blocking"
+		fallback: true
 	};
 }
 
