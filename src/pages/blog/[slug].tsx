@@ -409,7 +409,7 @@ export async function getStaticPaths() {
 	// When this is true (in preview environments), don't prerender any static pages
 	// (faster builds, but slower initial page load)
 	if (process.env.SKIP_BUILD_STATIC_GENERATION) {
-		return { paths: [] };
+		return { paths: [], fallback: true };
 	}
 
 	// Get the paths we want to prerender based on posts
@@ -421,7 +421,8 @@ export async function getStaticPaths() {
 	return {
 		paths: posts.map(p => ({
 			params: { slug: p.slug }
-		}))
+		})),
+		fallback: true
 	};
 }
 
