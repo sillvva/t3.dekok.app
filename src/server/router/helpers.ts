@@ -1,11 +1,11 @@
-import matter from "gray-matter";
+import { parseError } from "$src/utils/misc";
+import { getContentDir } from "$src/utils/server.func";
 import { writeFileSync } from "fs";
+import matter from "gray-matter";
 import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import { prisma } from "../db/client";
-import { getContentDir } from "$src/utils/server.func";
-import type { ZodFormattedError } from "zod";
-import { parseError } from "$src/utils/misc";
 
+import type { ZodFormattedError } from "zod";
 interface FetchOptions {
 	getPosts?: boolean;
 	page?: number;
@@ -102,15 +102,17 @@ export async function fetchPosts(options: FetchOptions = {}) {
 	writeFileSync(`${getContentDir()}/blog.json`, JSON.stringify(posts));
 
 	if (changes) {
-		console.log("Storing metadata to Firestore");
+		console.log("Storing metadata to Supabase");
 		for (const post of posts.filter(p => !!upserted.find(a => a === p.slug))) {
 			try {
-				await prisma.blog.upsert({
-					where: { id: post.id },
+				const result = await prisma.blog.upsert({
+					where: { id: post.id ?? 0 },
 					update: post,
 					create: post
 				});
+				if (result.id) console.log(`Upserted: ${result.id}`);
 			} catch (err) {
+				console.error(err);
 				errors.push({ slug: post.slug, error: parseError(err) });
 			}
 		}

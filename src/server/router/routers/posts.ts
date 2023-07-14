@@ -1,10 +1,10 @@
 import { isoDateRegex } from "$src/utils/constants";
-import { supabaseClient } from "@supabase/auth-helpers-nextjs";
-import { TRPCError } from "@trpc/server";
 import { parse } from "cookie";
 import matter from "gray-matter";
 import path from "path";
 import { z } from "zod";
+import { supabaseClient } from "@supabase/auth-helpers-nextjs";
+import { TRPCError } from "@trpc/server";
 import { createRouter } from "../context";
 import { fetchPosts, formatErrors } from "../helpers";
 
@@ -55,8 +55,8 @@ export const postsRouter = createRouter()
 			const envSchema = z.object({
 				title: z.string(),
 				description: z.string(),
-				date: z.string().regex(new RegExp(isoDateRegex), "Must be a valid ISO date"),
-				updated: z.string().regex(new RegExp(isoDateRegex), "Must be a valid ISO date").optional(),
+				date: z.union([z.date(), z.string().regex(new RegExp(isoDateRegex), "Must be a valid ISO date")]),
+				updated: z.union([z.date(), z.string().regex(new RegExp(isoDateRegex), "Must be a valid ISO date")]).optional(),
 				image: z.string().url("Invalid URL").optional(),
 				tags: z.array(z.string()).optional(),
 				full: z.boolean().optional()
