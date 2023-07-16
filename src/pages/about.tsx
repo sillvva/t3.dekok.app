@@ -1,7 +1,7 @@
 import type { NextPageWithLayout } from "./_app";
-import Page from "$src/layouts/main/components/page";
 import AnimatedButton from "$src/components/animated-button";
 import MainLayout from "$src/layouts/main";
+import Page from "$src/layouts/main/components/page";
 
 const age = (birthday: Date) => {
 	const ageDifMs = Date.now() - birthday.getTime();
@@ -17,9 +17,9 @@ const AboutMe: NextPageWithLayout = () => {
 					<div className="flex flex-col md:flex-row">
 						<div className="basis-full md:basis-6/12 mb-5 md:mb-0">
 							<p>
-								Experienced web developer with a demonstrated history of working in the wireless industry. Skilled in PHP, Node.JS, Vue, Angular, HTML,
-								JavaScript, TypeScript, CSS, and SCSS. Strong engineering professional with a Bachelor&apos;s Degree focused in Computer and Information Systems
-								Security/Information Assurance from Dakota State University.
+								Experienced Full Stack Web Developer with a demonstrated history of working in the wireless industry. Skilled in 
+								Svelte, React, PHP, HTML, JavaScript, TypeScript, and CSS. Strong engineering professional with a Bachelor&rsquo;s 
+								Degree focused in Computer and Information Systems Security/Information Assurance from Dakota State University.
 							</p>
 						</div>
 						<div className="basis-full md:basis-6/12">
