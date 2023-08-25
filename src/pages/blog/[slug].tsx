@@ -296,7 +296,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 				<Page.Article className="w-full xl:w-9/12 2xl:w-8/12">
 					{!data.full && (
 						<div className="aspect-video relative">
-							<Image src={data.image} alt={"Cover"} width={1200} height={(1200 * 2) / 3} className="object-cover" priority />
+							<Image src={data.image} alt={"Cover"} width={1200} height={(1200 * 2) / 3} className="object-cover h-full" priority />
 							{user && user.id === uid && (
 								<button className="absolute top-4 right-4" onClick={revalidatePage}>
 									<Icon path={mdiRefresh} className="w-12 h-12" />
