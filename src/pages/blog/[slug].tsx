@@ -4,6 +4,7 @@ import Page from "$src/layouts/main/components/page";
 import { prisma } from "$src/server/db/client";
 import { concatenate } from "$src/utils/misc";
 import { getContentDir } from "$src/utils/server.func";
+import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 import matter from "gray-matter";
 import { GetStaticPropsContext } from "next";
 import { useTheme } from "next-themes";
@@ -28,10 +29,9 @@ import lightStyles from "react-syntax-highlighter/dist/cjs/styles/prism/vs";
 import darkStyles from "react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
-import { supabaseClient } from "@supabase/auth-helpers-nextjs";
 
-import type { NextPageWithLayout } from "../_app";
 import type { blog } from "@prisma/client";
+import type { NextPageWithLayout } from "../_app";
 const ReactCodepen = dynamic(() => import("../../components/codepen"));
 
 SyntaxHighlighter.registerLanguage("yaml", yaml);
@@ -158,6 +158,10 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 
 			li({ children }) {
 				return <li className="list-item-icon leading-7 mb-3">{children}</li>;
+			},
+
+			strong({ children }) {
+				return <strong className="font-sans">{children}</strong>
 			},
 
 			pre({ children }) {
