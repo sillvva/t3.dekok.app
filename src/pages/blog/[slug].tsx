@@ -30,7 +30,13 @@ import darkStyles from "react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 
+import { env } from "$src/server/env.mjs";
+import { useAuthentication } from "$src/utils/hooks";
+import { mdiRefresh } from "@mdi/js";
+import Icon from "@mdi/react";
 import type { blog } from "@prisma/client";
+import { useRouter } from "next/router";
+import { toast } from "react-toastify";
 import type { NextPageWithLayout } from "../_app";
 const ReactCodepen = dynamic(() => import("../../components/codepen"));
 
@@ -59,10 +65,13 @@ type ServerProps = {
 	data: SerializedBlog;
 	slug: string;
 	content: string;
+	uid: string;
 };
 
 const Blog: NextPageWithLayout<ServerProps> = props => {
-	const { data, content, slug } = props;
+	const { user } = useAuthentication({ login: false });
+	const router = useRouter();
+	const { data, content, slug, uid } = props;
 	const { theme } = useTheme();
 
 	try {
@@ -266,13 +275,33 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 			.replace(/(```(bash|text|env)) \[([^\]]+)\]/g, "$1\n# $3")
 			.replace(/(```[^\n ]+) \[([^\]]+)\]/g, "$1\n// $2");
 
+		const revalidatePage = async () => {
+			try {
+				const currentPath = router.asPath;
+				const response = await fetch(`/api/revalidate?path=${currentPath}`);
+				if (!response.ok) throw new Error(`Could not revalidate ${currentPath}`);
+				const data = await response.json() as { success: boolean, statusCode: number, revalidated?: string[], message?: string };
+				if (!data.success) throw new Error(data.message || `Could not revalidate ${currentPath}`);
+				if (data.revalidated) data.revalidated.forEach(path => console.log(`Revalidated ${path}`));
+				router.reload();
+			} catch (err) {
+				if (err instanceof Error) toast(err.message, { className: "!bg-red-400 !text-white !rounded-lg" });
+				console.error(err)
+			}
+			return false;
+		};
+
 		return (
 			<Page.Body>
 				<Page.Article className="w-full xl:w-9/12 2xl:w-8/12">
 					{!data.full && (
 						<div className="aspect-video relative">
-							{/* <Image src={data.image} alt={"Cover"} fill sizes="100vw" className="object-cover" priority />  */}
 							<Image src={data.image} alt={"Cover"} width={1200} height={(1200 * 2) / 3} className="object-cover" priority />
+							{user && user.id === uid && (
+								<button className="absolute top-4 right-4" onClick={revalidatePage}>
+									<Icon path={mdiRefresh} className="w-12 h-12" />
+								</button>
+							)}
 						</div>
 					)}
 					<Page.Section>
@@ -404,7 +433,8 @@ export async function getStaticProps(context: GetStaticPropsContext) {
 		props: {
 			content,
 			slug,
-			data
+			data,
+			uid: env.AUTH_UID
 		}
 	};
 }
