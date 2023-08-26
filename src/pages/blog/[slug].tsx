@@ -178,7 +178,7 @@ const Blog: NextPageWithLayout<ServerProps> = props => {
 			},
 
 			code({ className, children, inline }) {
-				if (inline || typeof children[0] !== "string") return <code className="px-1 outline outline-1 rounded-sm bg-white/10 text-theme-base">{children}</code>;
+				if (inline || typeof children[0] !== "string") return <code className="px-1 rounded-sm bg-white/10 text-theme-base">{children}</code>;
 				const content = children as string[];
 				let language = (className ?? "").split("-")[1];
 
